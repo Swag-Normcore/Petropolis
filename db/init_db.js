@@ -7,13 +7,14 @@ const {
 async function buildTables() {
   try {
     client.connect();
-    console.log("Dropping all tables...");
+    console.log("Starting to drop tables...");
 
     // drop tables in correct order
 
     await client.query(`
     DROP TABLE IF EXISTS reviews;
-    DROP TABLE IF EXISTS order_history;
+    DROP TABLE IF EXISTS order_products;
+    DROP TABLE IF EXISTS orders;
     DROP TABLE IF EXISTS cart_products;
     DROP TABLE IF EXISTS shopping_cart;
     DROP TABLE IF EXISTS favorites;
@@ -65,7 +66,7 @@ async function buildTables() {
     CREATE TABLE shopping_cart(
       id SERIAL PRIMARY KEY,
       "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE,
-      "expirationDate" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP + interval '1 week'
+      "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
       );
     `)
     await client.query(`
@@ -78,14 +79,22 @@ async function buildTables() {
     );
     `)
     await client.query(`
-    CREATE TABLE order_history(
+    CREATE TABLE orders(
       id SERIAL PRIMARY KEY,
-      "productId" INTEGER REFERENCES products(id) NOT NULL,
       "userId" INTEGER REFERENCES users(id) NOT NULL,
-      quatity INTEGER NOT NULL,
-      completed BOOLEAN DEFAULT false,
-      "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT UC_order_history UNIQUE ("productId", "userId")
+      status VARCHAR(255) NOT NULL,
+      "totalPrice" INTEGER NOT NULL,
+      "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+    `)
+    await client.query(`
+    CREATE TABLE order_products(
+      id SERIAL PRIMARY KEY,
+      "orderId" INTEGER REFERENCES orders(id) NOT NULL,
+      "productId" INTEGER REFERENCES products(id) NOT NULL,
+      quantity INTEGER NOT NULL,
+      "subTotal" INTEGER NOT NULL,
+      CONSTRAINT UC_order_products UNIQUE ("orderId", "productId")
     )
     `)
     await client.query(`
@@ -99,7 +108,7 @@ async function buildTables() {
       CONSTRAINT UC_reviews UNIQUE ("userId", "productId")
     );
     `)
-    console.log("Created tables successfully.");
+    console.log("Built tables successfully.");
 
   } catch (error) {
     throw error;
