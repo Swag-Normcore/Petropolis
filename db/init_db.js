@@ -2,7 +2,8 @@ const {
   client,
   // declare your model imports here
   // for example, User
-} = require('./');
+  User,
+} = require("./");
 
 async function buildTables() {
   try {
@@ -21,12 +22,12 @@ async function buildTables() {
     DROP TABLE IF EXISTS products;
     DROP TABLE IF EXISTS categories;
     DROP TABLE IF EXISTS users;
-  `)
+  `);
     console.log("Dropped tables successfully.");
 
     // build tables in correct order
 
-    console.log("Starting to build tables...")
+    console.log("Starting to build tables...");
     await client.query(`
     CREATE TABLE users(
       id SERIAL PRIMARY KEY,
@@ -35,14 +36,14 @@ async function buildTables() {
       name VARCHAR(255) NOT NULL,
       "isAdmin" BOOLEAN DEFAULT false
       );
-    `)
+    `);
     await client.query(`
     CREATE TABLE categories(
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       description VARCHAR(255)
       );
-    `)
+    `);
     await client.query(`
     CREATE TABLE products(
       id SERIAL PRIMARY KEY,
@@ -53,7 +54,7 @@ async function buildTables() {
       image VARCHAR(255),
       "categoryId" INTEGER REFERENCES categories(id)
       );
-    `)
+    `);
     await client.query(`
     CREATE TABLE favorites(
       id SERIAL PRIMARY KEY,
@@ -61,14 +62,14 @@ async function buildTables() {
       "userId" INTEGER REFERENCES users(id) NOT NULL,
       CONSTRAINT UC_favorites UNIQUE ("productId", "userId")
     );
-    `)
+    `);
     await client.query(`
     CREATE TABLE shopping_cart(
       id SERIAL PRIMARY KEY,
       "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE,
       "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
       );
-    `)
+    `);
     await client.query(`
     CREATE TABLE cart_products(
       id SERIAL PRIMARY KEY,
@@ -77,7 +78,7 @@ async function buildTables() {
       quatitiy INTEGER NOT NULL,
       CONSTRAINT UC_cart_products UNIQUE ("shoppingId", "productId")
     );
-    `)
+    `);
     await client.query(`
     CREATE TABLE orders(
       id SERIAL PRIMARY KEY,
@@ -86,7 +87,7 @@ async function buildTables() {
       "totalPrice" INTEGER NOT NULL,
       "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );
-    `)
+    `);
     await client.query(`
     CREATE TABLE order_products(
       id SERIAL PRIMARY KEY,
@@ -96,7 +97,7 @@ async function buildTables() {
       "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_order_products UNIQUE ("orderId", "productId")
     )
-    `)
+    `);
     await client.query(`
     CREATE TABLE reviews(
       id SERIAL PRIMARY KEY,
@@ -107,9 +108,8 @@ async function buildTables() {
       "isAnonymous" BOOLEAN DEFAULT false,
       CONSTRAINT UC_reviews UNIQUE ("userId", "productId")
     );
-    `)
+    `);
     console.log("Built tables successfully.");
-
   } catch (error) {
     throw error;
   }
@@ -120,6 +120,40 @@ async function populateInitialData() {
     // create useful starting data by leveraging your
     // Model.method() adapters to seed your db, for example:
     // const user1 = await User.createUser({ ...user info goes here... })
+
+    console.log("Starting to create users...");
+
+    const fakeUser1 = await User.createUser({
+      email: "wizardboi@hogwarts.wiz",
+      password: "lumos",
+      name: "Albus Dumbledore",
+      isAdmin: true,
+    });
+    const fakeUser2 = await User.createUser({
+      email: "thechosenone@hogwarts.wiz",
+      password: "expelliarmus",
+      name: "Harry Potter",
+      isAdmin: false,
+    });
+    const fakeUser3 = await User.createUser({
+      email: "Tyrannosaurus@Zordon.Go",
+      password: "Dragonzord",
+      name: "Red Ranger",
+      isAdmin: false,
+    });
+    const fakeUser4 = await User.createUser({
+      email: "Triceratops@Zordon.Go",
+      password: "PinkRanger",
+      name: "Blue Ranger",
+      isAdmin: false,
+    });
+
+    console.log(fakeUser1);
+    console.log(fakeUser2);
+    console.log(fakeUser3);
+    console.log(fakeUser4);
+
+    console.log("Finished creating users!");
   } catch (error) {
     throw error;
   }
