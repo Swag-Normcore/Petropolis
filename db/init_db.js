@@ -148,6 +148,11 @@ async function populateInitialData() {
       isAdmin: false,
     });
 
+    console.log(fakeUser1);
+    console.log(fakeUser2);
+    console.log(fakeUser3);
+    console.log(fakeUser4);
+
     console.log("Finished creating users!");
   } catch (error) {
     throw error;
