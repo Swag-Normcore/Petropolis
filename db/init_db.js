@@ -2,7 +2,7 @@ const {
   client,
   // declare your model imports here
   // for example, User
-  user,
+  User,
 } = require("./");
 
 async function buildTables() {
@@ -123,25 +123,25 @@ async function populateInitialData() {
 
     console.log("Starting to create users...");
 
-    const fakeUser1 = await user.createUser({
+    const fakeUser1 = await User.createUser({
       email: "wizardboi@hogwarts.wiz",
       password: "lumos",
       name: "Albus Dumbledore",
       isAdmin: true,
     });
-    const fakeUser2 = await user.createUser({
+    const fakeUser2 = await User.createUser({
       email: "thechosenone@hogwarts.wiz",
       password: "expelliarmus",
       name: "Harry Potter",
       isAdmin: false,
     });
-    const fakeUser3 = await user.createUser({
+    const fakeUser3 = await User.createUser({
       email: "Tyrannosaurus@Zordon.Go",
       password: "Dragonzord",
       name: "Red Ranger",
       isAdmin: false,
     });
-    const fakeUser4 = await user.createUser({
+    const fakeUser4 = await User.createUser({
       email: "Triceratops@Zordon.Go",
       password: "PinkRanger",
       name: "Blue Ranger",
