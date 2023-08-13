@@ -35,7 +35,7 @@ async function createUser({ name, password, email }) {
       `
       INSERT INTO users(name, password, email)
       VALUES ($1, $2, $3)
-      ON CONFLICT (username) DO NOTHING
+      ON CONFLICT (email) DO NOTHING
       RETURNING id, name, email, "isAdmin";
     `,
       [name, hashedPassword, email]
@@ -82,7 +82,7 @@ async function getUserByEmail(email) {
   }
 }
 
-async function getUserByEmailAndPassword(email, password) {
+async function getUserByEmailAndPassword({ email, password }) {
   try {
     const user = await getUserByEmail(email);
 
@@ -128,16 +128,15 @@ async function updateUser(id, fields = {}) {
   }
 }
 
+//delete user and all their orders, reviews, and products, and orders_products associated with those user ids
+//will need to be edited once we have reviews, products and orders
 async function deleteUser(userId) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(`
+    const { rows: user } = await client.query(`
       DELETE FROM users
       WHERE id=${userId}
       RETURNING *;
     `);
-
     return user;
   } catch (error) {
     throw error;
