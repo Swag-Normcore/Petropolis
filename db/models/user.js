@@ -63,6 +63,25 @@ async function getUserById(userId) {
   }
 }
 
+async function getUserByEmail(email) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT *
+      FROM users
+      WHERE email=$1;
+    `,
+      [email]
+    );
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function getUserByEmailAndPassword(email, password) {
   try {
     const user = await getUserByEmail(email);
