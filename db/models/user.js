@@ -19,6 +19,7 @@ async function getAllUsers() {
       SELECT id, name, email, "isAdmin"
       FROM users;
     `);
+    console.log(users);
 
     return users;
   } catch (error) {
@@ -26,21 +27,24 @@ async function getAllUsers() {
   }
 }
 
-async function createUser({ name, password, email }) {
+async function createUser({ name, password, email, isAdmin }) {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+
     const {
       rows: [user],
     } = await client.query(
       `
-      INSERT INTO users(name, password, email)
-      VALUES ($1, $2, $3)
+      INSERT INTO users(name, password, email, "isAdmin")
+      VALUES($1, $2, $3, $4)
       ON CONFLICT (email) DO NOTHING
-      RETURNING id, name, email, "isAdmin";
+      RETURNING *;
     `,
-      [name, hashedPassword, email]
+      [name, hashedPassword, email, isAdmin]
     );
+    console.log(user);
 
+    delete user.password;
     return user;
   } catch (error) {
     throw error;
@@ -56,6 +60,12 @@ async function getUserById(userId) {
       FROM users
       WHERE id=${userId};
     `);
+
+    if (!user) {
+      return null;
+    }
+
+    delete user.password;
 
     return user;
   } catch (error) {
@@ -76,6 +86,12 @@ async function getUserByEmail(email) {
       [email]
     );
 
+    console.log(user);
+
+    if (!user) {
+      return null;
+    }
+
     return user;
   } catch (error) {
     throw error;
@@ -88,10 +104,14 @@ async function getUserByEmailAndPassword({ email, password }) {
 
     const hashedPassword = user.password;
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+    console.log(passwordsMatch);
+    console.log(user);
 
     if (passwordsMatch) {
       delete user.password;
       return user;
+    } else {
+      return null;
     }
   } catch (error) {
     throw error;
@@ -122,6 +142,8 @@ async function updateUser(id, fields = {}) {
       Object.values(fields)
     );
 
+    console.log(user);
+
     return user;
   } catch (error) {
     throw error;
@@ -132,11 +154,19 @@ async function updateUser(id, fields = {}) {
 //will need to be edited once we have reviews, products and orders
 async function deleteUser(userId) {
   try {
-    const { rows: user } = await client.query(`
-      DELETE FROM users
-      WHERE id=${userId}
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      DELETE FROM users, orders, reviews, products, orders_products
+      WHERE id=$1
       RETURNING *;
-    `);
+    `,
+      [userId]
+    );
+
+    console.log(user);
+
     return user;
   } catch (error) {
     throw error;
