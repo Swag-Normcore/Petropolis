@@ -5,6 +5,7 @@ module.exports = {
   // and User: require('./user') here
 
   User: require("./user"),
+  Products: require("./products")
 };
 
 // then, in your API, you'll require the appropriate model
