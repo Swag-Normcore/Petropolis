@@ -200,7 +200,7 @@ async function deleteUser(userId) {
     } = await client.query(
       `
       DELETE FROM users
-      WHERE users.id=$1
+      WHERE id=$1
       RETURNING *;
     `,
       [userId]
