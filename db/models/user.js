@@ -200,7 +200,7 @@ async function deleteUser(userId) {
     } = await client.query(
       `
       DELETE FROM users, orders, reviews, products, orders_products
-      WHERE id=$1
+      WHERE users.id=$1
       RETURNING *;
     `,
       [userId]
@@ -211,8 +211,6 @@ async function deleteUser(userId) {
     if (!user) {
       throw new Error("User not found");
     }
-
-    delete user.password;
 
     return user;
   } catch (error) {
