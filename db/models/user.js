@@ -11,6 +11,7 @@ module.exports = {
   getUserByEmailAndPassword,
   updateUser,
   deleteUser,
+  isAdmin,
 };
 
 async function getAllUsers() {
