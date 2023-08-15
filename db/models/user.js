@@ -199,7 +199,7 @@ async function deleteUser(userId) {
       rows: [user],
     } = await client.query(
       `
-      DELETE FROM users, orders, reviews, products, orders_products
+      DELETE FROM users
       WHERE users.id=$1
       RETURNING *;
     `,
