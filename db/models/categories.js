@@ -12,14 +12,13 @@ async function createCategory({ name, description }) {
   `,
       [name, description]
     );
+    console.log("createCategory: ", category);
     if (!category) {
-      throw Error;
-    } else {
-      console.log("category: ", category);
-      return category;
+      throw new Error("Unable to create category");
     }
-  } catch (err) {
-    console.error(err);
+    return category;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -28,14 +27,13 @@ async function getAllCategories() {
     const { rows: categories } = await client.query(`
   SELECT * FROM categories;
   `);
+    console.log("categories: ", categories);
     if (!categories) {
-      throw Error;
-    } else {
-      console.log("categories: ", categories);
-      return category;
+      throw new Error("Unable to get categories");
     }
-  } catch (err) {
-    console.error(err);
+    return category;
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -46,22 +44,21 @@ async function getCategoryById(id) {
     } = await client.query(
       `
   SELECT * FROM categories
-  WHERE id = $1;
+  WHERE id=$1;
   `,
       [id]
     );
+    console.log("getCategoryById: ", category);
     if (!category) {
-      throw Error;
-    } else {
-      console.log("getCategoryById: ", category);
-      return category;
+      throw new Error("Category not found");
     }
-  } catch (err) {
-    console.error(err);
+    return category;
+  } catch (error) {
+    throw error;
   }
 }
 
-async function updateCategory({ id, ...fields }) {
+async function updateCategory(id, fields = {}) {
   const setString = Object.keys(fields)
     .map(
       (key, index) =>
@@ -81,12 +78,14 @@ async function updateCategory({ id, ...fields }) {
   `,
       Object.values(fields)
     );
+    console.log("updateCategory: ", category);
     if (!category) {
-      throw Error;
-    } else {
-      return category;
+      throw new Error("Unable to update category");
     }
-  } catch (err) {}
+    return category;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function deleteCategory(id) {
@@ -95,19 +94,31 @@ async function deleteCategory(id) {
       rows: [category],
     } = await client.query(
       `
-  DELETE FROM categories
-  WHERE id = $1;
-  RETURNING *;
+    DELETE FROM categories, 
+    WHERE id=$1;
+    RETURNING *;
   `,
       [id]
     );
+    const {
+      rows: [products],
+    } = await client.query(
+      `
+      DELETE FROM products
+      WHERE id=$1;
+      RETURNING *;
+      `,
+      [id]
+    );
+
+    console.log("deleteCategory: ", category);
     if (!category) {
-      throw Error;
-    } else {
-      console.log("deleteCategory: ", category);
-      return category;
+      throw new Error("Unable to delete category");
     }
-  } catch (err) {}
+    return category && products;
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = {
