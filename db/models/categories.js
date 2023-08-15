@@ -105,7 +105,7 @@ async function deleteCategory(id) {
     } = await client.query(
       `
       UPDATE products
-      SET "categoryId=$1
+      SET "categoryId"=$1
       WHERE "categoryId"=$2;
       `,
       [null, categoryId]
