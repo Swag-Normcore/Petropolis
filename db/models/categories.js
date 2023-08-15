@@ -104,11 +104,11 @@ async function deleteCategory(id) {
       rows: [products],
     } = await client.query(
       `
-      DELETE FROM products
-      WHERE id=$1;
-      RETURNING *;
+      UPDATE products
+      SET "categoryId=$1
+      WHERE "categoryId"=$2;
       `,
-      [id]
+      [null, categoryId]
     );
 
     console.log("deleteCategory: ", category);
