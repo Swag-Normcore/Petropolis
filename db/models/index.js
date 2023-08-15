@@ -6,6 +6,7 @@ module.exports = {
   // and User: require('./user') here
 
   User: require("./user"),
+  Orders: require("./orders"),
   Products: require("./products")
 };
 

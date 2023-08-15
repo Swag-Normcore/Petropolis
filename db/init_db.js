@@ -4,8 +4,10 @@ const {
   // declare your model imports here
   // for example, User
   User,
+  Orders,
   Products,
 } = require("./");
+const { getOrderById } = require("./models/orders");
 
 async function buildTables() {
   try {
@@ -172,6 +174,44 @@ async function populateInitialData() {
     console.log(fakeUser4);
 
     console.log("Finished creating users!");
+
+    console.log("Starting to create orders...");
+    const order1 = await Orders.createOrder({
+      userId: fakeUser1.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order2 = await Orders.createOrder({
+      userId: fakeUser2.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order3 = await Orders.createOrder({
+      userId: fakeUser3.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order4 = await Orders.createOrder({
+      userId: fakeUser4.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    console.log("Finished creating orders!");
+
+    console.log("Starting to get orders...");
+    await Orders.getOrderById(order1.id);
+    await Orders.getOrderById(order2.id);
+    await Orders.getOrderById(order3.id);
+    await Orders.getOrderById(order4.id);
+    console.log("Finished getting orders!");
+
+    console.log("Starting to get orders by user...");
+    await Orders.getAllOrdersByUser(fakeUser1.id);
+    await Orders.getAllOrdersByUser(fakeUser2.id);
+    await Orders.getAllOrdersByUser(fakeUser3.id);
+    await Orders.getAllOrdersByUser(fakeUser4.id);
+    console.log("Finished getting orders by user!");
+
   } catch (error) {
     console.error("Error creating categories");
     throw error;
