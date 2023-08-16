@@ -11,6 +11,7 @@ module.exports = {
   getUserByEmailAndPassword,
   updateUser,
   deleteUser,
+  isAdmin,
 };
 
 async function getAllUsers() {
@@ -19,6 +20,10 @@ async function getAllUsers() {
       SELECT id, name, email, "isAdmin"
       FROM users;
     `);
+    console.log("getAllUsers:", users);
+    if (!users) {
+      throw new Error("No users found");
+    }
 
     return users;
   } catch (error) {
@@ -26,21 +31,28 @@ async function getAllUsers() {
   }
 }
 
-async function createUser({ name, password, email }) {
+async function createUser({ name, password, email, isAdmin }) {
   try {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+
     const {
       rows: [user],
     } = await client.query(
       `
-      INSERT INTO users(name, password, email)
-      VALUES ($1, $2, $3)
+      INSERT INTO users(name, password, email, "isAdmin")
+      VALUES($1, $2, $3, $4)
       ON CONFLICT (email) DO NOTHING
-      RETURNING id, name, email, "isAdmin";
+      RETURNING *;
     `,
-      [name, hashedPassword, email]
+      [name, hashedPassword, email, isAdmin]
     );
+    console.log("createUser:", user);
 
+    if (!user) {
+      throw new Error("User not created");
+    }
+
+    delete user.password;
     return user;
   } catch (error) {
     throw error;
@@ -56,6 +68,12 @@ async function getUserById(userId) {
       FROM users
       WHERE id=${userId};
     `);
+    console.log("getUserById:", user);
+    if (!user) {
+      return new Error("User not found");
+    }
+
+    delete user.password;
 
     return user;
   } catch (error) {
@@ -76,6 +94,12 @@ async function getUserByEmail(email) {
       [email]
     );
 
+    console.log("getUserByEmail:", user);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     return user;
   } catch (error) {
     throw error;
@@ -88,10 +112,14 @@ async function getUserByEmailAndPassword({ email, password }) {
 
     const hashedPassword = user.password;
     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+    console.log("getUserByEmailAndPassword:", user);
+    console.log("passwordsMatch:", passwordsMatch);
 
     if (passwordsMatch) {
       delete user.password;
       return user;
+    } else {
+      throw new Error("Password incorrect");
     }
   } catch (error) {
     throw error;
@@ -122,7 +150,42 @@ async function updateUser(id, fields = {}) {
       Object.values(fields)
     );
 
+    console.log("updateUser:", user);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    delete user.password;
+
     return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//check if user is admin
+//can be used to check if user is admin before allowing them to make changes to the database
+async function isAdmin(userId) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT "isAdmin"
+      FROM users
+      WHERE id=$1;
+    `,
+      [userId]
+    );
+
+    console.log("isAdmin:", user);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user.isAdmin;
   } catch (error) {
     throw error;
   }
@@ -132,11 +195,23 @@ async function updateUser(id, fields = {}) {
 //will need to be edited once we have reviews, products and orders
 async function deleteUser(userId) {
   try {
-    const { rows: user } = await client.query(`
+    const {
+      rows: [user],
+    } = await client.query(
+      `
       DELETE FROM users
-      WHERE id=${userId}
+      WHERE id=$1
       RETURNING *;
-    `);
+    `,
+      [userId]
+    );
+
+    console.log("deleteUser:", user);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     return user;
   } catch (error) {
     throw error;

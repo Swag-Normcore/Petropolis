@@ -1,12 +1,15 @@
 const {
   client,
+  Category,
   // declare your model imports here
   // for example, User
   User,
+  Reviews,
+  Orders,
   Products,
-  Reviews
 } = require("./");
 const { createNewProduct } = require("./models/products");
+const { getOrderById } = require("./models/orders");
 
 async function buildTables() {
   try {
@@ -16,6 +19,7 @@ async function buildTables() {
     // drop tables in correct order
 
     await client.query(`
+
     DROP TABLE IF EXISTS reviews;
     DROP TABLE IF EXISTS order_products;
     DROP TABLE IF EXISTS orders;
@@ -29,7 +33,6 @@ async function buildTables() {
     console.log("Dropped tables successfully.");
 
     // build tables in correct order
-
     console.log("Starting to build tables...");
     await client.query(`
     CREATE TABLE users(
@@ -121,6 +124,22 @@ async function buildTables() {
 
 async function populateInitialData() {
   try {
+    console.log("Creating Categories...");
+
+    const categoryToCreate = await Category.createCategory({
+      name: "T-Shirts",
+      description: "XL Mens Taylor Swift Shirt",
+    });
+    //   {
+    //     name: "Bags",
+    //     description: "Black womens toot bag",
+    //   },
+    // ];
+
+    // console.log("Category Created:");
+    console.log(categoryToCreate);
+
+    console.log("Finshed creating categories.");
     // create useful starting data by leveraging your
     // Model.method() adapters to seed your db, for example:
     // const user1 = await User.createUser({ ...user info goes here... })
@@ -195,7 +214,46 @@ async function populateInitialData() {
     // console.log(fakeProduct3)
 
     // console.log("Finished creating products!")
+    
+    console.log("Starting to create orders...");
+    const order1 = await Orders.createOrder({
+      userId: fakeUser1.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order2 = await Orders.createOrder({
+      userId: fakeUser2.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order3 = await Orders.createOrder({
+      userId: fakeUser3.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    const order4 = await Orders.createOrder({
+      userId: fakeUser4.id,
+      status: "pending",
+      totalPrice: 0
+    });
+    console.log("Finished creating orders!");
+
+    console.log("Starting to get orders...");
+    await Orders.getOrderById(order1.id);
+    await Orders.getOrderById(order2.id);
+    await Orders.getOrderById(order3.id);
+    await Orders.getOrderById(order4.id);
+    console.log("Finished getting orders!");
+
+    console.log("Starting to get orders by user...");
+    await Orders.getAllOrdersByUser(fakeUser1.id);
+    await Orders.getAllOrdersByUser(fakeUser2.id);
+    await Orders.getAllOrdersByUser(fakeUser3.id);
+    await Orders.getAllOrdersByUser(fakeUser4.id);
+    console.log("Finished getting orders by user!");
+
   } catch (error) {
+    console.error("Error creating categories");
     throw error;
   }
 }
