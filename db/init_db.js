@@ -83,6 +83,7 @@ async function buildTables() {
       "shoppingId" INTEGER REFERENCES shopping_cart(id) NOT NULL,
       "productId" INTEGER REFERENCES products(id) NOT NULL,
       quatitiy INTEGER NOT NULL,
+      "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_cart_products UNIQUE ("shoppingId", "productId")
     );
     `);
@@ -189,39 +190,39 @@ async function populateInitialData() {
     // console.log("Starting to create products");
 
     // const fakeProduct1 = await Products.createProduct({
-    //   title: "Large Brown Dog Bed", 
+    //   title: "Large Brown Dog Bed",
     //   description: "Soft polyester lining and walls will make your pet happy!",
-    //   price: 2099, 
+    //   price: 2099,
     //   stock: 20,
     //   imageUrl: "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
     //   categoryId: 1
     // })
 
     // const fakeProduct2 = await Products.createProduct({
-    //   title: "Bone chew toy", 
+    //   title: "Bone chew toy",
     //   description: "Splinter free for pet safety!",
-    //   price: 999, 
+    //   price: 999,
     //   stock: 950,
     //   imageUrl: "https://franklypet.com/wp-content/uploads/DDP180194_V2_ChickenBoneLarge-scaled.jpg",
     //   categoryId: 2
     // })
 
     // const fakeProduct3 = await Products.createProduct({
-    //   title: "Stuffed cat treats", 
+    //   title: "Stuffed cat treats",
     //   description: "Delicious salmon filled treats with no filler products!",
-    //   price: 999, 
+    //   price: 999,
     //   stock: 250,
     //   imageUrl: "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
     //   categoryId: 3
     // })
 
-    
+
     // console.log(fakeProduct1)
     // console.log(fakeProduct2)
     // console.log(fakeProduct3)
 
     // console.log("Finished creating products!")
-    
+
     console.log("Starting to create orders...");
     const order1 = await Orders.createOrder({
       userId: fakeUser1.id,
