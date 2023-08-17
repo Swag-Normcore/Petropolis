@@ -18,7 +18,7 @@ async function createCategory({ name, description }) {
     }
     return category;
   } catch (error) {
-    throw error;
+    console.error(err);
   }
 }
 
@@ -33,7 +33,7 @@ async function getAllCategories() {
     }
     return category;
   } catch (error) {
-    throw error;
+    console.error(err);
   }
 }
 
@@ -54,7 +54,7 @@ async function getCategoryById(id) {
     }
     return category;
   } catch (error) {
-    throw error;
+    console.error(err);
   }
 }
 
@@ -84,22 +84,12 @@ async function updateCategory(id, fields = {}) {
     }
     return category;
   } catch (error) {
-    throw error;
+    console.error(err);
   }
 }
 
 async function deleteCategory(id) {
   try {
-    const {
-      rows: [category],
-    } = await client.query(
-      `
-    DELETE FROM categories, 
-    WHERE id=$1;
-    RETURNING *;
-  `,
-      [id]
-    );
     const {
       rows: [products],
     } = await client.query(
@@ -111,13 +101,23 @@ async function deleteCategory(id) {
       [null, categoryId]
     );
 
+    const {
+      rows: [category],
+    } = await client.query(
+      `
+      DELETE FROM categories, 
+      WHERE id=$1;
+      RETURNING *;
+    `,
+      [id]
+    );
     console.log("deleteCategory: ", category);
     if (!category) {
       throw new Error("Unable to delete category");
     }
     return category && products;
   } catch (error) {
-    throw error;
+    console.error(err);
   }
 }
 

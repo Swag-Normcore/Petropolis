@@ -123,18 +123,25 @@ async function populateInitialData() {
   try {
     console.log("Creating Categories...");
 
-    const categoryToCreate = await Category.createCategory({
-      name: "T-Shirts",
-      description: "XL Mens Taylor Swift Shirt",
+    const categoryOne = await Category.createCategory({
+      name: "Beds",
+      description: "Beds for your furry friend",
     });
-    //   {
-    //     name: "Bags",
-    //     description: "Black womens toot bag",
-    //   },
-    // ];
 
-    // console.log("Category Created:");
-    console.log(categoryToCreate);
+    const categoryTwo = await Category.createCategory({
+      name: "Clothes",
+      description: "Find all your fury friends needs",
+    });
+
+    const categoryThree = await Category.createCategory({
+      name: "Food",
+      description: "S-XL bags of food for cats and dogs",
+    });
+
+    console.log("Category Created:");
+    console.log(categoryOne);
+    console.log(categoryTwo);
+    console.log(categoryThree);
 
     console.log("Finshed creating categories.");
     // create useful starting data by leveraging your
@@ -179,22 +186,22 @@ async function populateInitialData() {
     const order1 = await Orders.createOrder({
       userId: fakeUser1.id,
       status: "pending",
-      totalPrice: 0
+      totalPrice: 0,
     });
     const order2 = await Orders.createOrder({
       userId: fakeUser2.id,
       status: "pending",
-      totalPrice: 0
+      totalPrice: 0,
     });
     const order3 = await Orders.createOrder({
       userId: fakeUser3.id,
       status: "pending",
-      totalPrice: 0
+      totalPrice: 0,
     });
     const order4 = await Orders.createOrder({
       userId: fakeUser4.id,
       status: "pending",
-      totalPrice: 0
+      totalPrice: 0,
     });
     console.log("Finished creating orders!");
 
@@ -211,7 +218,6 @@ async function populateInitialData() {
     await Orders.getAllOrdersByUser(fakeUser3.id);
     await Orders.getAllOrdersByUser(fakeUser4.id);
     console.log("Finished getting orders by user!");
-
   } catch (error) {
     console.error("Error creating categories");
     throw error;
