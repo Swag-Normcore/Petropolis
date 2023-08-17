@@ -38,9 +38,10 @@ async function getAllFavorites(userId) {
   try {
     const favorites = await client.query(
       `
-      SELECT *
+      SELECT favorites.*, products.*
       FROM favorites
-      WHERE "userId" = $1;
+      JOIN products ON favorites."productId"=products.id
+      WHERE favorites."userId"=$1;
     `,
       [userId]
     );
