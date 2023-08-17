@@ -1,6 +1,7 @@
 //database adapters for a user to product reference table where users can create a list of their favorite products
 //adapters will be createFavorite, getAllFavorites, getFavorite, updateFavorite, deleteFavorite
 const client = require("./client");
+const db = require("../db");
 
 module.exports = {
   createFavorite,
@@ -13,8 +14,12 @@ module.exports = {
 
 async function createFavorite({ userId, productId }) {
   try {
-    const favorite = await db.one(
-      "INSERT INTO favorites (user_id, product_id) VALUES ($1, $2) RETURNING *",
+    const favorite = await client.query(
+      `
+      INSERT INTO favorites("userId", "productId")
+      VALUES ($1, $2)
+      RETURNING *;
+    `,
       [userId, productId]
     );
     console.log("createFavorite:", favorite);
@@ -25,20 +30,24 @@ async function createFavorite({ userId, productId }) {
 
     return favorite;
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 }
 
 async function getAllFavorites(userId) {
   try {
-    const favorites = await db.any(
-      "SELECT * FROM favorites WHERE user_id = $1",
-      userId
+    const favorites = await client.query(
+      `
+      SELECT *
+      FROM favorites
+      WHERE "userId" = $1;
+    `,
+      [userId]
     );
     console.log("getAllFavorites:", favorites);
 
     if (!favorites) {
-      throw new Error("Could not get favorites");
+      throw new Error("Could not get all favorites");
     }
 
     return favorites;
@@ -49,8 +58,12 @@ async function getAllFavorites(userId) {
 
 async function getFavorite(userId, productId) {
   try {
-    const favorite = await db.one(
-      "SELECT * FROM favorites WHERE user_id = $1 AND product_id = $2",
+    const favorite = await client.query(
+      `
+      SELECT *
+      FROM favorites
+      WHERE "userId" = $1 AND "productId" = $2;
+    `,
       [userId, productId]
     );
     console.log("getFavorite:", favorite);
@@ -67,8 +80,13 @@ async function getFavorite(userId, productId) {
 
 async function updateFavorite(userId, productId, newProductId) {
   try {
-    const favorite = await db.one(
-      "UPDATE favorites SET product_id = $1 WHERE user_id = $2 AND product_id = $3 RETURNING *",
+    const favorite = await client.query(
+      `
+      UPDATE favorites
+      SET "productId" = $1
+      WHERE "userId" = $2 AND "productId" = $3
+      RETURNING *;
+    `,
       [newProductId, userId, productId]
     );
     console.log("updateFavorite:", favorite);
@@ -85,8 +103,12 @@ async function updateFavorite(userId, productId, newProductId) {
 
 async function deleteFavorite(userId, productId) {
   try {
-    const favorite = await db.one(
-      "DELETE FROM favorites WHERE user_id = $1 AND product_id = $2 RETURNING *",
+    const favorite = await client.query(
+      `
+      DELETE FROM favorites
+      WHERE "userId" = $1 AND "productId" = $2
+      RETURNING *;
+    `,
       [userId, productId]
     );
     console.log("deleteFavorite:", favorite);
@@ -103,9 +125,13 @@ async function deleteFavorite(userId, productId) {
 
 async function deleteFavoritesByUser(userId) {
   try {
-    const favorites = await db.any(
-      "DELETE FROM favorites WHERE user_id = $1 RETURNING *",
-      userId
+    const favorites = await client.query(
+      `
+      DELETE FROM favorites
+      WHERE "userId" = $1
+      RETURNING *;
+    `,
+      [userId]
     );
     console.log("deleteFavoritesByUser:", favorites);
 
