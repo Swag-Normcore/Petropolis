@@ -82,7 +82,7 @@ async function buildTables() {
       id SERIAL PRIMARY KEY,
       "shoppingId" INTEGER REFERENCES shopping_cart(id) NOT NULL,
       "productId" INTEGER REFERENCES products(id) NOT NULL,
-      quatitiy INTEGER NOT NULL,
+      quantity INTEGER NOT NULL,
       "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_cart_products UNIQUE ("shoppingId", "productId")
     );
