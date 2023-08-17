@@ -1,5 +1,3 @@
-//database adapters for a user to product reference table where users can create a list of their favorite products
-//adapters will be createFavorite, getAllFavorites, getFavorite, updateFavorite, deleteFavorite
 const client = require("./client");
 const db = require("../db");
 
