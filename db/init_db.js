@@ -7,9 +7,9 @@ const {
   Reviews,
   Orders,
   Products,
+  Order_Products,
 } = require("./");
 const { createNewProduct } = require("./models/products");
-const { getOrderById } = require("./models/orders");
 
 async function buildTables() {
   try {
@@ -73,8 +73,7 @@ async function buildTables() {
     await client.query(`
     CREATE TABLE shopping_cart(
       id SERIAL PRIMARY KEY,
-      "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE,
-      "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE
       );
     `);
     await client.query(`
@@ -82,7 +81,7 @@ async function buildTables() {
       id SERIAL PRIMARY KEY,
       "shoppingId" INTEGER REFERENCES shopping_cart(id) NOT NULL,
       "productId" INTEGER REFERENCES products(id) NOT NULL,
-      quatitiy INTEGER NOT NULL,
+      quantity INTEGER NOT NULL,
       CONSTRAINT UC_cart_products UNIQUE ("shoppingId", "productId")
     );
     `);
@@ -103,7 +102,7 @@ async function buildTables() {
       quantity INTEGER NOT NULL,
       "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_order_products UNIQUE ("orderId", "productId")
-    )
+    );
     `);
     await client.query(`
     CREATE TABLE reviews(
@@ -141,11 +140,6 @@ async function populateInitialData() {
       description: "S-XL bags of food for cats and dogs",
     });
 
-    console.log("Category Created:");
-    console.log(categoryOne);
-    console.log(categoryTwo);
-    console.log(categoryThree);
-
     console.log("Finshed creating categories.");
     // create useful starting data by leveraging your
     // Model.method() adapters to seed your db, for example:
@@ -178,50 +172,40 @@ async function populateInitialData() {
       isAdmin: false,
     });
 
-    console.log(fakeUser1);
-    console.log(fakeUser2);
-    console.log(fakeUser3);
-    console.log(fakeUser4);
-
     console.log("Finished creating users!");
 
-    //Need to create categories first probably
-    // console.log("Starting to create products");
+    // Need to create categories first probably
+    console.log("Starting to create products");
 
-    // const fakeProduct1 = await Products.createProduct({
-    //   title: "Large Brown Dog Bed", 
-    //   description: "Soft polyester lining and walls will make your pet happy!",
-    //   price: 2099, 
-    //   stock: 20,
-    //   imageUrl: "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
-    //   categoryId: 1
-    // })
+    const fakeProduct1 = await Products.createProduct({
+      title: "Large Brown Dog Bed",
+      description: "Soft polyester lining and walls will make your pet happy!",
+      price: 2099,
+      stock: 20,
+      imageUrl: "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
+      categoryId: 1
+    })
 
-    // const fakeProduct2 = await Products.createProduct({
-    //   title: "Bone chew toy", 
-    //   description: "Splinter free for pet safety!",
-    //   price: 999, 
-    //   stock: 950,
-    //   imageUrl: "https://franklypet.com/wp-content/uploads/DDP180194_V2_ChickenBoneLarge-scaled.jpg",
-    //   categoryId: 2
-    // })
+    const fakeProduct2 = await Products.createProduct({
+      title: "Bone chew toy",
+      description: "Splinter free for pet safety!",
+      price: 999,
+      stock: 950,
+      imageUrl: "https://franklypet.com/wp-content/uploads/DDP180194_V2_ChickenBoneLarge-scaled.jpg",
+      categoryId: 2
+    })
 
-    // const fakeProduct3 = await Products.createProduct({
-    //   title: "Stuffed cat treats", 
-    //   description: "Delicious salmon filled treats with no filler products!",
-    //   price: 999, 
-    //   stock: 250,
-    //   imageUrl: "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
-    //   categoryId: 3
-    // })
+    const fakeProduct3 = await Products.createProduct({
+      title: "Stuffed cat treats",
+      description: "Delicious salmon filled treats with no filler products!",
+      price: 999,
+      stock: 250,
+      imageUrl: "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
+      categoryId: 3
+    })
 
-    
-    // console.log(fakeProduct1)
-    // console.log(fakeProduct2)
-    // console.log(fakeProduct3)
+    console.log("Finished creating products!")
 
-    // console.log("Finished creating products!")
-    
     console.log("Starting to create orders...");
     const order1 = await Orders.createOrder({
       userId: fakeUser1.id,
@@ -244,6 +228,39 @@ async function populateInitialData() {
       totalPrice: 0,
     });
     console.log("Finished creating orders!");
+
+    console.log("Starting to add products to order...")
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 1,
+      quantity: 1,
+    })
+    await Order_Products.addProductToOrder({
+      orderId: 2,
+      productId: 2,
+      quantity: 2,
+    })
+    await Order_Products.addProductToOrder({
+      orderId: 3,
+      productId: 3,
+      quantity: 3,
+    })
+    await Order_Products.addProductToOrder({
+      orderId: 4,
+      productId: 1,
+      quantity: 4,
+    })
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 2,
+      quantity: 2,
+    })
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 3,
+      quantity: 3,
+    })
+    console.log("Finished adding products to order!")
 
     console.log("Starting to get orders...");
     await Orders.getOrderById(order1.id);

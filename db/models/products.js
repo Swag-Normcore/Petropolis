@@ -4,7 +4,7 @@ async function getAllProducts() {
   try {
     const { rows: products } = await client.query(`
     SELECT * FROM products;`)
-    if (!products){
+    if (!products) {
       throw new Error("Issue getting products")
     }
     console.log("GET ALL PRODUCTS: ", products)
@@ -14,14 +14,14 @@ async function getAllProducts() {
   }
 }
 
-async function createProduct({title, description, price, stock, imageUrl, categoryId}) {
+async function createProduct({ title, description, price, stock, imageUrl, categoryId }) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     INSERT INTO products(title, description, price, stock, image, "categoryId")
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
     `, [title, description, price, stock, imageUrl, categoryId])
-    if (!product){
+    if (!product) {
       throw new Error("Issue creating product")
     }
     console.log("CREATE NEW PRODUCTS: ", product)
@@ -33,11 +33,11 @@ async function createProduct({title, description, price, stock, imageUrl, catego
 
 async function getProductById(productId) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     SELECT * FROM products
     WHERE id=$1;
     `, [productId])
-    if (!product){
+    if (!product) {
       throw new Error("Issue getting product")
     }
     console.log("GET PRODUCT BY ID", product)
@@ -49,11 +49,11 @@ async function getProductById(productId) {
 
 async function getProductByTitle(title) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     SELECT * FROM products
     WHERE title=$1;
     `, [title])
-    if (!product){
+    if (!product) {
       throw new Error("Issue getting product")
     }
     console.log("GET PRODUCT BY TITLE", product)
@@ -65,11 +65,11 @@ async function getProductByTitle(title) {
 
 async function getProductByCategoryId(categoryId) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     SELECT * FROM products
     WHERE "categoryId"=$1;
     `, [categoryId])
-    if (!product){
+    if (!product) {
       throw new Error("Issue getting product")
     }
     console.log("GET PRODUCT BY CATEGORY ID", product)
@@ -85,13 +85,13 @@ async function updateProduct(id, fields = {}) {
     return
   }
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     UPDATE products
     SET ${placeholders}
     WHERE id=${id}
     RETURNING *;
     `, Object.values(fields))
-    if (!product){
+    if (!product) {
       throw new Error("Issue updating product")
     }
     console.log("UPDATE PRODUCT", product)
@@ -103,12 +103,12 @@ async function updateProduct(id, fields = {}) {
 
 async function makeProductInactive(productId) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     UPDATE products
     SET "isActive"=false
     WHERE id=$1
     `, [productId])
-    if (!product){
+    if (!product) {
       throw new Error("Issue updating product")
     }
     console.log("MAKE PRODUCT INACTIVE", product)
@@ -120,12 +120,12 @@ async function makeProductInactive(productId) {
 
 async function deleteProduct(productId) {
   try {
-    const {rows: [product]} = await client.query(`
+    const { rows: [product] } = await client.query(`
     DELETE FROM products
     WHERE id=$1
     RETURNING *;
     `, [productId])
-    if (!product){
+    if (!product) {
       throw new Error("Issue deleting product")
     }
     console.log("DELETE PRODUCT", product)

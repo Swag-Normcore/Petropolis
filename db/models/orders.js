@@ -17,7 +17,7 @@ async function createOrder({ userId, status, totalPrice }) {
             RETURNING *;
         `, [userId, status, totalPrice]);
         if (!order) {
-            throw Error;
+            throw new Error("Couldn't create order!");
         } else {
             console.log("createOrder: ", order);
             return order;
@@ -37,10 +37,11 @@ async function getOrderById(orderId) {
             WHERE orders.id=$1;
         `, [orderId]);
         if (!order) {
-            throw Error;
+            throw new Error("Couldn't find order!");
         } else {
             const { rows: products } = await client.query(`
-                SELECT products.*
+                SELECT products.*, order_products.quantity, order_products."subTotal",
+                order_products.id AS "orderProductId"
                 FROM products
                 JOIN order_products ON products.id=order_products."productId"
                 WHERE order_products."orderId"=$1;
@@ -68,7 +69,7 @@ async function getAllOrdersByUser(userId) {
             WHERE "userId"=$1;
         `, [userId]);
         if (!orders) {
-            throw Error;
+            throw new Error("Couldn't find user's orders!");
         } else {
             const ordersWithProducts = await Promise.all(orders.map(async (order) => {
                 const { rows: products } = await client.query(`
@@ -106,6 +107,12 @@ async function updateOrder(id, fields = {}) {
             WHERE id=${id}
             RETURNING *;
         `, Object.values(fields));
+        if (!order) {
+            throw new Error("Couldn't update order!");
+        } else {
+            console.log("updateOrder: ", order);
+            return order;
+        }
     } catch (err) {
         console.error(err);
     }
@@ -125,9 +132,13 @@ async function deleteOrder(orderId) {
             WHERE id=$1
             RETURNINGJ *;
         `, [orderId]);
-        order.orderProducts = orderProducts;
-        console.log("deleteOrder: ", order)
-        return order;
+        if (!order) {
+            throw new Error("Couldn't delete order!");
+        } else {
+            order.products = orderProducts;
+            console.log("deleteOrder: ", order)
+            return order;
+        }
     } catch (err) {
         console.error(err);
     }
@@ -146,14 +157,18 @@ async function deleteOrdersByUser(userId) {
             WHERE orders."userId"=$1
             RETURNING *;
         `, [userId]);
-        const deletedOrders = orders.map((order) => {
-            order.order_products = orderProducts.filter((product) => {
-                return order.id === product.orderId;
+        if (!orders) {
+            throw new Error("Couldn't delete user's orders!");
+        } else {
+            const deletedOrders = orders.map((order) => {
+                order.products = orderProducts.filter((product) => {
+                    return order.id === product.orderId;
+                })
+                return order;
             })
-            return order;
-        })
-        console.log("deleteOrderByUser: ", deletedOrders);
-        return deletedOrders;
+            console.log("deleteOrderByUser: ", deletedOrders);
+            return deletedOrders;
+        }
     } catch (err) {
         console.error(err);
     }
