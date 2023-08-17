@@ -8,6 +8,7 @@ module.exports = {
   User: require("./user"),
   Orders: require("./orders"),
   Products: require("./products"),
+  ShoppingCart: require("./shoppingCart"),
   Reviews: require("./reviews")
 };
 
