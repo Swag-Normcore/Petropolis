@@ -4,9 +4,11 @@ const {
   // declare your model imports here
   // for example, User
   User,
+  Reviews,
   Orders,
   Products,
 } = require("./");
+const { createNewProduct } = require("./models/products");
 const { getOrderById } = require("./models/orders");
 
 async function buildTables() {
@@ -56,7 +58,8 @@ async function buildTables() {
       price INTEGER NOT NULL,
       stock INTEGER NOT NULL,
       image VARCHAR(255),
-      "categoryId" INTEGER REFERENCES categories(id)
+      "categoryId" INTEGER REFERENCES categories(id),
+      "isActive" BOOLEAN DEFAULT true
       );
     `);
     await client.query(`
@@ -175,6 +178,43 @@ async function populateInitialData() {
 
     console.log("Finished creating users!");
 
+    //Need to create categories first probably
+    // console.log("Starting to create products");
+
+    // const fakeProduct1 = await Products.createProduct({
+    //   title: "Large Brown Dog Bed", 
+    //   description: "Soft polyester lining and walls will make your pet happy!",
+    //   price: 2099, 
+    //   stock: 20,
+    //   imageUrl: "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
+    //   categoryId: 1
+    // })
+
+    // const fakeProduct2 = await Products.createProduct({
+    //   title: "Bone chew toy", 
+    //   description: "Splinter free for pet safety!",
+    //   price: 999, 
+    //   stock: 950,
+    //   imageUrl: "https://franklypet.com/wp-content/uploads/DDP180194_V2_ChickenBoneLarge-scaled.jpg",
+    //   categoryId: 2
+    // })
+
+    // const fakeProduct3 = await Products.createProduct({
+    //   title: "Stuffed cat treats", 
+    //   description: "Delicious salmon filled treats with no filler products!",
+    //   price: 999, 
+    //   stock: 250,
+    //   imageUrl: "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
+    //   categoryId: 3
+    // })
+
+    
+    // console.log(fakeProduct1)
+    // console.log(fakeProduct2)
+    // console.log(fakeProduct3)
+
+    // console.log("Finished creating products!")
+    
     console.log("Starting to create orders...");
     const order1 = await Orders.createOrder({
       userId: fakeUser1.id,
