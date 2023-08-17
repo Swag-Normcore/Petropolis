@@ -1,5 +1,4 @@
 const client = require("../client");
-const { getOrderProductsByOrder } = require("./order_products");
 
 module.exports = {
     createOrder,

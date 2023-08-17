@@ -1,5 +1,5 @@
 const client = require("../client");
-const { getOrderById, updateOrder } = require("./orders");
+const { getOrderById, updateOrder } = require("./orders.js");
 const { getProductById } = require("./products");
 
 module.exports = {
@@ -16,11 +16,6 @@ async function addProductToOrder({ orderId, productId, quantity }) {
         if (order && product) {
             const subTotal = product.price * quantity;
             let totalPrice = order.totalPrice + subTotal;
-            if (order.products) {
-                order.products.forEach((el) => {
-                    totalPrice += el.subTotal;
-                })
-            }
             const { rows: [orderProduct] } = await client.query(`
                 INSERT INTO order_products("orderId", "productId", "subTotal", quantity)
                 VALUES ($1, $2, $3, $4)
@@ -116,7 +111,6 @@ async function updateOrderProductQuantity({ orderProductId, quantity }) {
     }
 }
 
-
 // async function updateSubTotalByProduct({ productId, price }) { }
 
 async function removeProductFromOrder(orderProductId) {
@@ -136,12 +130,7 @@ async function removeProductFromOrder(orderProductId) {
         } else if (!order) {
             throw new Error("Couldn't find order!");
         } else {
-            const totalPrice = 0;
-            if (order.products) {
-                order.products.forEach((el) => {
-                    totalPrice += el.subTotal;
-                })
-            }
+            const totalPrice = order.totalPrice - orderProduct.subTotal;
             const updatedOrder = await updateOrder(orderId, { totalPrice });
             if (!updatedOrder) {
                 throw new Error("Couldn't update order!");
