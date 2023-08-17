@@ -73,8 +73,7 @@ async function buildTables() {
     await client.query(`
     CREATE TABLE shopping_cart(
       id SERIAL PRIMARY KEY,
-      "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE,
-      "dateCreated" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      "userId" INTEGER REFERENCES users(id) NOT NULL UNIQUE
       );
     `);
     await client.query(`
@@ -83,7 +82,6 @@ async function buildTables() {
       "shoppingId" INTEGER REFERENCES shopping_cart(id) NOT NULL,
       "productId" INTEGER REFERENCES products(id) NOT NULL,
       quantity INTEGER NOT NULL,
-      "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_cart_products UNIQUE ("shoppingId", "productId")
     );
     `);
@@ -104,7 +102,7 @@ async function buildTables() {
       quantity INTEGER NOT NULL,
       "subTotal" INTEGER NOT NULL,
       CONSTRAINT UC_order_products UNIQUE ("orderId", "productId")
-    )
+    );
     `);
     await client.query(`
     CREATE TABLE reviews(
