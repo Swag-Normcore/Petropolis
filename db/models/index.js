@@ -9,6 +9,7 @@ module.exports = {
   Orders: require("./orders"),
   Products: require("./products"),
   ShoppingCart: require("./shoppingCart"),
+  Reviews: require("./reviews")
 };
 
 // then, in your API, you'll require the appropriate model
