@@ -2,12 +2,14 @@
 const client = require("../client");
 const bcrypt = require("bcrypt");
 const SALT_COUNT = 10;
+const { deleteOrdersByUser } = require("./orders");
 
 module.exports = {
   // add your database adapter fns here
   getAllUsers,
   createUser,
   getUserById,
+  getUserByEmail,
   getUserByEmailAndPassword,
   updateUser,
   deleteUser,
@@ -27,7 +29,7 @@ async function getAllUsers() {
 
     return users;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -55,7 +57,7 @@ async function createUser({ name, password, email, isAdmin }) {
     delete user.password;
     return user;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -77,7 +79,7 @@ async function getUserById(userId) {
 
     return user;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -102,7 +104,7 @@ async function getUserByEmail(email) {
 
     return user;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -122,7 +124,7 @@ async function getUserByEmailAndPassword({ email, password }) {
       throw new Error("Password incorrect");
     }
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -160,7 +162,7 @@ async function updateUser(id, fields = {}) {
 
     return user;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -187,7 +189,7 @@ async function isAdmin(userId) {
 
     return user.isAdmin;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }
 
@@ -195,6 +197,7 @@ async function isAdmin(userId) {
 //will need to be edited once we have reviews, products and orders
 async function deleteUser(userId) {
   try {
+    await deleteOrdersByUser(userId);
     const {
       rows: [user],
     } = await client.query(
@@ -214,6 +217,6 @@ async function deleteUser(userId) {
 
     return user;
   } catch (error) {
-    throw error;
+    console.error(error);
   }
 }

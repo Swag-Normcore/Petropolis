@@ -146,13 +146,21 @@ async function deleteOrder(orderId) {
 
 async function deleteOrdersByUser(userId) {
     try {
-        const { rows: orderProducts } = await client.query(`
-            DELETE FROM order_products
-            JOIN orders ON order_products."orderId"=orders.id
-            WHERE orders."userId"=$1
-            RETURING *;
-        `, [userId]);
         const { rows: orders } = await client.query(`
+            SELECT *
+            FROM orders
+            WHERE "userId"=$1;
+        `, [userId]);
+        const ordersProducts = Promise.all(orders.map(async (order) => {
+            const { rows: orderProducts } = await client.query(`
+                DELETE FROM order_products
+                WHERE order_products."orderId"=$1
+                RETURNING *;
+            `, [order.id]);
+            return orderProducts;
+        }))
+        console.log("deleteOrdersByUser (ordersProducts): ", ordersProducts)
+        const { rows: deletedOrders } = await client.query(`
             DELETE FROM orders
             WHERE orders."userId"=$1
             RETURNING *;
@@ -160,13 +168,7 @@ async function deleteOrdersByUser(userId) {
         if (!orders) {
             throw new Error("Couldn't delete user's orders!");
         } else {
-            const deletedOrders = orders.map((order) => {
-                order.products = orderProducts.filter((product) => {
-                    return order.id === product.orderId;
-                })
-                return order;
-            })
-            console.log("deleteOrderByUser: ", deletedOrders);
+            console.log("deleteOrderByUser (deletedOrders): ", deletedOrders);
             return deletedOrders;
         }
     } catch (err) {
