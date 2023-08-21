@@ -13,5 +13,6 @@ apiRouter.get('/health', (req, res, next) => {
 });
 
 // place your routers here
+apiRouter.use("/categories", require("./categories"));
 
 module.exports = apiRouter;
