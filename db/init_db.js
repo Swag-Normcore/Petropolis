@@ -55,12 +55,20 @@ async function buildTables() {
       id SERIAL PRIMARY KEY,
       title VARCHAR(255) NOT NULL UNIQUE,
       description TEXT NOT NULL,
+      "animalType" VARCHAR(255),
       price INTEGER NOT NULL,
       stock INTEGER NOT NULL,
       image VARCHAR(255),
       "categoryId" INTEGER REFERENCES categories(id),
       "isActive" BOOLEAN DEFAULT true
       );
+    `);
+    await client.query(`
+    CREATE TABLE images(
+      id SERIAL PRIMARY KEY,
+      "imageUrl" VARCHAR(255) NOT NULL,
+      "productId" INTEGER REFERENCES products(id) NOT NULL
+    );
     `);
     await client.query(`
     CREATE TABLE favorites(
@@ -132,7 +140,7 @@ async function populateInitialData() {
 
     const categoryTwo = await Category.createCategory({
       name: "Clothes",
-      description: "Find all your fury friends needs",
+      description: "Find all your furry friends needs",
     });
 
     const categoryThree = await Category.createCategory({
