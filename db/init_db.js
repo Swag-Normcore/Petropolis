@@ -149,7 +149,7 @@ async function populateInitialData() {
 
     const fakeUser1 = await User.createUser({
       email: "wizardboi@hogwarts.wiz",
-      password: "lumos",
+      password: "lumosmaxima",
       name: "Albus Dumbledore",
       isAdmin: true,
     });
