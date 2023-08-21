@@ -39,6 +39,8 @@ apiRouter.use(async (req, res, next) => {
 const usersRouter = require('./users');
 apiRouter.use("/users", usersRouter)
 
+apiRouter.use("/categories", require("./categories"));
+
 apiRouter.use((err, req, res, next) => {
   if (err) {
     res.status(400).send({
