@@ -115,7 +115,7 @@ async function deleteCategory(id) {
     if (!category) {
       throw new Error("Unable to delete category");
     }
-    return category && products;
+    return category;
   } catch (error) {
     console.error(err);
   }
