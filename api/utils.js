@@ -1,19 +1,3 @@
-
-const requireAdmin = (req, res, next) => {
-  if (!req.user.isAdmin) {
-    next({
-      name: "ForbiddenError",
-      message: "You must be an administrator to perform this action",
-    });
-  }
-  next();
-};
-
-module.exports = {
-  requireAdmin,
-};
-//
-
 async function requireUser(req, res, next) {
     if (!req.user) {
         next({
@@ -24,7 +8,7 @@ async function requireUser(req, res, next) {
 }
 
 async function requireCurrentUserOrAdmin(req, res, next) {
-    if (req.user.id !== req.params.userId && req.user.admin === false) {
+    if (req.user.id !== req.params.userId && req.user.isAdmin === false) {
         next({
             error: "You must be the current logged in user or an admin."
         })
@@ -46,4 +30,3 @@ module.exports = {
     requireCurrentUserOrAdmin,
     requireAdmin,
 }
-
