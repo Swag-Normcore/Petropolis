@@ -86,7 +86,7 @@ productsRouter.post("/", requireAdmin, async (req, res, next) => {
     } else {
       res.send(newProduct);
     }
-  } catch (error) {
+  } catch ({ error }) {
     next({ error });
   }
 });
@@ -102,7 +102,7 @@ productsRouter.patch("/:productId", requireAdmin, async (req, res, next) => {
     } else {
       res.send(updatedProduct);
     }
-  } catch (error) {
+  } catch ({ error }) {
     next({ error });
   }
 });
@@ -122,12 +122,10 @@ productsRouter.patch(
       } else {
         res.send(inactiveProduct);
       }
-    } catch (error) {
+    } catch ({ error }) {
       next({ error });
     }
   }
 );
 
-module.exports = {
-  productsRouter,
-};
+module.exports = productsRouter;
