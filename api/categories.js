@@ -1,59 +1,79 @@
 const express = require("express");
-const categoriesRouter = express.Router();
+const apiRouter = express.Router();
 const { getAllCategories } = require("../db");
-const { requireAdmin } = require("./utils");
+const { requireUser, requireAdmin } = require("./utils");
 
 // GET /api/categories
-categoriesRouter.get("/", async (req, res, next) => {
+// Returns a list of all categories
+apiRouter.get("/", async (req, res, next) => {
   try {
     const categories = await getAllCategories();
-    res.send({
-      categories,
-    });
-  } catch ({ name, message }) {
-    next({ name, message });
+    res.send(categories);
+    if (!categories) {
+      throw { error: "Couldn't get categories!" };
+    }
+  } catch ({ error }) {
+    next(error);
   }
 });
 
 //patch /api/categories/:categoryId
 //must be admin
-categoriesRouter.patch("/:categoryId", requireAdmin, async (req, res, next) => {
-  const { categoryId } = req.params;
-  const { name } = req.body;
-  try {
-    const updatedCategory = await updateCategory({ id: categoryId, name });
-    res.send(updatedCategory);
-  } catch ({ name, message }) {
-    next({ name, message });
+apiRouter.patch(
+  "/:categoryId",
+  requireUser,
+  requireAdmin,
+  async (req, res, next) => {
+    const categoryId = req.params.categoryId;
+    const fields = req.body;
+    try {
+      const updatedCategory = await updateCategory(categoryId, fields);
+      if (!updatedCategory) {
+        throw { error: "Couldn't update category!" };
+      } else {
+        res.send(updatedCategory);
+      }
+    } catch ({ error }) {
+      next({ error });
+    }
   }
-});
+);
 
 //post /api/categories
 //must be admin
-categoriesRouter.post("/", requireAdmin, async (req, res, next) => {
-  const { name } = req.body;
+apiRouter.post("/", requireUser, requireAdmin, async (req, res, next) => {
+  const { name, description } = req.body;
   try {
-    const newCategory = await createCategory({ name });
-    res.send(newCategory);
-  } catch ({ name, message }) {
-    next({ name, message });
+    const newCategory = await createCategory({ name, description });
+    if (!newCategory) {
+      throw { error: "Couldn't create category!" };
+    } else {
+      res.send(newCategory);
+    }
+  } catch ({ error }) {
+    next({ error });
   }
 });
 
 //delete /api/categories/:categoryId
 //must be admin
-categoriesRouter.delete(
+apiRouter.delete(
   "/:categoryId",
+  requireUser,
   requireAdmin,
   async (req, res, next) => {
-    const { categoryId } = req.params;
+    const categoryId = req.params.categoryId;
     try {
       const deletedCategory = await deleteCategory(categoryId);
-      res.send(deletedCategory);
-    } catch ({ name, message }) {
-      next({ name, message });
+      if (!deletedCategory) {
+        throw { error: "Couldn't delete category!" };
+      } else {
+        res.send(deletedCategory);
+      }
+    } catch ({ error }) {
+      next({ error });
     }
   }
 );
 
-module.exports = categoriesRouter;
+module.exports = apiRouter;
