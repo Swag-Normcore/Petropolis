@@ -7,7 +7,7 @@ module.exports = {
   deleteShoppingCart,
 };
 
-async function createShoppingCart({ id, userId, dateCreated }) {
+async function createShoppingCart({ id, userId }) {
   try {
     const {
       rows: [shoppingCart],
@@ -17,7 +17,7 @@ async function createShoppingCart({ id, userId, dateCreated }) {
     VALUES ($1, $2, $3)
     RETURNING *;
     `,
-      [id, userId, dateCreated]
+      [id, userId]
     );
     console.log("createShoppingCart: ", shoppingCart);
     if (!shoppingCart) {
@@ -29,7 +29,7 @@ async function createShoppingCart({ id, userId, dateCreated }) {
   }
 }
 
-async function getShoppingCart(id) {
+async function getShoppingCart(id, cart_products) {
   try {
     const {
       rows: [shoppingCart],
@@ -38,7 +38,7 @@ async function getShoppingCart(id) {
     SELECT * FROM shopping_cart
     WHERE "userId"= $1;
     `,
-      [id]
+      [id, cart_products]
     );
     if (!shoppingCart) {
       throw new Error("Unable to get cart");
@@ -83,7 +83,7 @@ async function deleteShoppingCart(id) {
       rows: [cart_products],
     } = await client.query(
       `
-    UPDATE cart_products
+    DELETE cart_products
     SET "shoppingId"=$1
     WHERE "shoppingId"=$2;
     `,
@@ -100,11 +100,11 @@ async function deleteShoppingCart(id) {
     `,
       [id]
     );
-    console.log("deleteShoppingCart: ", shoppingCart);
+    console.log("deleteShoppingCart: ", shoppingCart && cart_products);
     if (!shoppingCart) {
       throw new error("Unable to delete cart");
     }
-    return cart_products && Products;
+    return shoppingCart;
   } catch (error) {
     console.error(err);
   }
