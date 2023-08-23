@@ -3,28 +3,40 @@ const client = require("../client");
 async function getAllProducts() {
   try {
     const { rows: products } = await client.query(`
-    SELECT * FROM products;`)
+    SELECT * FROM products;`);
     if (!products) {
-      throw new Error("Issue getting products")
+      throw new Error("Issue getting products");
     }
-    console.log("GET ALL PRODUCTS: ", products)
+    console.log("GET ALL PRODUCTS: ", products);
     return products;
   } catch (error) {
     console.error(error);
   }
 }
 
-async function createProduct({ title, description, price, stock, imageUrl, categoryId }) {
+async function createProduct({
+  title,
+  description,
+  price,
+  stock,
+  imageUrl,
+  categoryId,
+}) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     INSERT INTO products(title, description, price, stock, image, "categoryId")
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
-    `, [title, description, price, stock, imageUrl, categoryId])
+    `,
+      [title, description, price, stock, imageUrl, categoryId]
+    );
     if (!product) {
-      throw new Error("Issue creating product")
+      throw new Error("Issue creating product");
     }
-    console.log("CREATE NEW PRODUCTS: ", product)
+    console.log("CREATE NEW PRODUCTS: ", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -33,14 +45,19 @@ async function createProduct({ title, description, price, stock, imageUrl, categ
 
 async function getProductById(productId) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     SELECT * FROM products
     WHERE id=$1;
-    `, [productId])
+    `,
+      [productId]
+    );
     if (!product) {
-      throw new Error("Issue getting product")
+      throw new Error("Issue getting product");
     }
-    console.log("GET PRODUCT BY ID", product)
+    console.log("GET PRODUCT BY ID", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -49,14 +66,19 @@ async function getProductById(productId) {
 
 async function getProductByTitle(title) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     SELECT * FROM products
     WHERE title=$1;
-    `, [title])
+    `,
+      [title]
+    );
     if (!product) {
-      throw new Error("Issue getting product")
+      throw new Error("Issue getting product");
     }
-    console.log("GET PRODUCT BY TITLE", product)
+    console.log("GET PRODUCT BY TITLE", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -65,14 +87,19 @@ async function getProductByTitle(title) {
 
 async function getProductByCategoryId(categoryId) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     SELECT * FROM products
     WHERE "categoryId"=$1;
-    `, [categoryId])
+    `,
+      [categoryId]
+    );
     if (!product) {
-      throw new Error("Issue getting product")
+      throw new Error("Issue getting product");
     }
-    console.log("GET PRODUCT BY CATEGORY ID", product)
+    console.log("GET PRODUCT BY CATEGORY ID", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -80,21 +107,28 @@ async function getProductByCategoryId(categoryId) {
 }
 
 async function updateProduct(id, fields = {}) {
-  const placeholders = Object.keys(fields).map((key, index) => `"${key}"=$${index + 1}`).join(", ");
+  const placeholders = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 2}`)
+    .join(", ");
   if (placeholders.length === 0) {
-    return
+    return;
   }
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     UPDATE products
     SET ${placeholders}
-    WHERE id=${id}
+    WHERE id=$1
     RETURNING *;
-    `, Object.values(fields))
+    `,
+      [id, Object.values(fields)]
+    );
     if (!product) {
-      throw new Error("Issue updating product")
+      throw new Error("Issue updating product");
     }
-    console.log("UPDATE PRODUCT", product)
+    console.log("UPDATE PRODUCT", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -103,16 +137,21 @@ async function updateProduct(id, fields = {}) {
 
 async function makeProductInactive(productId) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     UPDATE products
     SET "isActive"=false
     WHERE id=$1
-    `, [productId])
+    `,
+      [productId]
+    );
     if (!product) {
-      throw new Error("Issue updating product")
+      throw new Error("Issue updating product");
     }
-    console.log("MAKE PRODUCT INACTIVE", product)
-    return product
+    console.log("MAKE PRODUCT INACTIVE", product);
+    return product;
   } catch (error) {
     console.error(error);
   }
@@ -120,16 +159,21 @@ async function makeProductInactive(productId) {
 
 async function deleteProduct(productId) {
   try {
-    const { rows: [product] } = await client.query(`
+    const {
+      rows: [product],
+    } = await client.query(
+      `
     DELETE FROM products
     WHERE id=$1
     RETURNING *;
-    `, [productId])
+    `,
+      [productId]
+    );
     if (!product) {
-      throw new Error("Issue deleting product")
+      throw new Error("Issue deleting product");
     }
-    console.log("DELETE PRODUCT", product)
-    return product
+    console.log("DELETE PRODUCT", product);
+    return product;
   } catch (error) {
     console.error(error);
   }
@@ -144,4 +188,4 @@ module.exports = {
   updateProduct,
   makeProductInactive,
   deleteProduct,
-}
+};

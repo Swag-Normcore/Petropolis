@@ -12,7 +12,7 @@ productsRouter.get("/", async (req, res, next) => {
   try {
     const allProducts = await Products.getAllProducts();
     if (!allProducts) {
-      res.send({ error: "Could not get all products" });
+      throw { error: "Could not get all products" };
     } else {
       const allActiveProducts = allProducts.filter(
         (product) => product.isActive === true
@@ -24,9 +24,6 @@ productsRouter.get("/", async (req, res, next) => {
   }
 });
 
-// I forget if this should be req.params.productId or just req.params
-// I think in some past projects it has just been req.params so it'll be worth
-// console.logging the params object to see what info it's giving when testing
 productsRouter.get("/:productId", async (req, res, next) => {
   console.log("Get /:productId request sent.");
   console.log(req.params);
@@ -34,7 +31,7 @@ productsRouter.get("/:productId", async (req, res, next) => {
   try {
     const productById = await Products.getProductById(productId);
     if (!productById) {
-      res.send({ error: "Could not get a product by that id." });
+      throw { error: "Could not get a product by that id." };
     } else {
       res.send(productById);
     }
@@ -43,16 +40,16 @@ productsRouter.get("/:productId", async (req, res, next) => {
   }
 });
 
-productsRouter.get("/:categoryId", async (req, res, next) => {
+productsRouter.get("/categories/:categoryId", async (req, res, next) => {
   console.log("Get /:categoryId request sent.");
   console.log(req.params);
   const categoryId = req.params.categoryId;
   try {
-    const productsByCategoryId = await Products.getProductByCateogryId(
+    const productsByCategoryId = await Products.getProductByCategoryId(
       categoryId
     );
     if (!productsByCategoryId) {
-      res.send({ error: "Could not get products for that category id." });
+      throw { error: "Could not get products for that category id." };
     } else {
       res.send(productsByCategoryId);
     }
@@ -63,8 +60,17 @@ productsRouter.get("/:categoryId", async (req, res, next) => {
 
 productsRouter.post("/", requireAdmin, async (req, res, next) => {
   console.log("Post / request sent.");
-  const { title, description, price, stock, imageUrl, categoryId } = req.body;
-  console.log(req.body);
+  const { title, description, price, stock, imageUrl, categoryId, animalType } =
+    req.body;
+  console.log(
+    title,
+    description,
+    price,
+    stock,
+    imageUrl,
+    categoryId,
+    animalType
+  );
   try {
     const newProduct = await Products.createProduct({
       title,
@@ -73,8 +79,13 @@ productsRouter.post("/", requireAdmin, async (req, res, next) => {
       stock,
       imageUrl,
       categoryId,
+      animalType,
     });
-    res.send(newProduct);
+    if (!newProduct) {
+      throw { error: "Could not create new product" };
+    } else {
+      res.send(newProduct);
+    }
   } catch (error) {
     next({ error });
   }
@@ -86,7 +97,11 @@ productsRouter.patch("/:productId", requireAdmin, async (req, res, next) => {
   const fields = req.body;
   try {
     const updatedProduct = await Products.updateProduct(productId, fields);
-    res.send(updatedProduct);
+    if (!updatedProduct) {
+      throw { error: "Could not update product" };
+    } else {
+      res.send(updatedProduct);
+    }
   } catch (error) {
     next({ error });
   }
@@ -94,13 +109,25 @@ productsRouter.patch("/:productId", requireAdmin, async (req, res, next) => {
 
 // I made this inactive since idk if there will be reason to ever truly
 // delete a product, but could change this depending on what we need.
-productsRouter.delete("/:productId", requireAdmin, async (req, res, next) => {
-  console.log("Delete /:productId request sent.");
-  const productId = req.params.productId;
-  try {
-    const inactiveProduct = await Products.makeProductInactive(productId);
-    res.send(inactiveProduct);
-  } catch (error) {
-    next({ error });
+productsRouter.patch(
+  "/:productId/active",
+  requireAdmin,
+  async (req, res, next) => {
+    console.log("Delete /:productId request sent.");
+    const productId = req.params.productId;
+    try {
+      const inactiveProduct = await Products.makeProductInactive(productId);
+      if (!inactiveProduct) {
+        throw { error: "Could not make product inactive" };
+      } else {
+        res.send(inactiveProduct);
+      }
+    } catch (error) {
+      next({ error });
+    }
   }
-});
+);
+
+module.exports = {
+  productsRouter,
+};

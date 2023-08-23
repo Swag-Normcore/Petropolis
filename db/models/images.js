@@ -1,6 +1,5 @@
 const client = require("../client");
 
-
 // This is probably the function I'm least sure of and will likely just need testing
 // I think it would be nice to be able to take multiple imageUrls at once, in this case an array
 // and add them all into the images reference table, but iterating over the array
@@ -12,7 +11,7 @@ async function addImages(productId, imageUrls = []) {
     const query = `
       INSERT INTO images("productId", "imageUrl")
       VALUES ($1, $2)
-    `;
+    ;`;
 
     const insertPromises = values.map((params) => client.query(query, params));
     await Promise.all(insertPromises);
@@ -26,65 +25,82 @@ async function addImages(productId, imageUrls = []) {
 //wondering if this should be in products
 async function getProductsWithImages(productId) {
   try {
-    const { rows: images } = await client.query(`
-      SELECT products.*, images."imageUrl"
-      FROM products
-      JOIN images ON products.id=images."productId"
-      WHERE images."productId"=$1
-    ;`, productId)
+    const {
+      rows: [product],
+    } = await client.query(
+      `
+    SELECT * FROM products
+    WHERE id=$1;`,
+      [productId]
+    );
+    const { rows: images } = await client.query(
+      `
+      SELECT * FROM images
+      WHERE "productId"=$1
+    ;`,
+      [productId]
+    );
     if (images.length === 0) {
-      throw new Error("Couldn't retrieve images.")
+      throw new Error("Couldn't retrieve images.");
     } else {
-      console.log("GET PRODUCTS WITH IMAGES", images)
-      return images;
+      product.images = images;
+      console.log("GET PRODUCT WITH IMAGES", product);
+      return product;
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 
 async function deleteImage(imageId) {
   try {
-    const { rows: [image] } = await client.query(`
-      DELETE * FROM images
+    const {
+      rows: [image],
+    } = await client.query(
+      `
+      DELETE FROM images
       WHERE id=$1
       RETURNING *
-    ;`, imageId)
+    ;`,
+      [imageId]
+    );
     if (!image) {
-      throw new Error("Couldn't add images.")
+      throw new Error("Couldn't delete images.");
     } else {
-      console.log("DELETE IMAGE", image)
+      console.log("DELETE IMAGE", image);
       return image;
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 
-//we didn't have this one in the TODO but I figured it wouldn't hurt 
+//we didn't have this one in the TODO but I figured it wouldn't hurt
 // & would probably be necessary for deleting a product
 async function deleteAllImagesForAProduct(productId) {
   try {
-    const { rows: images } = await client.query(`
-      DELETE * FROM images
+    const { rows: images } = await client.query(
+      `
+      DELETE FROM images
       WHERE "productId"=$1
       RETURNING *
-    ;`, productId)
-    if (!images) {
-      throw new Error("Couldn't add images.")
+    ;`,
+      [productId]
+    );
+    if (images.length === 0) {
+      throw new Error("Couldn't delete images.");
     } else {
-      console.log("DELETE IMAGE", images)
+      console.log("DELETE IMAGE", images);
       return images;
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
-
 
 module.exports = {
   addImages,
   getProductsWithImages,
   deleteImage,
-  deleteAllImagesForAProduct
-}
+  deleteAllImagesForAProduct,
+};
