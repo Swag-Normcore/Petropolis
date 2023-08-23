@@ -33,6 +33,8 @@ async function getReviewsByUser(userId) {
   }
 }
 
+
+//TODO do a join to show name for review display
 async function getReviewsByProduct(productId) {
   try {
     const {rows: reviews} = await client.query(`
