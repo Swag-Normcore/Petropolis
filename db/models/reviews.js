@@ -2,16 +2,21 @@ const client = require("../client");
 
 async function createReview(userId, productId, rating, comment, isAnonymous) {
   try {
-    const {rows: [review]} = await client.query(`
+    const {
+      rows: [review],
+    } = await client.query(
+      `
     INSERT INTO reviews("userId", "productId", rating, comment, "isAnonymous")
     VALUES($1, $2, $3, $4, $5)
     RETURNING *;
-    `, [userId, productId, rating, comment, isAnonymous])
-    if (!review){
-      throw new Error("Issue creating review")
+    `,
+      [userId, productId, rating, comment, isAnonymous]
+    );
+    if (!review) {
+      throw new Error("Issue creating review");
     }
-    console.log("CREATE REVIEW RESULT: ", review)
-    return review
+    console.log("CREATE REVIEW RESULT: ", review);
+    return review;
   } catch (error) {
     console.error(error);
   }
@@ -19,33 +24,38 @@ async function createReview(userId, productId, rating, comment, isAnonymous) {
 
 async function getReviewsByUser(userId) {
   try {
-    const {rows: reviews} = await client.query(`
+    const { rows: reviews } = await client.query(
+      `
     SELECT * FROM reviews
     WHERE "userId"=$1;
-    `, [userId])
-    if (!reviews){
-      throw new Error("Issue getting reviews")
-    } 
-    console.log("GET REVIEWS BY USER RESULT: ", reviews)
-    return reviews
+    `,
+      [userId]
+    );
+    if (!reviews) {
+      throw new Error("Issue getting reviews");
+    }
+    console.log("GET REVIEWS BY USER RESULT: ", reviews);
+    return reviews;
   } catch (error) {
     console.error(error);
   }
 }
 
-
 //TODO do a join to show name for review display
 async function getReviewsByProduct(productId) {
   try {
-    const {rows: reviews} = await client.query(`
+    const { rows: reviews } = await client.query(
+      `
     SELECT * FROM reviews
     WHERE "productId" = $1;
-    `, [productId])
-    if (!reviews){
-      throw new Error("Issue getting reviews")
+    `,
+      [productId]
+    );
+    if (!reviews) {
+      throw new Error("Issue getting reviews");
     }
-    console.log("GET REVIEWS BY PRODUCT RESULT: ", reviews)
-    return reviews
+    console.log("GET REVIEWS BY PRODUCT RESULT: ", reviews);
+    return reviews;
   } catch (error) {
     console.error(error);
   }
@@ -53,38 +63,50 @@ async function getReviewsByProduct(productId) {
 
 async function deleteReview(id) {
   try {
-    const {rows: [review]} = await client.query(`
+    const {
+      rows: [review],
+    } = await client.query(
+      `
     DELETE FROM reviews
     WHERE id=$1
     RETURNING *;
-    `, [id])
-    if (!review){
-      throw new Error("Issue deleting review")
+    `,
+      [id]
+    );
+    if (!review) {
+      throw new Error("Issue deleting review");
     }
-    console.log("DELETE REVIEW RESULT: ", review)
-    return review
+    console.log("DELETE REVIEW RESULT: ", review);
+    return review;
   } catch (error) {
     console.error(error);
   }
 }
 
 async function updateReview(id, fields = {}) {
-  const placeholders = Object.keys(fields).map((key, index) => `"${key}"=$${index + 1}`).join(", ");
+  const placeholders = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
   if (placeholders.length === 0) {
-    return
+    return;
   }
   try {
-    const {rows: [review]} = await client.query(`
+    const {
+      rows: [review],
+    } = await client.query(
+      `
     UPDATE reviews
     SET ${placeholders}
     WHERE id=${id}
     RETURNING *;
-    `, Object.values(fields))
-    if (!review){
-      throw new Error("Issue updating review")
+    `,
+      Object.values(fields)
+    );
+    if (!review) {
+      throw new Error("Issue updating review");
     }
-    console.log("UPDATE REVIEW RESULT: ", review)
-    return review
+    console.log("UPDATE REVIEW RESULT: ", review);
+    return review;
   } catch (error) {
     console.error(error);
   }
@@ -92,22 +114,44 @@ async function updateReview(id, fields = {}) {
 
 async function deleteReviewsByUser(userId) {
   try {
-    const {rows: reviews} = client.query(`
+    const { rows: reviews } = client.query(
+      `
     DELETE * FROM reviews
     WHERE "userId"=$1
     RETURNING*
-    ;`, [userId])
-    if (!reviews){
-      throw new Error("Issue deleting reviews")
+    ;`,
+      [userId]
+    );
+    if (!reviews) {
+      throw new Error("Issue deleting reviews");
     }
-    console.log("DELETE REVIEWS BY USER RESULT: ", reviews)
+    console.log("DELETE REVIEWS BY USER RESULT: ", reviews);
     return reviews;
   } catch (error) {
     console.error(error);
   }
 }
 
-
+async function getReviewById(id) {
+  try {
+    const {
+      rows: [review],
+    } = await client.query(
+      `
+    SELECT * FROM reviews
+    WHERE id=$1;
+    `,
+      [id]
+    );
+    if (!review) {
+      throw new Error("Issue getting review");
+    }
+    console.log("GET REVIEW BY ID RESULT: ", review);
+    return review;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 module.exports = {
   createReview,
@@ -115,5 +159,6 @@ module.exports = {
   getReviewsByUser,
   deleteReview,
   updateReview,
-  deleteReviewsByUser
-}
+  deleteReviewsByUser,
+  getReviewById,
+};

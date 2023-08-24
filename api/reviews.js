@@ -47,7 +47,7 @@ apiRouter.post("/products/:productId", requireUser, async (req, res, next) => {
 // /users/:userId (get)
 //must be logged in and be the current user or admin
 apiRouter.get(
-  "users/:userId",
+  "/users/:userId",
   requireUser,
   requireCurrentUserOrAdmin,
   async (req, res, next) => {
@@ -74,6 +74,13 @@ apiRouter.patch(
   async (req, res, next) => {
     const { reviewId } = req.params.reviewId;
     const { title, content, rating } = req.body;
+    const { review } = await Reviews.getReviewById(reviewId);
+    if (review.userId !== req.user.id) {
+      next({
+        error: "You must be the current logged in user or an admin.",
+      });
+    }
+
     try {
       const updatedReview = await Reviews.updateReview({
         id: reviewId,
@@ -102,6 +109,13 @@ apiRouter.delete(
   requireCurrentUserOrAdmin,
   async (req, res, next) => {
     const { reviewId } = req.params.reviewId;
+    const { review } = await Reviews.getReviewById(reviewId);
+    if (review.userId !== req.user.id) {
+      next({
+        error: "You must be the current logged in user or an admin.",
+      });
+    }
+
     try {
       const deletedReview = await Reviews.deleteReview(reviewId);
       res.send(deletedReview);
