@@ -4,10 +4,10 @@ const { User, Reviews, Products } = require("../db");
 const { requireUser, requireCurrentUserOrAdmin } = require("./utils");
 
 // /products/:productId (get)
-apiRouter.get("/:productId", async (req, res, next) => {
-  const { productId } = req.params;
+apiRouter.get("/products/:productId", async (req, res, next) => {
+  const { productId } = req.params.productId;
   try {
-    const product = await Products.getProductById(productId);
+    const product = await Reviews.getReviewsByProduct(productId);
     if (!product) {
       throw { error: "Product not found!" };
     } else {
@@ -20,8 +20,8 @@ apiRouter.get("/:productId", async (req, res, next) => {
 
 // /products/:productId (post)
 //must be logged in
-apiRouter.post("/:productId", requireUser, async (req, res, next) => {
-  const { productId } = req.params;
+apiRouter.post("/products/:productId", requireUser, async (req, res, next) => {
+  const { productId } = req.params.productId;
   const { title, content, rating } = req.body;
   const { id } = req.user;
   try {
@@ -47,11 +47,11 @@ apiRouter.post("/:productId", requireUser, async (req, res, next) => {
 // /users/:userId (get)
 //must be logged in and be the current user or admin
 apiRouter.get(
-  "/:userId",
+  "users/:userId",
   requireUser,
   requireCurrentUserOrAdmin,
   async (req, res, next) => {
-    const { userId } = req.params;
+    const { userId } = req.params.userId;
     try {
       const user = await User.getUserById(userId);
       if (!user) {
@@ -72,7 +72,7 @@ apiRouter.patch(
   requireUser,
   requireCurrentUserOrAdmin,
   async (req, res, next) => {
-    const { reviewId } = req.params;
+    const { reviewId } = req.params.reviewId;
     const { title, content, rating } = req.body;
     try {
       const updatedReview = await Reviews.updateReview({
@@ -101,7 +101,7 @@ apiRouter.delete(
   requireUser,
   requireCurrentUserOrAdmin,
   async (req, res, next) => {
-    const { reviewId } = req.params;
+    const { reviewId } = req.params.reviewId;
     try {
       const deletedReview = await Reviews.deleteReview(reviewId);
       res.send(deletedReview);
