@@ -1,15 +1,13 @@
 const express = require("express");
 const apiRouter = express.Router();
-const { getUserById } = require("../db");
-const { updateReview, deleteReview } = require("../db/reviews");
-const { updateProduct, getProductById } = require("../db/products");
+const { User, Reviews, Products } = require("../db");
 const { requireUser, requireCurrentUserOrAdmin } = require("./utils");
 
 // /products/:productId (get)
 apiRouter.get("/:productId", async (req, res, next) => {
   const { productId } = req.params;
   try {
-    const product = await getProductById(productId);
+    const product = await Products.getProductById(productId);
     if (!product) {
       throw { error: "Product not found!" };
     } else {
@@ -27,7 +25,7 @@ apiRouter.post("/:productId", requireUser, async (req, res, next) => {
   const { title, content, rating } = req.body;
   const { id } = req.user;
   try {
-    const newReview = await createReview({
+    const newReview = await Reviews.createReview({
       productId,
       title,
       content,
@@ -55,7 +53,7 @@ apiRouter.get(
   async (req, res, next) => {
     const { userId } = req.params;
     try {
-      const user = await getUserById(userId);
+      const user = await User.getUserById(userId);
       if (!user) {
         throw { error: "User not found!" };
       } else {
@@ -77,7 +75,7 @@ apiRouter.patch(
     const { reviewId } = req.params;
     const { title, content, rating } = req.body;
     try {
-      const updatedReview = await updateReview({
+      const updatedReview = await Reviews.updateReview({
         id: reviewId,
         title,
         content,
@@ -105,7 +103,7 @@ apiRouter.delete(
   async (req, res, next) => {
     const { reviewId } = req.params;
     try {
-      const deletedReview = await deleteReview(reviewId);
+      const deletedReview = await Reviews.deleteReview(reviewId);
       res.send(deletedReview);
       if (!deletedReview) {
         next({
