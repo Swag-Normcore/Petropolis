@@ -11,6 +11,7 @@ module.exports = {
   ShoppingCart: require("./shoppingCart"),
   Reviews: require("./reviews"),
   Order_Products: require("./order_products"),
+  Favorites: require("./favorites"),
 };
 
 // then, in your API, you'll require the appropriate model

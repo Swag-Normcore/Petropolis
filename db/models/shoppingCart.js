@@ -7,17 +7,17 @@ module.exports = {
   deleteShoppingCart,
 };
 
-async function createShoppingCart({ id, userId }) {
+async function createShoppingCart({ userId }) {
   try {
     const {
       rows: [shoppingCart],
     } = await client.query(
       `
-    INSERT INTO shopping_cart (Id, userId, dateCreated)
+    INSERT INTO shopping_cart (userId)
     VALUES ($1, $2, $3)
     RETURNING *;
     `,
-      [id, userId]
+      [userId]
     );
     console.log("createShoppingCart: ", shoppingCart);
     if (!shoppingCart) {
@@ -29,16 +29,16 @@ async function createShoppingCart({ id, userId }) {
   }
 }
 
-async function getShoppingCart(id, cart_products) {
+async function getShoppingCart(id) {
   try {
     const {
       rows: [shoppingCart],
     } = await client.query(
       `
     SELECT * FROM shopping_cart
-    WHERE "userId"= $1;
+    WHERE id=$1;
     `,
-      [id, cart_products]
+      [id]
     );
     if (!shoppingCart) {
       throw new Error("Unable to get cart");
@@ -52,12 +52,12 @@ async function getShoppingCart(id, cart_products) {
 async function updateShoppingCart(id, fields = {}) {
   const setString = Object.keys(fields)
     .map((key, index) => {
-      `"${key}" = $${index + 1}
+      return `"${key}" = $${index + 1}
     `;
-      return;
     })
     .join(", ");
   if (!setString) {
+    return;
   }
   try {
     const {
@@ -71,6 +71,9 @@ async function updateShoppingCart(id, fields = {}) {
     `,
       Object.values(fields)
     );
+    if (!shoppingCart) {
+      throw new Error("Unable to update cart");
+    }
     return shoppingCart;
   } catch (err) {
     console.error(err);
@@ -79,15 +82,13 @@ async function updateShoppingCart(id, fields = {}) {
 
 async function deleteShoppingCart(id) {
   try {
-    const {
-      rows: [cart_products],
-    } = await client.query(
+    const { rows: cart_products } = await client.query(
       `
-    DELETE cart_products
-    SET "shoppingId"=$1
-    WHERE "shoppingId"=$2;
+    DELETE FROM cart_products
+    WHERE "shoppingId"=$1
+    RETURNING *;
     `,
-      [null, shoppingId]
+      [id]
     );
 
     const {
@@ -95,12 +96,12 @@ async function deleteShoppingCart(id) {
     } = await client.query(
       `
     DELETE FROM shopping_cart,
-    WHERE id=$1;
+    WHERE id=$1
     RETURNING *;
     `,
       [id]
     );
-    console.log("deleteShoppingCart: ", shoppingCart && cart_products);
+    console.log("deleteShoppingCart: ", shoppingCart, cart_products);
     if (!shoppingCart) {
       throw new error("Unable to delete cart");
     }
