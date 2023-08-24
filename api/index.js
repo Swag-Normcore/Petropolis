@@ -1,6 +1,6 @@
 const apiRouter = require("express").Router();
 const jwt = require("jsonwebtoken");
-const { User } = require("../db")
+const { User } = require("../db");
 
 apiRouter.get("/", (req, res, next) => {
   res.send({
@@ -28,25 +28,29 @@ apiRouter.use(async (req, res, next) => {
         req.user = await User.getUserById(id);
         next();
       } else if (!id) {
-        throw { error: "Invalid authorization" }
+        throw { error: "Invalid authorization" };
       }
     } catch ({ error }) {
       next({ error });
     }
   }
-})
+});
 
-const usersRouter = require('./users');
-apiRouter.use("/users", usersRouter)
+const usersRouter = require("./users");
+apiRouter.use("/users", usersRouter);
 
-apiRouter.use("/categories", require("./categories"));
+const categoriesRouter = require("./categories");
+apiRouter.use("/categories", categoriesRouter);
+
+const productsRouter = require("./products");
+apiRouter.use("/products", productsRouter);
 
 apiRouter.use((err, req, res, next) => {
   if (err) {
     res.status(400).send({
-      error: err.error
-    })
+      error: err.error,
+    });
   }
-})
+});
 
 module.exports = apiRouter;

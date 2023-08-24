@@ -31,7 +31,7 @@ async function getAllCategories() {
     if (!categories) {
       throw new Error("Unable to get categories");
     }
-    return category;
+    return categories;
   } catch (error) {
     console.error(err);
   }
