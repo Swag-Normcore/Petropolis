@@ -67,68 +67,58 @@ apiRouter.get(
 
 // /:reviewId (patch)
 //must be logged in and be the current user or admin
-apiRouter.patch(
-  "/:reviewId",
-  requireUser,
-  requireCurrentUserOrAdmin,
-  async (req, res, next) => {
-    const { reviewId } = req.params.reviewId;
-    const { title, content, rating } = req.body;
-    const { review } = await Reviews.getReviewById(reviewId);
-    if (review.userId !== req.user.id) {
-      next({
-        error: "You must be the current logged in user or an admin.",
-      });
-    }
-
-    try {
-      const updatedReview = await Reviews.updateReview({
-        id: reviewId,
-        title,
-        content,
-        rating,
-      });
-      res.send(updatedReview);
-      if (!updatedReview) {
-        next({
-          name: "ReviewNotFoundError",
-          message: "Could not find a review with that reviewId",
-        });
-      }
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
+apiRouter.patch("/:reviewId", requireUser, async (req, res, next) => {
+  const { reviewId } = req.params.reviewId;
+  const { title, content, rating } = req.body;
+  const { review } = await Reviews.getReviewById(reviewId);
+  if (review.userId !== req.user.id) {
+    next({
+      error: "You must be the current logged in user or an admin.",
+    });
   }
-);
+
+  try {
+    const updatedReview = await Reviews.updateReview({
+      id: reviewId,
+      title,
+      content,
+      rating,
+    });
+    res.send(updatedReview);
+    if (!updatedReview) {
+      next({
+        name: "ReviewNotFoundError",
+        message: "Could not find a review with that reviewId",
+      });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
 // /:reviewId (delete)
 //must be logged in and be the current user or admin
-apiRouter.delete(
-  "/:reviewId",
-  requireUser,
-  requireCurrentUserOrAdmin,
-  async (req, res, next) => {
-    const { reviewId } = req.params.reviewId;
-    const { review } = await Reviews.getReviewById(reviewId);
-    if (review.userId !== req.user.id) {
+apiRouter.delete("/:reviewId", requireUser, async (req, res, next) => {
+  const { reviewId } = req.params.reviewId;
+  const { review } = await Reviews.getReviewById(reviewId);
+  if (review.userId !== req.user.id) {
+    next({
+      error: "You must be the current logged in user or an admin.",
+    });
+  }
+
+  try {
+    const deletedReview = await Reviews.deleteReview(reviewId);
+    res.send(deletedReview);
+    if (!deletedReview) {
       next({
-        error: "You must be the current logged in user or an admin.",
+        name: "ReviewNotFoundError",
+        message: "Could not find a review with that reviewId",
       });
     }
-
-    try {
-      const deletedReview = await Reviews.deleteReview(reviewId);
-      res.send(deletedReview);
-      if (!deletedReview) {
-        next({
-          name: "ReviewNotFoundError",
-          message: "Could not find a review with that reviewId",
-        });
-      }
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
-);
+});
 
 module.exports = apiRouter;
