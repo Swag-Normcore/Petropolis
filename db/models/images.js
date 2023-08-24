@@ -16,7 +16,7 @@ async function addImages(productId, imageUrls = []) {
     const insertPromises = values.map((params) => client.query(query, params));
     await Promise.all(insertPromises);
 
-    console.log("Images added successfully.");
+    console.log("Mapping over images", insertPromises);
   } catch (error) {
     console.error(error);
   }

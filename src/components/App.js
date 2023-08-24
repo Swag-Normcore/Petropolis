@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import Image from 'react-bootstrap/Image';
+import Image from "react-bootstrap/Image";
 import { LinkContainer } from "react-router-bootstrap";
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import Button from 'react-bootstrap/Button';
-import '../style/App.css';
+import Offcanvas from "react-bootstrap/Offcanvas";
+import Button from "react-bootstrap/Button";
+import "../style/App.css";
 import petLogo from "../images/pet-logo.png";
 import basket from "../images/basket-fill.svg";
 // getAPIHealth is defined in our axios-services directory index.js
 // you can think of that directory as a collection of api adapters
 // where each adapter fetches specific info from our express server's /api route
-import { getAPIHealth } from '../axios-services';
+import { getAPIHealth } from "../axios-services";
 import { useAtom } from "jotai";
-import { counterAtom, tokenAtom, adminAtom, canvasAtom, apiHealthAtom } from '../atoms';
+import {
+  counterAtom,
+  tokenAtom,
+  adminAtom,
+  canvasAtom,
+  apiHealthAtom,
+} from "../atoms";
+import ProductsPage from "./Products";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -34,7 +41,7 @@ const App = () => {
     // invoke the adapter, await the response, and set the data
     const getAPIStatus = async () => {
       const { healthy } = await getAPIHealth();
-      setAPIHealth(healthy ? 'api is up! :D' : 'api is down :/');
+      setAPIHealth(healthy ? "api is up! :D" : "api is down :/");
     };
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
@@ -43,10 +50,12 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className='app'>
-        <Offcanvas show={canvas} onHide={handleClose} placement='end'>
+      <div className="app">
+        <Offcanvas show={canvas} onHide={handleClose} placement="end">
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title><h3>{APIHealth}</h3></Offcanvas.Title>
+            <Offcanvas.Title>
+              <h3>{APIHealth}</h3>
+            </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
             <h4>Jotai Test:</h4>
@@ -54,7 +63,7 @@ const App = () => {
             <Button onClick={() => setCount(count + 1)}>Count</Button>
           </Offcanvas.Body>
         </Offcanvas>
-        <Navbar sticky="top" bg="info" variant="light" expand="lg">
+        <Navbar sticky="top" className="cyan" expand="lg">
           <Container>
             <LinkContainer to="/">
               <Navbar.Brand>
@@ -67,12 +76,15 @@ const App = () => {
               </Navbar.Brand>
             </LinkContainer>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+            <Navbar.Collapse
+              id="basic-navbar-nav"
+              className="justify-content-end"
+            >
               <Nav className="mr-auto">
                 <LinkContainer to="/products">
                   <Nav.Link>Products</Nav.Link>
                 </LinkContainer>
-                {token ?
+                {token ? (
                   <>
                     <LinkContainer to="/favorites">
                       <Nav.Link>Favorites</Nav.Link>
@@ -83,18 +95,19 @@ const App = () => {
                     <LinkContainer to="/account">
                       <Nav.Link>Account</Nav.Link>
                     </LinkContainer>
-                    {isAdmin ?
+                    {isAdmin ? (
                       <>
                         <LinkContainer to="/dashboard">
                           <Nav.Link>Dashboard</Nav.Link>
                         </LinkContainer>
-                      </> : null
-                    }
-                  </> :
+                      </>
+                    ) : null}
+                  </>
+                ) : (
                   <LinkContainer to="/login">
                     <Nav.Link>Login</Nav.Link>
                   </LinkContainer>
-                }
+                )}
                 <Nav.Link onClick={handleShow}>
                   <img
                     src={basket}
@@ -107,9 +120,9 @@ const App = () => {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-        <main id='main'>
+        <main id="main">
           <Route exact path="/">
-            <h1>Products</h1>
+            <ProductsPage />
           </Route>
           <Route path="/products">
             <h1>Products page</h1>
@@ -135,7 +148,7 @@ const App = () => {
         </main>
       </div>
     </BrowserRouter>
-  )
+  );
 };
 
 export default App;

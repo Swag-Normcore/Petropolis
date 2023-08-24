@@ -1,3 +1,13 @@
+body{
+  background-color: #F9E0D9;
+}
+.cyan{
+  background-color: #2D93AD;
+  color: white;
+}
+.nav-link{
+color:white
+}
 .app-container {
   display: flex;
   flex-direction: column;
@@ -10,4 +20,22 @@
 .app-container h1 {
   color: var(--green);
   padding: 1rem;
+}
+
+#products-page{
+  display: flex;
+  height: 100vh;
+}
+
+#category-nav{
+  height:50%;
+  background-color: #F9E0D9;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  outline: 2px solid #57371e;
+}
+
+#category-form>input{
+  margin-right:50px;
 }
