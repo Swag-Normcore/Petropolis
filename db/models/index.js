@@ -1,17 +1,19 @@
 module.exports = {
-  Category: require("./categories"),
   // add each model to your exports object here
   // so that you can use them in your express server api routers
   // for example, create a users.js file for a User model
   // and User: require('./user') here
 
   User: require("./user"),
-  Orders: require("./orders"),
+  Category: require("./categories"),
   Products: require("./products"),
+  Images: require("./images"),
   ShoppingCart: require("./shoppingCart"),
-  Reviews: require("./reviews"),
+  Orders: require("./orders"),
   Order_Products: require("./order_products"),
   Favorites: require("./favorites"),
+  Reviews: require("./reviews")
+
 };
 
 // then, in your API, you'll require the appropriate model
