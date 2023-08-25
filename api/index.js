@@ -45,6 +45,15 @@ apiRouter.use("/categories", categoriesRouter);
 const productsRouter = require("./products");
 apiRouter.use("/products", productsRouter);
 
+const shoppingRouter = require("./shopping_cart");
+apiRouter.use("/shopping_cart", shoppingRouter);
+
+const favoritesRouter = require("./favorites");
+apiRouter.use("/favorites", favoritesRouter);
+
+const reviewsRouter = require("./reviews");
+apiRouter.use("/reviews", reviewsRouter);
+
 apiRouter.use((err, req, res, next) => {
   if (err) {
     res.status(400).send({

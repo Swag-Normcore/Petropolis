@@ -2,7 +2,6 @@ const express = require("express");
 const favoritesRouter = express.Router();
 const { Favorites } = require("../db");
 const { requireUser } = require("./utils");
-const requireUser = requireUser;
 
 favoritesRouter.get("/", requireUser, async (req, res) => {
   try {

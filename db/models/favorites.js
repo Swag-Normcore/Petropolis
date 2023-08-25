@@ -1,5 +1,4 @@
-const client = require("./client");
-const db = require("../db");
+const client = require("../client");
 
 module.exports = {
   createFavorite,
