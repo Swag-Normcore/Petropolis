@@ -14,7 +14,7 @@ async function createShoppingCart({ userId }) {
     } = await client.query(
       `
     INSERT INTO shopping_cart (userId)
-    VALUES ($1, $2, $3)
+    VALUES ($1)
     RETURNING *;
     `,
       [userId]
@@ -67,7 +67,7 @@ async function updateShoppingCart(id, fields = {}) {
     UPDATE shopping_cart
     SET ${setString}
     WHERE id=${id}
-    RETURNING *; 
+    RETURNING *;
     `,
       Object.values(fields)
     );

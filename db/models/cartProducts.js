@@ -1,5 +1,5 @@
 const client = require("../client");
-const { getProductById } = require("../products");
+const { getProductById } = require("./products");
 
 module.exports = {
   getProductsByShoppingCart,
@@ -82,8 +82,8 @@ async function updateCartProductsQuantity({ cartProductId, quantity }) {
           rows: [updatedCartProducts],
         } = await client.query(
           `
-      UPDATE cart_products 
-      SET "quantity"= $1, 
+      UPDATE cart_products
+      SET "quantity"= $1,
       WHERE id= $2
       RETURNING *;
 

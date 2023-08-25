@@ -9,6 +9,7 @@ module.exports = {
   Products: require("./products"),
   Images: require("./images"),
   ShoppingCart: require("./shoppingCart"),
+  CartProducts: require("./cartProducts"),
   Orders: require("./orders"),
   Order_Products: require("./order_products"),
   Favorites: require("./favorites"),
