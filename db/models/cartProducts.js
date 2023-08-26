@@ -11,18 +11,23 @@ module.exports = {
 
 async function getProductsByShoppingCart(shoppingId) {
   try {
-    const { rows: product } = await client.query(
+    const { rows: cartProducts } = await client.query(
       `
     SELECT * FROM cart_products
     WHERE "shoppingId"= $1;
     `,
       [shoppingId]
     );
-    if (!product) {
+    if (!cartProducts) {
       throw new Error("Unable to get product");
     }
-    console.log(product);
-    return product;
+    const cartProductsWithProducts = Promise.all(cartProducts.map(async (cartProduct) => {
+      const product = await getProductById(cartProduct.productId);
+      cartProduct.product = product;
+      return cartProduct;
+    }));
+    console.log(cartProductsWithProducts);
+    return cartProductsWithProducts;
   } catch (err) {
     console.error(err);
   }
@@ -83,7 +88,7 @@ async function updateCartProductsQuantity({ cartProductId, quantity }) {
         } = await client.query(
           `
       UPDATE cart_products
-      SET "quantity"= $1,
+      SET "quantity"= $1
       WHERE id= $2
       RETURNING *;
 
@@ -112,7 +117,8 @@ async function removeProductFromCart(cartProductId) {
     } = await client.query(
       `
     DELETE FROM cart_products
-    WHERE id=$1;
+    WHERE id=$1
+    RETURNING *;
     `,
       [cartProductId]
     );

@@ -72,7 +72,7 @@ async function updateCategory(id, fields = {}) {
     } = await client.query(
       `
     UPDATE categories
-    SET ${setString} 
+    SET ${setString}
     WHERE id=${id}
     RETURNING *;
   `,
@@ -95,18 +95,18 @@ async function deleteCategory(id) {
     } = await client.query(
       `
       UPDATE products
-      SET "categoryId"=$1
-      WHERE "categoryId"=$2;
+      SET "categoryId"=Null
+      WHERE "categoryId"=$1;
       `,
-      [null, categoryId]
+      [id]
     );
 
     const {
       rows: [category],
     } = await client.query(
       `
-      DELETE FROM categories, 
-      WHERE id=$1;
+      DELETE FROM categories
+      WHERE id=$1
       RETURNING *;
     `,
       [id]
@@ -117,7 +117,7 @@ async function deleteCategory(id) {
     }
     return category;
   } catch (error) {
-    console.error(err);
+    console.error(error);
   }
 }
 
