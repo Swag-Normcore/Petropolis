@@ -23,16 +23,16 @@ async function addImages(productId, imageUrls = []) {
 }
 
 //wondering if this should be in products
-async function getProductsWithImages(productId) {
+async function getImagesByProduct(productId) {
   try {
-    const {
-      rows: [product],
-    } = await client.query(
-      `
-    SELECT * FROM products
-    WHERE id=$1;`,
-      [productId]
-    );
+    // const {
+    //   rows: [product],
+    // } = await client.query(
+    //   `
+    // SELECT * FROM products
+    // WHERE id=$1;`,
+    //   [productId]
+    // );
     const { rows: images } = await client.query(
       `
       SELECT * FROM images
@@ -40,12 +40,12 @@ async function getProductsWithImages(productId) {
     ;`,
       [productId]
     );
-    if (images.length === 0) {
+    if (!images) {
       throw new Error("Couldn't retrieve images.");
     } else {
-      product.images = images;
-      console.log("GET PRODUCT WITH IMAGES", product);
-      return product;
+      // product.images = images;
+      console.log("GET IMAGES BY PRODUCT", images);
+      return images;
     }
   } catch (error) {
     console.error(error);
@@ -100,7 +100,7 @@ async function deleteAllImagesForAProduct(productId) {
 
 module.exports = {
   addImages,
-  getProductsWithImages,
+  getImagesByProduct,
   deleteImage,
   deleteAllImagesForAProduct,
 };

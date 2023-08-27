@@ -111,8 +111,6 @@ async function updateOrderProductQuantity({ orderProductId, quantity }) {
     }
 }
 
-// async function updateSubTotalByProduct({ productId, price }) { }
-
 async function removeProductFromOrder(orderProductId) {
     try {
         const { rows: [orderId] } = await client.query(`

@@ -4,14 +4,14 @@ module.exports = {
   createFavorite,
   getAllFavorites,
   getFavorite,
-  updateFavorite,
+  // updateFavorite,
   deleteFavorite,
   deleteFavoritesByUser,
 };
 
 async function createFavorite({ userId, productId }) {
   try {
-    const favorite = await client.query(
+    const { rows: [favorite] } = await client.query(
       `
       INSERT INTO favorites("userId", "productId")
       VALUES ($1, $2)
@@ -33,9 +33,9 @@ async function createFavorite({ userId, productId }) {
 
 async function getAllFavorites(userId) {
   try {
-    const favorites = await client.query(
+    const { rows: favorites } = await client.query(
       `
-      SELECT favorites.*, products.title, products.price, products."imageUrl"
+      SELECT favorites.*, products.title, products.price, products.image
       FROM favorites
       JOIN products ON favorites."productId"=products.id
       WHERE favorites."userId"=$1;
@@ -54,15 +54,15 @@ async function getAllFavorites(userId) {
   }
 }
 
-async function getFavorite(userId, productId) {
+async function getFavorite(id) {
   try {
-    const favorite = await client.query(
+    const { rows: [favorite] } = await client.query(
       `
       SELECT *
       FROM favorites
-      WHERE "userId" = $1 AND "productId" = $2;
+      WHERE id = $1;
     `,
-      [userId, productId]
+      [id]
     );
     console.log("getFavorite:", favorite);
 
@@ -76,38 +76,39 @@ async function getFavorite(userId, productId) {
   }
 }
 
-async function updateFavorite(userId, productId, newProductId) {
+// We don't need this function
+// async function updateFavorite(userId, productId, newProductId) {
+//   try {
+//     const { rows: [favorite] } = await client.query(
+//       `
+//       UPDATE favorites
+//       SET "productId" = $1
+//       WHERE "userId" = $2 AND "productId" = $3
+//       RETURNING *;
+//     `,
+//       [newProductId, userId, productId]
+//     );
+//     console.log("updateFavorite:", favorite);
+
+//     if (!favorite) {
+//       throw new Error("Could not update favorite");
+//     }
+
+//     return favorite;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+async function deleteFavorite(id) {
   try {
-    const favorite = await client.query(
-      `
-      UPDATE favorites
-      SET "productId" = $1
-      WHERE "userId" = $2 AND "productId" = $3
-      RETURNING *;
-    `,
-      [newProductId, userId, productId]
-    );
-    console.log("updateFavorite:", favorite);
-
-    if (!favorite) {
-      throw new Error("Could not update favorite");
-    }
-
-    return favorite;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function deleteFavorite(userId, productId) {
-  try {
-    const favorite = await client.query(
+    const { rows: [favorite] } = await client.query(
       `
       DELETE FROM favorites
-      WHERE "userId" = $1 AND "productId" = $2
+      WHERE id = $1
       RETURNING *;
     `,
-      [userId, productId]
+      [id]
     );
     console.log("deleteFavorite:", favorite);
 
@@ -123,7 +124,7 @@ async function deleteFavorite(userId, productId) {
 
 async function deleteFavoritesByUser(userId) {
   try {
-    const favorites = await client.query(
+    const { rows: favorites } = await client.query(
       `
       DELETE FROM favorites
       WHERE "userId" = $1

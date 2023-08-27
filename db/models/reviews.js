@@ -1,6 +1,6 @@
 const client = require("../client");
 
-async function createReview(userId, productId, rating, comment, isAnonymous) {
+async function createReview({ userId, productId, rating, comment, isAnonymous }) {
   try {
     const {
       rows: [review],
@@ -54,8 +54,11 @@ async function getReviewsByProduct(productId) {
     if (!reviews) {
       throw new Error("Issue getting reviews");
     }
-    console.log("GET REVIEWS BY PRODUCT RESULT: ", reviews);
-    return reviews;
+    const filteredReviews = reviews.filter((review) => {
+      return !review.isAnonymous;
+    })
+    console.log("GET REVIEWS BY PRODUCT RESULT: ", filteredReviews);
+    return filteredReviews;
   } catch (error) {
     console.error(error);
   }
@@ -114,11 +117,11 @@ async function updateReview(id, fields = {}) {
 
 async function deleteReviewsByUser(userId) {
   try {
-    const { rows: reviews } = client.query(
+    const { rows: reviews } = await client.query(
       `
-    DELETE * FROM reviews
+    DELETE FROM reviews
     WHERE "userId"=$1
-    RETURNING*
+    RETURNING *
     ;`,
       [userId]
     );

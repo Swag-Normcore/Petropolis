@@ -89,7 +89,7 @@ async function getProductByTitle(title) {
 async function getProductByCategoryId(categoryId) {
   try {
     const {
-      rows: [product],
+      rows: products,
     } = await client.query(
       `
     SELECT * FROM products
@@ -97,11 +97,11 @@ async function getProductByCategoryId(categoryId) {
     `,
       [categoryId]
     );
-    if (!product) {
-      throw new Error("Issue getting product");
+    if (!products) {
+      throw new Error("Issue getting products");
     }
-    console.log("GET PRODUCT BY CATEGORY ID", product);
-    return product;
+    console.log("GET PRODUCTS BY CATEGORY ID", products);
+    return products;
   } catch (error) {
     console.error(error);
   }
@@ -109,11 +109,12 @@ async function getProductByCategoryId(categoryId) {
 
 async function updateProduct(id, fields = {}) {
   const placeholders = Object.keys(fields)
-    .map((key, index) => `"${key}"=$${index + 2}`)
+    .map((key, index) => `"${key}"=$${index + 1}`)
     .join(", ");
   if (placeholders.length === 0) {
     return;
   }
+  console.log("placeholders: ", placeholders);
   try {
     const {
       rows: [product],
@@ -121,10 +122,10 @@ async function updateProduct(id, fields = {}) {
       `
     UPDATE products
     SET ${placeholders}
-    WHERE id=$1
+    WHERE id=${id}
     RETURNING *;
     `,
-      [id, Object.values(fields)]
+      Object.values(fields)
     );
     if (!product) {
       throw new Error("Issue updating product");
@@ -145,6 +146,7 @@ async function makeProductInactive(productId) {
     UPDATE products
     SET "isActive"=false
     WHERE id=$1
+    RETURNING *;
     `,
       [productId]
     );
@@ -160,6 +162,26 @@ async function makeProductInactive(productId) {
 
 async function deleteProduct(productId) {
   try {
+    await client.query(`
+      DELETE FROM cart_products
+      WHERE "productId"=$1;
+    `, [productId])
+    await client.query(`
+      DELETE FROM order_products
+      WHERE "productId"=$1;
+    `, [productId])
+    await client.query(`
+      DELETE FROM reviews
+      WHERE "productId"=$1;
+    `, [productId])
+    await client.query(`
+      DELETE FROM favorites
+      WHERE "productId"=$1;
+    `, [productId])
+    await client.query(`
+      DELETE FROM images
+      WHERE "productId"=$1;
+    `, [productId])
     const {
       rows: [product],
     } = await client.query(

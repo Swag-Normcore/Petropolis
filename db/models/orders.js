@@ -121,16 +121,14 @@ async function updateOrder(id, fields = {}) {
 async function deleteOrder(orderId) {
     try {
         const { rows: orderProducts } = await client.query(`
-            DELETE *
-            FROM order_products
+            DELETE FROM order_products
             WHERE order_products."orderId"=$1
             RETURNING *;
         `, [orderId]);
         const { rows: [order] } = await client.query(`
-            DELETE *
-            FROM orders
+            DELETE FROM orders
             WHERE id=$1
-            RETURNINGJ *;
+            RETURNING *;
         `, [orderId]);
         if (!order) {
             throw new Error("Couldn't delete order!");

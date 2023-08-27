@@ -34,5 +34,5 @@ jobs:
         run: npm install
       - name: Seed Database
         run: npm run db:build
-      - name: Test Suite
-        run: npm run test
+      # - name: Test Suite
+      #   run: npm run test

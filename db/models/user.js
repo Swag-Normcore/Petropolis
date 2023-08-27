@@ -3,6 +3,9 @@ const client = require("../client");
 const bcrypt = require("bcrypt");
 const SALT_COUNT = 10;
 const { deleteOrdersByUser } = require("./orders");
+const { createShoppingCart, deleteShoppingCart } = require("./shoppingCart");
+const { deleteReviewsByUser } = require("./reviews");
+const { deleteFavoritesByUser } = require("./favorites");
 
 module.exports = {
   // add your database adapter fns here
@@ -48,13 +51,20 @@ async function createUser({ name, password, email, isAdmin }) {
     `,
       [name, hashedPassword, email, isAdmin]
     );
-    console.log("createUser:", user);
 
     if (!user) {
       throw new Error("User not created");
     }
 
+    const shoppingCart = await createShoppingCart({ userId: user.id });
+
+    if (!shoppingCart) {
+      throw new Error("Failed to create shopping cart for user!");
+    }
+
+    user.shoppingId = shoppingCart.id;
     delete user.password;
+    console.log("createUser:", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -66,9 +76,11 @@ async function getUserById(userId) {
     const {
       rows: [user],
     } = await client.query(`
-      SELECT id, name, email, "isAdmin"
+      SELECT users.id, users.name, users.email, users."isAdmin",
+      shopping_cart.id as "shoppingId"
       FROM users
-      WHERE id=${userId};
+      JOIN shopping_cart ON users.id=shopping_cart."userId"
+      WHERE users.id=${userId};
     `);
     console.log("getUserById:", user);
     if (!user) {
@@ -89,8 +101,9 @@ async function getUserByEmail(email) {
       rows: [user],
     } = await client.query(
       `
-      SELECT *
+      SELECT users.*, shopping_cart.id as "shoppingId"
       FROM users
+      JOIN shopping_cart ON users.id=shopping_cart."userId"
       WHERE email=$1;
     `,
       [email]
@@ -128,6 +141,7 @@ async function getUserByEmailAndPassword({ email, password }) {
   }
 }
 
+// Only for name and isAdmin right now
 async function updateUser(id, fields = {}) {
   // build the set string
   const setString = Object.keys(fields)
@@ -198,8 +212,12 @@ async function isAdmin(userId) {
 async function deleteUser(userId) {
   try {
     await deleteOrdersByUser(userId);
+    const user = await getUserById(userId);
+    await deleteShoppingCart(user.shoppingId);
+    await deleteReviewsByUser(userId);
+    await deleteFavoritesByUser(userId);
     const {
-      rows: [user],
+      rows: [deletedUser],
     } = await client.query(
       `
       DELETE FROM users
@@ -209,13 +227,12 @@ async function deleteUser(userId) {
       [userId]
     );
 
-    console.log("deleteUser:", user);
-
     if (!user) {
       throw new Error("User not found");
     }
 
-    return user;
+    console.log("deleteUser:", deletedUser);
+    return deletedUser;
   } catch (error) {
     console.error(error);
   }
