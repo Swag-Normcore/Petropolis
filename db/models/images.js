@@ -40,7 +40,7 @@ async function getImagesByProduct(productId) {
     ;`,
       [productId]
     );
-    if (!images) {
+    if (images.length === 0) {
       throw new Error("Couldn't retrieve images.");
     } else {
       // product.images = images;
