@@ -54,6 +54,9 @@ apiRouter.use("/favorites", favoritesRouter);
 const reviewsRouter = require("./reviews");
 apiRouter.use("/reviews", reviewsRouter);
 
+const ordersRouter = require("./orders");
+apiRouter.use("/orders", ordersRouter);
+
 apiRouter.use((err, req, res, next) => {
   if (err) {
     res.status(400).send({
