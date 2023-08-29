@@ -36,13 +36,17 @@ export async function register({ name, email, password, isAdmin }) {
   }
 }
 
-export async function login(userData) {
+export async function login({ email, password }) {
   try {
-    const { data: user } = await axios.post("/api/users/login", userData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const { data: user } = await axios.post(
+      "/api/users/login",
+      { email, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     console.log("Axios login POST", user);
     return user;
   } catch (error) {

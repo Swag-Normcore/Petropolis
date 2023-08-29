@@ -23,8 +23,6 @@ const ProductsPage = () => {
     };
     getProducts();
     getCategories();
-    console.log("products in useEffect", products);
-    console.log("categories in useEffect", categories);
   }, []);
 
   const handleCheckboxChange = (id) => {

@@ -2,10 +2,11 @@ import { register } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { useAtom } from "jotai";
-import { tokenAtom } from "../atoms";
+import { tokenAtom, adminAtom } from "../atoms";
 
 const Register = () => {
   const [token, setToken] = useAtom(tokenAtom);
+  const [admin, setAdmin] = useAtom(adminAtom);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [passConfirm, setPassConfirm] = useState("");
@@ -17,7 +18,10 @@ const Register = () => {
     console.log(name, email, password);
     const result = await register({ name, email, password, isAdmin });
     console.log(result);
-    // setToken(result.token);
+    if (result) {
+      // setToken(result.token);
+      setAdmin(result.user.isAdmin);
+    }
   };
 
   return (
