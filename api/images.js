@@ -22,7 +22,7 @@ apiRouter.post(
   async (req, res, next) => {
     try {
       const { productId } = req.params.productId;
-      const [imageUrls] = req.body;
+      const { imageUrls } = req.body;
       const newImages = await Images.addImages(productId, imageUrls);
       if (!newImages) {
         throw { error: "Unable to create images" };
