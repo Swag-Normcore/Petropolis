@@ -17,7 +17,11 @@ async function requireCurrentUserOrAdmin(req, res, next) {
 }
 
 async function requireAdmin(req, res, next) {
-    if (!req.user.isAdmin) {
+    if (!req.user) {
+        next({
+            error: "You must be logged in."
+        })
+    } else if (!req.user.isAdmin) {
         next({
             error: "You must be an admin."
         })

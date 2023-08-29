@@ -58,3 +58,16 @@ export async function getAllCategories() {
 //     console.error(error);
 //   }
 // }
+
+export async function getShoppingCart({ shoppingId, token }) {
+  try {
+    const { data: shoppingCart } = await axios.get(`/api/shopping_cart/${shoppingId}`, {}, {
+      headers: {
+        "Content-type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    })
+  } catch (error) {
+    console.error(error);
+  }
+}

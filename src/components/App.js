@@ -24,6 +24,7 @@ import {
   apiHealthAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
+import ShoppingCart from "./ShoppingCart";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -61,6 +62,7 @@ const App = () => {
             <h4>Jotai Test:</h4>
             <h4>{count}</h4>
             <Button onClick={() => setCount(count + 1)}>Count</Button>
+            <ShoppingCart />
           </Offcanvas.Body>
         </Offcanvas>
         <Navbar sticky="top" className="cyan" expand="lg">
