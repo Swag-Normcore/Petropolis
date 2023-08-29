@@ -33,6 +33,7 @@ favoritesRouter.post("/", requireUser, async (req, res, next) => {
 
 favoritesRouter.delete("/:favoriteId", requireUser, async (req, res, next) => {
   const favoriteItem = await Favorites.getFavoriteById(favoriteId);
+  const { favoriteId } = req.params.favoriteId;
   try {
     if (favoriteItem.userId !== req.user.id) {
       throw { error: "Unable to get favorite" };
@@ -44,7 +45,6 @@ favoritesRouter.delete("/:favoriteId", requireUser, async (req, res, next) => {
         throw { error: "Unable to delete favorites" };
       }
       res.send(deleteFavorites);
-      r;
     }
   } catch ({ error }) {
     next({ error });
