@@ -4,7 +4,7 @@ const { requireUser, requireAdmin } = require("./utils");
 
 apiRouter.get("/product/:productId", async (req, res, next) => {
   try {
-    const { productId } = req.params;
+    const { productId } = req.params.productId;
     const images = await Images.getImagesByProduct(productId);
     if (!images) {
       throw { error: "Unable to get images" };
@@ -21,7 +21,7 @@ apiRouter.post(
   requireAdmin,
   async (req, res, next) => {
     try {
-      const { productId } = req.params;
+      const { productId } = req.params.productId;
       const [imageUrls] = req.body;
       const newImages = await Images.addImages(productId, imageUrls);
       if (!newImages) {
@@ -40,7 +40,7 @@ apiRouter.delete(
   requireAdmin,
   async (req, res, next) => {
     try {
-      const { imageId } = req.params;
+      const { imageId } = req.params.imageId;
       const deletedImage = await Images.deleteImage(imageId);
       if (!deletedImage) {
         throw { error: "Unable to delete image" };
