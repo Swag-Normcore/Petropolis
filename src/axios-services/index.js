@@ -85,6 +85,19 @@ export async function getAllCategories() {
   }
 }
 
+export async function addToFavorites({ userId, productId }) {
+  try {
+    const { data: favorite } = await axios.post("/api/favorites", {
+      userId,
+      productId,
+    });
+    console.log(favorite);
+    return favorite;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 // export async function getAllCategories() {
 //   try {
 //     const result = await axios.get("/api/categories");
