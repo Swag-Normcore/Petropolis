@@ -24,6 +24,8 @@ import {
   apiHealthAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
+import Register from "./Register";
+import Login from "./Login";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -125,13 +127,16 @@ const App = () => {
             <ProductsPage />
           </Route>
           <Route path="/products">
-            <h1>Products page</h1>
+            <ProductsPage />
           </Route>
           <Route path="/cart">
             <h1>Cart page</h1>
           </Route>
           <Route path="/login">
-            <h1>Login page</h1>
+            <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
           </Route>
           <Route path="/favorites">
             <h1>Favorites page</h1>

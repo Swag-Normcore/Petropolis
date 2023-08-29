@@ -2,7 +2,7 @@ import { atom } from "jotai";
 
 export const counterAtom = atom(0);
 
-export const tokenAtom = atom("asdf");
+export const tokenAtom = atom(null);
 
 export const adminAtom = atom(true);
 

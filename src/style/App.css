@@ -1,13 +1,25 @@
 body{
   background-color: #F9E0D9;
+  width: 100vw;
 }
+
 .cyan{
   background-color: #2D93AD;
   color: white;
 }
+
+#root{
+  width: 100vw;
+}
+
+nav{
+ width: 100vw;
+}
+
 .nav-link{
 color:white
 }
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -22,9 +34,53 @@ color:white
   padding: 1rem;
 }
 
+.login-register-container{
+  display: flex;
+  justify-content: center;
+}
+
+#register-form{
+  width: 20rem;
+  margin: 20px;
+}
+
+Form>button{
+  background-color: #2D93AD;
+  color: white;
+  margin: 10px;
+  margin-left: 0px;
+  border-radius: 5px;
+}
+
+Form>button:hover{
+  background-color: #69cde6;
+}
+
 #products-page{
   display: flex;
   height: 100vh;
+}
+
+.search{
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px;
+}
+
+.search>input{
+  width: 88%;
+  border-radius: 3px;
+}
+
+#search-button{
+  background-color: #2D93AD;
+  color: white;
+  margin: 0px 5px 0px 5px;
+  border-radius: 5px;
+}
+
+#search-button:hover{
+  background-color: #69cde6;
 }
 
 #category-nav{
@@ -38,4 +94,27 @@ color:white
 
 #category-form>input{
   margin-right:50px;
+}
+
+#products-container{
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
+.card{
+  height: 18rem;
+  width: 15rem;
+  margin: 10px;
+}
+
+.card-img-top{
+  height: 10rem;
+}
+
+.card-footer{
+  display: flex;
+  justify-content: space-around;
+  margin: -10px;
+  height: 3rem;
 }
