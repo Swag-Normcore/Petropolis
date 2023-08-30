@@ -18,6 +18,38 @@ import axios from "axios";
   }
 */
 
+export async function register({ name, email, password, isAdmin }) {
+  try {
+    const { data: user } = await axios.post(
+      "/api/users/register",
+      { name, email, password, isAdmin },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Axios register POST", user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function login(userData) {
+  try {
+    const { data: user } = await axios.post("/api/users/login", userData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("Axios login POST", user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function getAPIHealth() {
   try {
     const { data } = await axios.get("/api/health");

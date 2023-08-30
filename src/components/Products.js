@@ -8,6 +8,9 @@ const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
   const [checkedId, setCheckedId] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchFilter, setSearchFilter] = useState([]);
 
   useEffect(async () => {
     const getProducts = async () => {
@@ -26,7 +29,26 @@ const ProductsPage = () => {
 
   const handleCheckboxChange = (id) => {
     setCheckedId(id);
+    const filtered = products.filter((product) => product.categoryId === id);
+    setFilteredProducts(filtered);
   };
+
+  const searchProducts = () => {
+    const filtered = products.filter((product) => {
+      const lowerCaseQuery = searchTerm.toLowerCase();
+      return (
+        product.title.toLowerCase().includes(lowerCaseQuery) ||
+        product.description.toLowerCase().includes(lowerCaseQuery)
+      );
+    });
+    setSearchFilter(filtered);
+  };
+
+  const productsToDisplay = searchTerm.length
+    ? searchFilter
+    : filteredProducts
+    ? filteredProducts
+    : products;
 
   return (
     <div id="products-page">
@@ -44,10 +66,36 @@ const ProductsPage = () => {
           ))}
         </Form>
       </div>
-      <div id="products-container">
-        {products.map((product) => (
-          <h2>{product.title}</h2>
-        ))}
+      <div id="search-container">
+        <div className="search">
+          <input
+            id="search"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              searchProducts();
+            }}
+          />
+          <button id="search-button">SEARCH</button>
+        </div>
+        <div id="products-container">
+          {productsToDisplay.map((product) => (
+            <div className="card" key={product.id}>
+              <img
+                className="card-img-top"
+                src={product.image}
+                alt={product.title}
+              />
+              <div className="card-body">
+                <h5 className="card-title">{product.title}</h5>
+                <div className="card-footer">
+                  <p>${product.price / 100}</p> <p>Stock: {product.stock}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
