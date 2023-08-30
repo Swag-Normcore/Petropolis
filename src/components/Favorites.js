@@ -1,8 +1,8 @@
-const { useAtom } = require("jotai");
-const { useEffect, useState } = require("react");
-const { favoritesAtom } = require("../atoms");
-const { getAllFavorites } = require("../axios-services");
-const { default: Form } = require("react-bootstrap/Form");
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
+import { favoritesAtom } from "../atoms";
+import { getAllFavorites } from "../axios-services";
+import { Card, Button } from "react-bootstrap";
 
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useAtom(favoritesAtom);
@@ -13,7 +13,6 @@ const FavoritesPage = () => {
       const result = await getAllFavorites();
       setFavorites(result);
     };
-
     getFavorites();
     console.log("favorites in useEffect", favorites);
   }, []);
@@ -22,23 +21,32 @@ const FavoritesPage = () => {
     setCheckedId(id);
   };
   const handleDelete = async (id) => {
-    const result = await deleteFavorite(id);
-    setFavorites(result);
+    try {
+      const result = await axios.delete(`/api/favorites/${id}`);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div id="favorites-page">
       <div id="favorites-container">
         {favorites.map((favorite) => (
-          <div key={favorite.id} className="mb-3">
-            <Form.Check
-              id={`${favorite.id}`}
-              label={`${favorite.name}`}
-              checked={favorite.id === checkedId}
-              onChange={() => handleCheckboxChange(favorite.id)}
-            />
-            <button onClick={() => handleDelete(favorite.id)}>Delete</button>
-          </div>
+          <Card key={favorite.id} style={{ width: "18rem" }}>
+            <Card.Img variant="top" src={favorite.image} />
+            <Card.Body>
+              <Card.Title>{favorite.title}</Card.Title>
+              <Card.Text>{favorite.price}</Card.Text>
+              <Button variant="primary">Go somewhere</Button>
+              <Button
+                variant="danger"
+                onClick={() => handleDelete(favorite.id)}
+              >
+                Delete
+              </Button>
+            </Card.Body>
+          </Card>
         ))}
       </div>
     </div>

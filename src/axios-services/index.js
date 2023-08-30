@@ -7,17 +7,6 @@ import axios from "axios";
 // for example, if we need to display a list of users
 // we'd probably want to define a getUsers service like this:
 
-/*
-  export async function getUsers() {
-    try {
-      const { data: users } = await axios.get('/api/users')
-      return users;
-    } catch(err) {
-      console.error(err)
-    }
-  }
-*/
-
 export async function getAPIHealth() {
   try {
     const { data } = await axios.get("/api/health");
@@ -44,6 +33,36 @@ export async function getAllCategories() {
     const { data: categories } = await axios.get("/api/categories");
     console.log("Get all categories in axios", categories);
     return categories;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getAllUsers() {
+  try {
+    const { data: users } = await axios.get("/api/users");
+    console.log(users);
+    return users;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUserById(userId) {
+  try {
+    const { data: user } = await axios.get(`/api/users/${userId}`);
+    console.log(user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getAllFavorites(userId) {
+  try {
+    const { data: favorites } = await axios.get(`/api/favorites/${userId}`);
+    console.log(favorites);
+    return favorites;
   } catch (error) {
     console.error(error);
   }
