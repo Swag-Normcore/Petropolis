@@ -2,7 +2,8 @@ import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { favoritesAtom } from "../atoms";
 import { getAllFavorites } from "../axios-services";
-import { Card, Button } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useAtom(favoritesAtom);
@@ -20,9 +21,18 @@ const FavoritesPage = () => {
   const handleCheckboxChange = (id) => {
     setCheckedId(id);
   };
+
   const handleDelete = async (id) => {
     try {
       const result = await axios.delete(`/api/favorites/${id}`);
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleAddToCart = async (id) => {
+    try {
+      const result = await axios.post(`/api/cart/${id}`);
       console.log(result);
     } catch (error) {
       console.error(error);
@@ -33,17 +43,23 @@ const FavoritesPage = () => {
     <div id="favorites-page">
       <div id="favorites-container">
         {favorites.map((favorite) => (
-          <Card key={favorite.id} style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={favorite.image} />
+          <Card key={favorite.id} className="mb-3">
             <Card.Body>
               <Card.Title>{favorite.title}</Card.Title>
+              <Card.Text>{favorite.description}</Card.Text>
               <Card.Text>{favorite.price}</Card.Text>
-              <Button variant="primary">Go somewhere</Button>
+              <Card.Text>{favorite.image}</Card.Text>
               <Button
                 variant="danger"
                 onClick={() => handleDelete(favorite.id)}
               >
                 Delete
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => handleAddToCart(favorite.id)}
+              >
+                Add to Cart
               </Button>
             </Card.Body>
           </Card>
@@ -53,4 +69,4 @@ const FavoritesPage = () => {
   );
 };
 
-module.exports = FavoritesPage;
+export default FavoritesPage;
