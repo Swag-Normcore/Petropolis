@@ -1,8 +1,14 @@
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { categoriesAtom, productsAtom } from "../atoms";
-import { getAllProducts, getAllCategories } from "../axios-services";
+import { categoriesAtom, productsAtom, userAtom } from "../atoms";
+import {
+  getAllProducts,
+  getAllCategories,
+  addToFavorites,
+} from "../axios-services";
 import Form from "react-bootstrap/Form";
+import emptyHeart from "../images/heart-empty.svg";
+import fullHeart from "../images/heart-fill.svg";
 
 const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
@@ -11,6 +17,8 @@ const ProductsPage = () => {
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFilter, setSearchFilter] = useState([]);
+  const [productId, setProductId] = useState(null);
+  const [user, setUser] = useAtom(userAtom);
 
   useEffect(async () => {
     const getProducts = async () => {
@@ -23,8 +31,6 @@ const ProductsPage = () => {
     };
     getProducts();
     getCategories();
-    console.log("products in useEffect", products);
-    console.log("categories in useEffect", categories);
   }, []);
 
   const handleCheckboxChange = (id) => {
@@ -42,6 +48,16 @@ const ProductsPage = () => {
       );
     });
     setSearchFilter(filtered);
+  };
+
+  const handleFavorite = (e) => {
+    const userId = user.id;
+    setProductId(e.target.value);
+    addToFavorites(userId, productId);
+  };
+
+  const handleCart = (e) => {
+    setProductId(e.target.value);
   };
 
   const productsToDisplay = searchTerm.length
@@ -82,16 +98,46 @@ const ProductsPage = () => {
         <div id="products-container">
           {productsToDisplay.map((product) => (
             <div className="card" key={product.id}>
-              <img
-                className="card-img-top"
-                src={product.image}
-                alt={product.title}
-              />
+              <a href={`/api/products/${product.id}`}>
+                <img
+                  className="card-img-top"
+                  src={product.image}
+                  alt={product.title}
+                />
+              </a>
               <div className="card-body">
-                <h5 className="card-title">{product.title}</h5>
-                <div className="card-footer">
-                  <p>${product.price / 100}</p> <p>Stock: {product.stock}</p>
+                <div className="title-block">
+                  <h5 className="card-title">{product.title}</h5>
+                  <button
+                    className="favorite-button"
+                    value={product.id}
+                    onClick={handleFavorite}
+                  >
+                    <img
+                      src={emptyHeart}
+                      width="20"
+                      height="20"
+                      className="d-inline-block align-top"
+                    />
+                  </button>
                 </div>
+                <button
+                  className="cart-button"
+                  value={product.id}
+                  onClick={handleCart}
+                >
+                  Add to Cart
+                </button>
+              </div>
+              <div className="card-footer">
+                <p>${product.price / 100}</p>{" "}
+                {product.stock > 20 ? (
+                  <p>In stock</p>
+                ) : product.stock > 0 ? (
+                  <p>Low Stock</p>
+                ) : (
+                  <p>Out of stock</p>
+                )}
               </div>
             </div>
           ))}

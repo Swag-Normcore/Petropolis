@@ -36,13 +36,17 @@ export async function register({ name, email, password, isAdmin }) {
   }
 }
 
-export async function login(userData) {
+export async function login({ email, password }) {
   try {
-    const { data: user } = await axios.post("/api/users/login", userData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const { data: user } = await axios.post(
+      "/api/users/login",
+      { email, password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     console.log("Axios login POST", user);
     return user;
   } catch (error) {
@@ -76,6 +80,19 @@ export async function getAllCategories() {
     const { data: categories } = await axios.get("/api/categories");
     console.log("Get all categories in axios", categories);
     return categories;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function addToFavorites({ userId, productId }) {
+  try {
+    const { data: favorite } = await axios.post("/api/favorites", {
+      userId,
+      productId,
+    });
+    console.log(favorite);
+    return favorite;
   } catch (error) {
     console.error(error);
   }
