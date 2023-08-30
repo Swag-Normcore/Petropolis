@@ -93,6 +93,7 @@ apiRouter.get("/", requireUser, requireAdmin, async (req, res, next) => {
 
 // GET /me *
 apiRouter.get("/me", requireUser, async (req, res, next) => {
+  console.log("user: ", req.user);
   const { email } = req.user;
   try {
     const currentUser = await User.getUserByEmail(email);

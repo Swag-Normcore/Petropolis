@@ -19,7 +19,8 @@ const Register = () => {
     const result = await register({ name, email, password, isAdmin });
     console.log(result);
     if (result) {
-      // setToken(result.token);
+      localStorage.setItem("token", result.token)
+      setToken(result.token);
       setAdmin(result.user.isAdmin);
     }
   };

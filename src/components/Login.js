@@ -17,6 +17,7 @@ const Login = () => {
     console.log(email, password);
     const result = await login({ email, password });
     console.log(result);
+    localStorage.setItem("token", result.token);
     setToken(result.token);
     setAdmin(result.user.isAdmin);
     setUser(result.user);

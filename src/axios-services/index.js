@@ -48,6 +48,25 @@ export async function login({ email, password }) {
       }
     );
     console.log("Axios login POST", user);
+
+
+
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUser({ token }) {
+  try {
+    const { data: user } = await axios.get("/api/users/me", {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+    );
+    console.log(user);
     return user;
   } catch (error) {
     console.error(error);
@@ -153,6 +172,61 @@ export async function getGuestShoppingCart({ shoppingId }) {
     })
     if (!shoppingCart) {
       throw new Error("Couln't get guest's shopping cart!");
+    } else {
+      console.log(shoppingCart);
+      return shoppingCart;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function addProductToShoppingCart({ shoppingId, productId, quantity }) {
+  try {
+    console.log("running addProductToShoppingCart...");
+    const { data: shoppingCart } = await axios.post(`api/shopping_cart/${shoppingId}`, { productId, quantity }, {
+      "Content-Type": "application/json"
+    });
+    if (!shoppingCart) {
+      throw new Error("Couldn't add product to cart!");
+    } else {
+      console.log(shoppingCart);
+      return shoppingCart;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function removeProductFromShoppingCart({ shoppingId, cartProductId }) {
+  try {
+    console.log("running removeProductFromShoppingCart...", cartProductId);
+    const { data: shoppingCart } = await axios.delete(`api/shopping_cart/products/${cartProductId}`, {
+      data: { shoppingId }
+    }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if (!shoppingCart) {
+      throw new Error("Couldn't add product to cart!");
+    } else {
+      console.log(shoppingCart);
+      return shoppingCart;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateShoppingCartProductQuantity({ shoppingId, cartProductId, quantity }) {
+  try {
+    console.log("running updateCartProductQuantity...");
+    const { data: shoppingCart } = await axios.patch(`api/shopping_cart/${shoppingId}`, { cartProductId, quantity }, {
+      "Content-Type": "application/json"
+    });
+    if (!shoppingCart) {
+      throw new Error("Couldn't add product to cart!");
     } else {
       console.log(shoppingCart);
       return shoppingCart;
