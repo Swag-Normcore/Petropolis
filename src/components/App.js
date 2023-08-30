@@ -14,7 +14,12 @@ import basket from "../images/basket-fill.svg";
 // getAPIHealth is defined in our axios-services directory index.js
 // you can think of that directory as a collection of api adapters
 // where each adapter fetches specific info from our express server's /api route
-import { getAPIHealth } from "../axios-services";
+import {
+  getAPIHealth,
+  getUserShoppingCart,
+  getGuestShoppingCart,
+  createGuestShoppingCart,
+} from "../axios-services";
 import { useAtom } from "jotai";
 import {
   counterAtom,
@@ -22,6 +27,9 @@ import {
   adminAtom,
   canvasAtom,
   apiHealthAtom,
+  shoppingCartAtom,
+  cartProductsAtom,
+  userAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
 import Register from "./Register";
@@ -34,6 +42,9 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useAtom(adminAtom);
   const [canvas, setCanvas] = useAtom(canvasAtom);
   const [count, setCount] = useAtom(counterAtom);
+  const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+  const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
@@ -49,7 +60,29 @@ const App = () => {
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
     getAPIStatus();
-  }, []);
+
+    if (token) {
+      const getUserCart = async () => {
+        const cartData = await getUserShoppingCart({ shoppingId: user.shoppingId, token });
+        setShoppingCart(cartData);
+      }
+      getUserCart();
+    } else {
+      const getGuestCart = async () => {
+        const storedShoppingId = localStorage.getItem("shoppingId");
+        if (storedShoppingId) {
+          console.log(storedShoppingId);
+          const cartData = await getGuestShoppingCart({ shoppingId: storedShoppingId });
+          setShoppingCart(cartData);
+        } else {
+          const cartData = await createGuestShoppingCart();
+          localStorage.setItem("shoppingId", cartData.id);
+          setShoppingCart(cartData);
+        }
+      }
+      getGuestCart();
+    }
+  }, [token]);
 
   return (
     <BrowserRouter>

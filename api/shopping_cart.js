@@ -4,22 +4,25 @@ const { requireUser, requireAdmin } = require("./utils");
 
 // POST / (guest cart)
 apiRouter.post("/guest", async (req, res, next) => {
+    console.log("post request being made to /api/shopping_cart/guest")
     const userId = null;
-    const { productId, quantity } = req.body;
+    // const { productId, quantity } = req.body;
     try {
+        console.log("trying to create guest cart...");
         const guestCart = await ShoppingCart.createShoppingCart({ userId });
+        console.log("finished creating guest cart!")
         if (!guestCart) {
             throw { error: "Couldn't create shopping cart!" };
         } else {
-            if (productId && quantity) {
-                const shoppingId = guestCart.id;
-                const shoppingProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
-                if (!shoppingProduct) {
-                    throw { error: "Couldn't add product to cart!" };
-                } else {
-                    guestCart.products = shoppingProduct
-                }
-            }
+            // if (productId && quantity) {
+            // const shoppingId = guestCart.id;
+            // const shoppingProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
+            // if (!shoppingProduct) {
+            //     throw { error: "Couldn't add product to cart!" };
+            // } else {
+            //     guestCart.products = shoppingProduct
+            // }
+            // }
             console.log("POST / (guest cart): ", guestCart);
             res.send(guestCart);
         }

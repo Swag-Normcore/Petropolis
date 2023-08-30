@@ -18,6 +18,8 @@ export const ordersAtom = atom([]);
 
 export const shoppingCartAtom = atom([]);
 
+export const cartProductsAtom = atom([]);
+
 export const canvasAtom = atom(false);
 
 export const apiHealthAtom = atom("");

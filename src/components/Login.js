@@ -1,7 +1,7 @@
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { useAtom } from "jotai";
-import { tokenAtom, adminAtom } from "../atoms";
+import { tokenAtom, adminAtom, userAtom } from "../atoms";
 import { login } from "../axios-services";
 import { Link } from "react-router-dom";
 
@@ -10,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [token, setToken] = useAtom(tokenAtom);
   const [admin, setAdmin] = useAtom(adminAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ const Login = () => {
     console.log(result);
     setToken(result.token);
     setAdmin(result.user.isAdmin);
+    setUser(result.user);
   };
 
   return (
