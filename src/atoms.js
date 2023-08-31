@@ -4,7 +4,7 @@ export const counterAtom = atom(0);
 
 export const tokenAtom = atom(null);
 
-export const adminAtom = atom(false);
+export const adminAtom = atom(true);
 
 export const userAtom = atom({});
 
