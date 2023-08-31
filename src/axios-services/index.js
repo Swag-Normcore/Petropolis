@@ -100,6 +100,41 @@ export async function getAllCategories() {
   }
 }
 
+export async function getAllUsers() {
+  try {
+    const { data: users } = await axios.get("/api/users");
+    console.log("Get all users in axios", users);
+    return users;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUserById(userId) {
+  try {
+    const { data: user } = await axios.get(`/api/users/${userId}`);
+    console.log("Get user by id in axios", user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getAllFavorites({ userId, token }) {
+  try {
+    const { data: favorites } = await axios.get(`/api/favorites/${userId}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Get all favorites in axios", favorites);
+    return favorites;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function addToFavorites({ productId, token }) {
   try {
     const { data: favorite } = await axios.post(
@@ -121,31 +156,19 @@ export async function addToFavorites({ productId, token }) {
   }
 }
 
-export async function getAllUsers() {
+export async function removeFavorite({ favoriteId, token }) {
   try {
-    const { data: users } = await axios.get("/api/users");
-    console.log("Get all users in axios", users);
-    return users;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function getUserById(userId) {
-  try {
-    const { data: user } = await axios.get(`/api/users/${userId}`);
-    console.log("Get user by id in axios", user);
-    return user;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-export async function getAllFavorites(userId) {
-  try {
-    const { data: favorites } = await axios.get(`/api/favorites/${userId}`);
-    console.log("Get all favorites in axios", favorites);
-    return favorites;
+    const { data: favorite } = await axios.delete(
+      `/api/favorites/remove/${favoriteId}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("remove fave in axios", favorite);
+    return favorite;
   } catch (error) {
     console.error(error);
   }

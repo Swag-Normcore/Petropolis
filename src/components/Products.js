@@ -8,7 +8,7 @@ import {
   tokenAtom,
   shoppingCartAtom,
 } from "../atoms";
-import { addToFavorites } from "../axios-services";
+import { addToFavorites, addProductToShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
@@ -28,7 +28,7 @@ const ProductsPage = () => {
 
   useEffect(() => {
     if (favorites) {
-      const favoritesIdArray = favorites.map((favorite) => favorite.id);
+      const favoritesIdArray = favorites.map((favorite) => favorite.productId);
       setFavoritesIds(favoritesIdArray);
     }
   }, []);
@@ -55,10 +55,9 @@ const ProductsPage = () => {
     setSearchFilter(filtered);
   };
 
-  const handleFavorite = (e) => {
-    const productId = e.target.value;
-    // setProductId(e.target.value);
-    addToFavorites(productId, token);
+  const handleFavorite = (productId) => {
+    console.log("Handle favorites productId", productId);
+    addToFavorites({ productId, token });
   };
 
   const handleCart = async (e) => {
@@ -128,15 +127,12 @@ const ProductsPage = () => {
                   <div className="card-body">
                     <div className="title-block">
                       <h5 className="card-title">{product.title}</h5>
-                      <button
-                        className="favorite-button"
-                        value={product.id}
-                        onClick={handleFavorite}
-                      >
-                        {token ? (
-                          favoritesIds.includes(product.id) ? (
+                      {token ? (
+                        <button className="favorite-button" value={product.id}>
+                          {favoritesIds.includes(product.id) ? (
                             <img
                               src={fullHeart}
+                              value={product.id}
                               width="20"
                               height="20"
                               className="d-inline-block align-top"
@@ -144,13 +140,15 @@ const ProductsPage = () => {
                           ) : (
                             <img
                               src={emptyHeart}
+                              value={product.id}
                               width="20"
                               height="20"
                               className="d-inline-block align-top"
+                              onClick={() => handleFavorite(product.id)}
                             />
-                          )
-                        ) : null}
-                      </button>
+                          )}
+                        </button>
+                      ) : null}
                     </div>
                     <button
                       className="cart-button"

@@ -42,6 +42,7 @@ import ProductsPage from "./Products";
 import Register from "./Register";
 import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
+import Favorites from "./Favorites";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -83,8 +84,8 @@ const App = () => {
     };
     getCategories();
 
-    const getFavorites = async () => {
-      const result = await getAllFavorites(user.id);
+    const getFavorites = async (userId) => {
+      const result = await getAllFavorites(userId);
       if (result) {
         setFavorites(result);
       }
@@ -101,9 +102,9 @@ const App = () => {
         });
         setUser(userData);
         setShoppingCart(cartData);
+        getFavorites({ userId: userData.id, token: storedToken });
       };
       getUserCart();
-      getFavorites();
     } else {
       const getGuestCart = async () => {
         const storedShoppingId = localStorage.getItem("shoppingId");
@@ -229,7 +230,7 @@ const App = () => {
             <Register />
           </Route>
           <Route path="/favorites">
-            <h1>Favorites page</h1>
+            <Favorites />
           </Route>
           <Route path="/order-history">
             <h1>Orders page</h1>

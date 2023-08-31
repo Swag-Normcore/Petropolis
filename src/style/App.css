@@ -171,3 +171,18 @@ h3{
   height: 3rem;
   padding: 0px;
 }
+
+.favorite-title{
+  font-size: 1.2rem;
+}
+
+.favorite-footer{
+  display: flex;
+}
+
+#favorites-container{
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  height: 100%;
+}
