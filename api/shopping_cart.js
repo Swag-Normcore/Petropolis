@@ -4,22 +4,25 @@ const { requireUser, requireAdmin } = require("./utils");
 
 // POST / (guest cart)
 apiRouter.post("/guest", async (req, res, next) => {
+    console.log("post request being made to /api/shopping_cart/guest")
     const userId = null;
-    const { productId, quantity } = req.body;
+    // const { productId, quantity } = req.body;
     try {
+        console.log("trying to create guest cart...");
         const guestCart = await ShoppingCart.createShoppingCart({ userId });
+        console.log("finished creating guest cart!")
         if (!guestCart) {
             throw { error: "Couldn't create shopping cart!" };
         } else {
-            if (productId && quantity) {
-                const shoppingId = guestCart.id;
-                const shoppingProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
-                if (!shoppingProduct) {
-                    throw { error: "Couldn't add product to cart!" };
-                } else {
-                    guestCart.products = shoppingProduct
-                }
-            }
+            // if (productId && quantity) {
+            // const shoppingId = guestCart.id;
+            // const shoppingProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
+            // if (!shoppingProduct) {
+            //     throw { error: "Couldn't add product to cart!" };
+            // } else {
+            //     guestCart.products = shoppingProduct
+            // }
+            // }
             console.log("POST / (guest cart): ", guestCart);
             res.send(guestCart);
         }
@@ -60,19 +63,36 @@ apiRouter.post("/:shoppingId", async (req, res, next) => {
             throw { error: "Couldn't find cart!" };
         } else {
             const cartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
-            cartProducts.forEach((product) => {
-                if (product.productId === productId) {
-                    throw { error: "Product already exists in shopping cart!" };
+            let cartProductId = null;
+            let cartProductQuantity = null;
+            let indexOfCartProduct = null;
+            cartProducts.forEach((product, index) => {
+                if (product.productId == productId) {
+                    cartProductId = product.id;
+                    cartProductQuantity = product.quantity + quantity;
+                    indexOfCartProduct = index;
                 }
             });
-            const newCartProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
-            if (!newCartProduct) {
-                throw { error: "Couldn't add product to cart!" };
+            if (cartProductId) {
+                const updatedCartProduct = await CartProducts.updateCartProductsQuantity({ cartProductId, quantity: cartProductQuantity })
+                if (!updatedCartProduct) {
+                    throw { error: "Couldn't update cart product quantity!" };
+                } else {
+                    cartProducts.splice(indexOfCartProduct, 1, updatedCartProduct);
+                    shoppingCart.products = cartProducts;
+                    console.log("POST /:shoppingId ", shoppingCart);
+                    res.send(shoppingCart);
+                }
             } else {
-                cartProducts.push(newCartProduct);
-                shoppingCart.products = cartProducts;
-                console.log("POST /:shoppingId ", shoppingCart);
-                res.send(shoppingCart);
+                const newCartProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
+                if (!newCartProduct) {
+                    throw { error: "Couldn't add product to cart!" };
+                } else {
+                    cartProducts.push(newCartProduct);
+                    shoppingCart.products = cartProducts;
+                    console.log("POST /:shoppingId ", shoppingCart);
+                    res.send(shoppingCart);
+                }
             }
         }
     } catch ({ error }) {
@@ -106,10 +126,11 @@ apiRouter.patch("/:shoppingId", async (req, res, next) => {
 
 // DELETE /:shoppingId (guest or user cart)
 
-apiRouter.delete("/:shoppingId", async (req, res, next) => {
-    const shoppingId = req.params.shoppingId;
-    const { cartProductId } = req.body;
+apiRouter.delete("/products/:cartProductId", async (req, res, next) => {
+    const cartProductId = req.params.cartProductId;
+    const { shoppingId } = req.body;
     try {
+        console.log("trying to remove product from cart", cartProductId)
         const removedProduct = await CartProducts.removeProductFromCart(cartProductId);
         if (!removedProduct) {
             throw { error: "Couldn't remove product from cart!" }
@@ -129,7 +150,11 @@ apiRouter.delete("/:shoppingId", async (req, res, next) => {
     }
 })
 
-// DELETE / (all guest carts) ***
+// DELETE /:shoppingId (guest cart)
+
+// apiRouter.delete("/:shoppingId", async (req, res, next) => { })
+
+// DELETE /guest (all guest carts) ***
 
 apiRouter.delete("/guest", requireUser, requireAdmin, async (req, res, next) => {
     try {

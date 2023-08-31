@@ -14,11 +14,10 @@ const Register = () => {
   const [passConfirm, setPassConfirm] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const isAdmin = false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await register({ name, email, password, isAdmin });
+    const result = await register({ name, email, password });
     console.log(result);
     if (result) {
       setToken(result.token);

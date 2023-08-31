@@ -26,8 +26,10 @@ async function getReviewsByUser(userId) {
   try {
     const { rows: reviews } = await client.query(
       `
-    SELECT * FROM reviews
-    WHERE "userId"=$1;
+    SELECT reviews.*, products.title
+    FROM reviews
+    JOIN products ON reviews."productId"=products.id
+    WHERE reviews."userId"=$1;
     `,
       [userId]
     );
@@ -46,16 +48,21 @@ async function getReviewsByProduct(productId) {
   try {
     const { rows: reviews } = await client.query(
       `
-    SELECT * FROM reviews
-    WHERE "productId" = $1;
+    SELECT reviews.*, users.name
+    FROM reviews
+    JOIN users ON reviews."userId"=users.id
+    WHERE reviews."productId" = $1;
     `,
       [productId]
     );
     if (!reviews) {
       throw new Error("Issue getting reviews");
     }
-    const filteredReviews = reviews.filter((review) => {
-      return !review.isAnonymous;
+    const filteredReviews = reviews.map((review) => {
+      if (review.isAnonymous) {
+        review.name = "Anonymous";
+      }
+      return review;
     })
     console.log("GET REVIEWS BY PRODUCT RESULT: ", filteredReviews);
     return filteredReviews;

@@ -16,7 +16,8 @@ apiRouter.use("/", (req, res, next) => {
 // POST /register
 apiRouter.post("/register", async (req, res, next) => {
   console.log("working 1");
-  const { name, email, password, isAdmin } = req.body;
+  const { name, email, password } = req.body;
+  const isAdmin = false;
   console.log(req.body);
   try {
     const existingUser = await User.getUserByEmail(email);
@@ -93,6 +94,7 @@ apiRouter.get("/", requireUser, requireAdmin, async (req, res, next) => {
 
 // GET /me *
 apiRouter.get("/me", requireUser, async (req, res, next) => {
+  console.log("user: ", req.user);
   const { email } = req.user;
   try {
     const currentUser = await User.getUserByEmail(email);
