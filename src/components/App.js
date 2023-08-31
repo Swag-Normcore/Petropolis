@@ -37,6 +37,7 @@ import {
   shoppingCartAtom,
   cartProductsAtom,
   userAtom,
+  singleProductAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
 import Register from "./Register";
@@ -44,6 +45,7 @@ import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
 import Favorites from "./Favorites";
 import ProductForm from "./ProductForm";
+import SingleProductView from "./SingleProductView";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -57,6 +59,7 @@ const App = () => {
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
   const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
+  const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
@@ -218,8 +221,11 @@ const App = () => {
           <Route exact path="/">
             <ProductsPage />
           </Route>
-          <Route path="/products">
+          <Route exact path="/products">
             <ProductsPage />
+          </Route>
+          <Route path="/products/:productId">
+            <SingleProductView />
           </Route>
           <Route path="/cart">
             <h1>Cart page</h1>

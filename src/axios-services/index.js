@@ -374,3 +374,19 @@ export async function updateShoppingCartProductQuantity({
     console.error(error);
   }
 }
+
+export async function getSingleProduct({ productId }) {
+  try {
+    const { data: product } = await axios.get(`/api/products/${productId}`, {
+      "Content-Type": "application/json"
+    });
+    if (!product) {
+      throw new Error("Couldn't get product!");
+    } else {
+      console.log(product);
+      return product;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
