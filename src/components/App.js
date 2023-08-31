@@ -16,6 +16,9 @@ import basket from "../images/basket-fill.svg";
 // where each adapter fetches specific info from our express server's /api route
 import {
   getAPIHealth,
+  getAllProducts,
+  getAllCategories,
+  getAllFavorites,
   getUserShoppingCart,
   getGuestShoppingCart,
   createGuestShoppingCart,
@@ -28,6 +31,9 @@ import {
   adminAtom,
   canvasAtom,
   apiHealthAtom,
+  productsAtom,
+  categoriesAtom,
+  favoritesAtom,
   shoppingCartAtom,
   cartProductsAtom,
   userAtom,
@@ -36,6 +42,7 @@ import ProductsPage from "./Products";
 import Register from "./Register";
 import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
+import Favorites from "./Favorites";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -43,6 +50,9 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useAtom(adminAtom);
   const [canvas, setCanvas] = useAtom(canvasAtom);
   const [count, setCount] = useAtom(counterAtom);
+  const [categories, setCategories] = useAtom(categoriesAtom);
+  const [products, setProducts] = useAtom(productsAtom);
+  const [favorites, setFavorites] = useAtom(favoritesAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
   const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
@@ -61,22 +71,48 @@ const App = () => {
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
     // getAPIStatus();
+
+    const getProducts = async () => {
+      const result = await getAllProducts();
+      setProducts(result);
+    };
+    getProducts();
+
+    const getCategories = async () => {
+      const result = await getAllCategories();
+      setCategories(result);
+    };
+    getCategories();
+
+    const getFavorites = async (userId) => {
+      const result = await getAllFavorites(userId);
+      if (result) {
+        setFavorites(result);
+      }
+    };
+
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
       const getUserCart = async () => {
-        const userData = await getUser({ token: storedToken })
-        const cartData = await getUserShoppingCart({ shoppingId: userData.shoppingId, token: storedToken });
+        const userData = await getUser({ token: storedToken });
+        const cartData = await getUserShoppingCart({
+          shoppingId: userData.shoppingId,
+          token: storedToken,
+        });
         setUser(userData);
         setShoppingCart(cartData);
-      }
+        getFavorites({ userId: userData.id, token: storedToken });
+      };
       getUserCart();
     } else {
       const getGuestCart = async () => {
         const storedShoppingId = localStorage.getItem("shoppingId");
         if (storedShoppingId) {
           console.log(storedShoppingId);
-          const cartData = await getGuestShoppingCart({ shoppingId: storedShoppingId });
+          const cartData = await getGuestShoppingCart({
+            shoppingId: storedShoppingId,
+          });
           if (cartData) {
             setShoppingCart(cartData);
           } else {
@@ -89,7 +125,7 @@ const App = () => {
           localStorage.setItem("shoppingId", cartData.id);
           setShoppingCart(cartData);
         }
-      }
+      };
       getGuestCart();
     }
   }, [token]);
@@ -142,12 +178,16 @@ const App = () => {
                     <LinkContainer to="/account">
                       <Nav.Link>Account</Nav.Link>
                     </LinkContainer>
-                    <Nav.Link onClick={() => {
-                      localStorage.removeItem("token");
-                      setToken("");
-                      setUser({});
-                      setIsAdmin(false);
-                    }}>Logout</Nav.Link>
+                    <Nav.Link
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        setToken("");
+                        setUser({});
+                        setIsAdmin(false);
+                      }}
+                    >
+                      Logout
+                    </Nav.Link>
                     {isAdmin ? (
                       <>
                         <LinkContainer to="/dashboard">
@@ -190,7 +230,7 @@ const App = () => {
             <Register />
           </Route>
           <Route path="/favorites">
-            <h1>Favorites page</h1>
+            <Favorites />
           </Route>
           <Route path="/order-history">
             <h1>Orders page</h1>

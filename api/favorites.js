@@ -3,15 +3,16 @@ const favoritesRouter = express.Router();
 const { Favorites } = require("../db");
 const { requireUser } = require("./utils");
 
-favoritesRouter.get("/", requireUser, async (req, res) => {
+favoritesRouter.get("/:userId", requireUser, async (req, res) => {
+  const userId = req.params.userId;
   try {
-    const favorites = await Favorites.getAllFavorites(req.user.id);
+    console.log("Log inside favorites Router", userId);
+    const favorites = await Favorites.getAllFavorites(userId);
+    console.log("favorites in API", favorites);
     if (!favorites) {
       throw { error: "Unable to get favorites" };
     }
-    res.send({
-      favorites,
-    });
+    res.send(favorites);
   } catch ({ error }) {
     next({ error });
   }
@@ -31,24 +32,27 @@ favoritesRouter.post("/", requireUser, async (req, res, next) => {
   }
 });
 
-favoritesRouter.delete("/:favoriteId", requireUser, async (req, res, next) => {
-  const favoriteItem = await Favorites.getFavoriteById(favoriteId);
-  const { favoriteId } = req.params.favoriteId;
-  try {
-    if (favoriteItem.userId !== req.user.id) {
-      throw { error: "Unable to get favorite" };
-    } else {
-      const deleteFavorites = await Favorites.deleteFavorite({
-        id: favoriteItem,
-      });
-      if (!deleteFavorites) {
-        throw { error: "Unable to delete favorites" };
+favoritesRouter.delete(
+  "/remove/:favoriteId",
+  requireUser,
+  async (req, res, next) => {
+    const favoriteId = req.params.favoriteId;
+    console.log("favoriteId in api", favoriteId);
+    const favoriteItem = await Favorites.getFavorite(favoriteId);
+    try {
+      if (favoriteItem.userId !== req.user.id) {
+        throw { error: "Unable to get favorite" };
+      } else {
+        const deleteFavorites = await Favorites.deleteFavorite(favoriteId);
+        if (!deleteFavorites) {
+          throw { error: "Unable to delete favorites" };
+        }
+        res.send(deleteFavorites);
       }
-      res.send(deleteFavorites);
+    } catch ({ error }) {
+      next({ error });
     }
-  } catch ({ error }) {
-    next({ error });
   }
-});
+);
 
 module.exports = favoritesRouter;

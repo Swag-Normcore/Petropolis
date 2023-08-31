@@ -2,34 +2,46 @@ import { register } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { useAtom } from "jotai";
-import { tokenAtom, adminAtom } from "../atoms";
+import { tokenAtom, adminAtom, userAtom } from "../atoms";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [token, setToken] = useAtom(tokenAtom);
   const [admin, setAdmin] = useAtom(adminAtom);
+  const [user, setUser] = useAtom(userAtom);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [passConfirm, setPassConfirm] = useState("");
   const [email, setEmail] = useState("");
-  const isAdmin = false;
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(name, email, password);
-    const result = await register({ name, email, password, isAdmin });
+    const result = await register({ name, email, password });
     console.log(result);
     if (result) {
-      localStorage.setItem("token", result.token)
       setToken(result.token);
+      localStorage.setItem("token", result.token);
       setAdmin(result.user.isAdmin);
+      setMessage(result.message);
+      setUser(result.user);
+      setName("");
+      setEmail("");
+      setPassConfirm("");
+      setPassword("");
     }
   };
 
   return (
     <div className="login-register-container">
+      <p className="login-redirect">
+        Already a user? Login <Link to="/login">here</Link>
+      </p>
       <Form id="register-form" onSubmit={handleSubmit}>
-        <div className="name">
-          <label htmlFor="name-input">Name:</label>
+        <div className="name mb-3">
+          <label htmlFor="name-input" className="form-label">
+            Name:
+          </label>
           <input
             type="text"
             className="form-control"
@@ -39,7 +51,7 @@ const Register = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 email">
           <label htmlFor="email-input" className="form-label">
             Email address:
           </label>
@@ -80,8 +92,9 @@ const Register = () => {
           onChange={(e) => setPassConfirm(e.target.value)}
         />
         <button type="submit">Register</button>
-        {password !== passConfirm ? <p>Passwords do not match</p> : null}
       </Form>
+      {password !== passConfirm ? <p>Passwords do not match</p> : null}
+      {message ? <h3>{message}</h3> : null}
     </div>
   );
 };

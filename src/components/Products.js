@@ -1,12 +1,14 @@
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { categoriesAtom, productsAtom, userAtom, shoppingCartAtom } from "../atoms";
 import {
-  getAllProducts,
-  getAllCategories,
-  addToFavorites,
-  addProductToShoppingCart,
-} from "../axios-services";
+  categoriesAtom,
+  productsAtom,
+  userAtom,
+  favoritesAtom,
+  tokenAtom,
+  shoppingCartAtom,
+} from "../atoms";
+import { addToFavorites, addProductToShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
@@ -14,31 +16,32 @@ import fullHeart from "../images/heart-fill.svg";
 const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
+  const [favorites, setFavorites] = useAtom(favoritesAtom);
+  const [user, setUser] = useAtom(userAtom);
+  const [token, setToken] = useAtom(tokenAtom);
   const [checkedId, setCheckedId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFilter, setSearchFilter] = useState([]);
-  const [productId, setProductId] = useState(null);
-  const [user, setUser] = useAtom(userAtom);
+  const [favoritesIds, setFavoritesIds] = useState([]);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
 
-  useEffect(async () => {
-    const getProducts = async () => {
-      const result = await getAllProducts();
-      setProducts(result);
-    };
-    const getCategories = async () => {
-      const result = await getAllCategories();
-      setCategories(result);
-    };
-    getProducts();
-    getCategories();
+  useEffect(() => {
+    if (favorites) {
+      const favoritesIdArray = favorites.map((favorite) => favorite.productId);
+      setFavoritesIds(favoritesIdArray);
+    }
   }, []);
 
   const handleCheckboxChange = (id) => {
-    setCheckedId(id);
-    const filtered = products.filter((product) => product.categoryId === id);
-    setFilteredProducts(filtered);
+    if (id === "all") {
+      setCheckedId(null);
+      setFilteredProducts(products);
+    } else {
+      setCheckedId(id);
+      const filtered = products.filter((product) => product.categoryId === id);
+      setFilteredProducts(filtered);
+    }
   };
 
   const searchProducts = () => {
@@ -52,35 +55,39 @@ const ProductsPage = () => {
     setSearchFilter(filtered);
   };
 
-  const handleFavorite = (e) => {
-    const userId = user.id;
-    // setProductId(e.target.value);
-    addToFavorites(userId, e.target.value);
+  const handleFavorite = (productId) => {
+    console.log("Handle favorites productId", productId);
+    addToFavorites({ productId, token });
   };
 
   const handleCart = async (e) => {
-    // setProductId(e.target.value);
     const result = await addProductToShoppingCart({
       shoppingId: shoppingCart.id,
       productId: e.target.value,
       quantity: 1,
-    })
+    });
     setShoppingCart(result);
   };
 
   const productsToDisplay = searchTerm.length
     ? searchFilter
     : filteredProducts
-      ? filteredProducts
-      : products;
+    ? filteredProducts
+    : products;
 
   return (
     <div id="products-page">
       <div id="category-nav" bg="info">
-        {
-          categories ?
-            <Form id="category-form">
-              {categories.map((category) => (
+        <Form id="category-form">
+          <Form.Check
+            className="mb-3"
+            id="all"
+            label="All Categories"
+            checked={checkedId === null}
+            onChange={() => handleCheckboxChange("all")}
+          />
+          {categories
+            ? categories.map((category) => (
                 <div key={category.id} className="mb-3">
                   <Form.Check
                     id={`${category.id}`}
@@ -89,9 +96,9 @@ const ProductsPage = () => {
                     onChange={() => handleCheckboxChange(category.id)}
                   />
                 </div>
-              ))}
-            </Form> : null
-        }
+              ))
+            : null}
+        </Form>
       </div>
       <div id="search-container">
         <div className="search">
@@ -107,9 +114,8 @@ const ProductsPage = () => {
           <button id="search-button">SEARCH</button>
         </div>
         <div id="products-container">
-          {productsToDisplay ?
-            <>
-              {productsToDisplay.map((product) => (
+          {productsToDisplay
+            ? productsToDisplay.map((product) => (
                 <div className="card" key={product.id}>
                   <a href={`/api/products/${product.id}`}>
                     <img
@@ -121,18 +127,28 @@ const ProductsPage = () => {
                   <div className="card-body">
                     <div className="title-block">
                       <h5 className="card-title">{product.title}</h5>
-                      <button
-                        className="favorite-button"
-                        value={product.id}
-                        onClick={handleFavorite}
-                      >
-                        <img
-                          src={emptyHeart}
-                          width="20"
-                          height="20"
-                          className="d-inline-block align-top"
-                        />
-                      </button>
+                      {token ? (
+                        <button className="favorite-button" value={product.id}>
+                          {favoritesIds.includes(product.id) ? (
+                            <img
+                              src={fullHeart}
+                              value={product.id}
+                              width="20"
+                              height="20"
+                              className="d-inline-block align-top"
+                            />
+                          ) : (
+                            <img
+                              src={emptyHeart}
+                              value={product.id}
+                              width="20"
+                              height="20"
+                              className="d-inline-block align-top"
+                              onClick={() => handleFavorite(product.id)}
+                            />
+                          )}
+                        </button>
+                      ) : null}
                     </div>
                     <button
                       className="cart-button"
@@ -141,21 +157,20 @@ const ProductsPage = () => {
                     >
                       Add to Cart
                     </button>
-                  </div>
-                  <div className="card-footer">
-                    <p>${product.price / 100}</p>{" "}
-                    {product.stock > 20 ? (
-                      <p>In stock</p>
-                    ) : product.stock > 0 ? (
-                      <p>Low Stock</p>
-                    ) : (
-                      <p>Out of stock</p>
-                    )}
+                    <div className="card-footer">
+                      <p>${product.price / 100}</p>{" "}
+                      {product.stock > 20 ? (
+                        <p>In stock</p>
+                      ) : product.stock > 0 ? (
+                        <p>Low Stock</p>
+                      ) : (
+                        <p>Out of stock</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              ))}
-            </> : null
-          }
+              ))
+            : null}
         </div>
       </div>
     </div>

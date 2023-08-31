@@ -11,6 +11,7 @@ const Login = () => {
   const [token, setToken] = useAtom(tokenAtom);
   const [admin, setAdmin] = useAtom(adminAtom);
   const [user, setUser] = useAtom(userAtom);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,16 +20,19 @@ const Login = () => {
     console.log(result);
     localStorage.setItem("token", result.token);
     setToken(result.token);
-    setAdmin(result.user.isAdmin);
     setUser(result.user);
+    setAdmin(result.user.isAdmin);
+    setMessage(result.message);
+    setEmail("");
+    setPassword("");
   };
 
   return (
     <div className="login-register-container">
+      <p className="login-redirect">
+        New User? Register <Link to="/register">here</Link>
+      </p>
       <Form id="register-form" onSubmit={handleSubmit}>
-        <p>
-          New User? Register <Link to="/register">here</Link>
-        </p>
         <div className="mb-3">
           <label htmlFor="email-input" className="form-label">
             Email address:
@@ -56,6 +60,7 @@ const Login = () => {
         />
         <button type="submit">Login</button>
       </Form>
+      {message ? <h3>{message}</h3> : null}
     </div>
   );
 };

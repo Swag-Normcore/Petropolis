@@ -7,7 +7,6 @@ import axios from "axios";
 // for example, if we need to display a list of users
 // we'd probably want to define a getUsers service like this:
 
-
 /*
   export async function getUsers() {
     try {
@@ -19,11 +18,11 @@ import axios from "axios";
   }
 */
 
-export async function register({ name, email, password, isAdmin }) {
+export async function register({ name, email, password }) {
   try {
     const { data: user } = await axios.post(
       "/api/users/register",
-      { name, email, password, isAdmin },
+      { name, email, password },
       {
         headers: {
           "Content-Type": "application/json",
@@ -59,11 +58,10 @@ export async function getUser({ token }) {
   try {
     const { data: user } = await axios.get("/api/users/me", {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }
-    );
+    });
     console.log(user);
     return user;
   } catch (error) {
@@ -102,19 +100,6 @@ export async function getAllCategories() {
   }
 }
 
-export async function addToFavorites({ userId, productId }) {
-  try {
-    const { data: favorite } = await axios.post("/api/favorites", {
-      userId,
-      productId,
-    });
-    console.log(favorite);
-    return favorite;
-  } catch(error) {
-    console.error(error)
-  }
-}    
-
 export async function getAllUsers() {
   try {
     const { data: users } = await axios.get("/api/users");
@@ -135,11 +120,55 @@ export async function getUserById(userId) {
   }
 }
 
-export async function getAllFavorites(userId) {
+export async function getAllFavorites({ userId, token }) {
   try {
-    const { data: favorites } = await axios.get(`/api/favorites/${userId}`);
+    const { data: favorites } = await axios.get(`/api/favorites/${userId}`, {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Get all favorites in axios", favorites);
     return favorites;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function addToFavorites({ productId, token }) {
+  try {
+    const { data: favorite } = await axios.post(
+      "/api/favorites",
+      {
+        productId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(favorite);
+    return favorite;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function removeFavorite({ favoriteId, token }) {
+  try {
+    const { data: favorite } = await axios.delete(
+      `/api/favorites/remove/${favoriteId}`,
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("remove fave in axios", favorite);
+    return favorite;
   } catch (error) {
     console.error(error);
   }
@@ -158,7 +187,7 @@ export async function isAdmin(userId) {
 export async function createGuestShoppingCart() {
   try {
     console.log("running createGuestShoppingCart...");
-    const { data: shoppingCart } = await axios.post('/api/shopping_cart/guest')
+    const { data: shoppingCart } = await axios.post("/api/shopping_cart/guest");
     if (!shoppingCart) {
       throw new Error("Couldn't create new guest cart!");
     } else {
@@ -172,13 +201,17 @@ export async function createGuestShoppingCart() {
 
 export async function getUserShoppingCart({ shoppingId, token }) {
   try {
-    console.log("running getUserShoppingCart...")
-    const { data: shoppingCart } = await axios.get(`/api/shopping_cart/${shoppingId}`, {}, {
-      headers: {
-        "Content-type": "application/json",
-        "Authorization": `Bearer ${token}`
+    console.log("running getUserShoppingCart...");
+    const { data: shoppingCart } = await axios.get(
+      `/api/shopping_cart/${shoppingId}`,
+      {},
+      {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    })
+    );
     if (!shoppingCart) {
       throw new Error("Couldn't get user's shopping cart!");
     } else {
@@ -192,12 +225,16 @@ export async function getUserShoppingCart({ shoppingId, token }) {
 
 export async function getGuestShoppingCart({ shoppingId }) {
   try {
-    console.log("running getGuestShoppingCart...")
-    const { data: shoppingCart } = await axios.get(`/api/shopping_cart/${shoppingId}`, {}, {
-      headers: {
-        "Content-type": "application/json"
+    console.log("running getGuestShoppingCart...");
+    const { data: shoppingCart } = await axios.get(
+      `/api/shopping_cart/${shoppingId}`,
+      {},
+      {
+        headers: {
+          "Content-type": "application/json",
+        },
       }
-    })
+    );
     if (!shoppingCart) {
       throw new Error("Couln't get guest's shopping cart!");
     } else {
@@ -209,12 +246,20 @@ export async function getGuestShoppingCart({ shoppingId }) {
   }
 }
 
-export async function addProductToShoppingCart({ shoppingId, productId, quantity }) {
+export async function addProductToShoppingCart({
+  shoppingId,
+  productId,
+  quantity,
+}) {
   try {
     console.log("running addProductToShoppingCart...");
-    const { data: shoppingCart } = await axios.post(`api/shopping_cart/${shoppingId}`, { productId, quantity }, {
-      "Content-Type": "application/json"
-    });
+    const { data: shoppingCart } = await axios.post(
+      `api/shopping_cart/${shoppingId}`,
+      { productId, quantity },
+      {
+        "Content-Type": "application/json",
+      }
+    );
     if (!shoppingCart) {
       throw new Error("Couldn't add product to cart!");
     } else {
@@ -226,16 +271,23 @@ export async function addProductToShoppingCart({ shoppingId, productId, quantity
   }
 }
 
-export async function removeProductFromShoppingCart({ shoppingId, cartProductId }) {
+export async function removeProductFromShoppingCart({
+  shoppingId,
+  cartProductId,
+}) {
   try {
     console.log("running removeProductFromShoppingCart...", cartProductId);
-    const { data: shoppingCart } = await axios.delete(`api/shopping_cart/products/${cartProductId}`, {
-      data: { shoppingId }
-    }, {
-      headers: {
-        "Content-Type": "application/json"
+    const { data: shoppingCart } = await axios.delete(
+      `api/shopping_cart/products/${cartProductId}`,
+      {
+        data: { shoppingId },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     if (!shoppingCart) {
       throw new Error("Couldn't add product to cart!");
     } else {
@@ -247,12 +299,20 @@ export async function removeProductFromShoppingCart({ shoppingId, cartProductId 
   }
 }
 
-export async function updateShoppingCartProductQuantity({ shoppingId, cartProductId, quantity }) {
+export async function updateShoppingCartProductQuantity({
+  shoppingId,
+  cartProductId,
+  quantity,
+}) {
   try {
     console.log("running updateCartProductQuantity...");
-    const { data: shoppingCart } = await axios.patch(`api/shopping_cart/${shoppingId}`, { cartProductId, quantity }, {
-      "Content-Type": "application/json"
-    });
+    const { data: shoppingCart } = await axios.patch(
+      `api/shopping_cart/${shoppingId}`,
+      { cartProductId, quantity },
+      {
+        "Content-Type": "application/json",
+      }
+    );
     if (!shoppingCart) {
       throw new Error("Couldn't add product to cart!");
     } else {

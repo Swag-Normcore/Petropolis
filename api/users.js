@@ -16,7 +16,8 @@ apiRouter.use("/", (req, res, next) => {
 // POST /register
 apiRouter.post("/register", async (req, res, next) => {
   console.log("working 1");
-  const { name, email, password, isAdmin } = req.body;
+  const { name, email, password } = req.body;
+  const isAdmin = false;
   console.log(req.body);
   try {
     const existingUser = await User.getUserByEmail(email);
