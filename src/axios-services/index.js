@@ -90,6 +90,53 @@ export async function getAllProducts() {
   }
 }
 
+export async function createProduct({
+  title,
+  description,
+  price,
+  stock,
+  imageUrl,
+  categoryId,
+  animalType,
+  token,
+}) {
+  try {
+    const { data: product } = await axios.post(
+      "/api/products",
+      { title, description, price, stock, imageUrl, categoryId, animalType },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("product inside axios", product);
+    return product;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function addImagesToProduct({ productId, imageUrls, token }) {
+  try {
+    const { data: images } = await axios.post(
+      `/api/images/product/${productId}`,
+      { imageUrls },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("images inside axios", images);
+    return images;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function getAllCategories() {
   try {
     const { data: categories } = await axios.get("/api/categories");

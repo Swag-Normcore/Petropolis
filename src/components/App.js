@@ -43,6 +43,7 @@ import Register from "./Register";
 import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
 import Favorites from "./Favorites";
+import ProductForm from "./ProductForm";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -240,6 +241,9 @@ const App = () => {
           </Route>
           <Route path="/dashboard">
             <h1>Dashboard page</h1>
+          </Route>
+          <Route path="/dashboard/product_form">
+            <ProductForm />
           </Route>
         </main>
       </div>

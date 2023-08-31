@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import {
   categoriesAtom,
   productsAtom,
-  userAtom,
   favoritesAtom,
   tokenAtom,
   shoppingCartAtom,
 } from "../atoms";
 import { addToFavorites, addProductToShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
 
@@ -17,7 +18,6 @@ const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
   const [favorites, setFavorites] = useAtom(favoritesAtom);
-  const [user, setUser] = useAtom(userAtom);
   const [token, setToken] = useAtom(tokenAtom);
   const [checkedId, setCheckedId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState(null);
@@ -56,7 +56,6 @@ const ProductsPage = () => {
   };
 
   const handleFavorite = (productId) => {
-    console.log("Handle favorites productId", productId);
     addToFavorites({ productId, token });
   };
 
@@ -111,24 +110,28 @@ const ProductsPage = () => {
               searchProducts();
             }}
           />
-          <button id="search-button">SEARCH</button>
+          <Button id="search-button">SEARCH</Button>
         </div>
         <div id="products-container">
           {productsToDisplay
             ? productsToDisplay.map((product) => (
-                <div className="card" key={product.id}>
+                <Card
+                  className="card"
+                  style={{ width: "18rem", height: "19rem" }}
+                  key={product.id}
+                >
                   <a href={`/api/products/${product.id}`}>
-                    <img
+                    <Card.Img
                       className="card-img-top"
                       src={product.image}
                       alt={product.title}
                     />
                   </a>
-                  <div className="card-body">
+                  <Card.Body>
                     <div className="title-block">
-                      <h5 className="card-title">{product.title}</h5>
+                      <Card.Title>{product.title}</Card.Title>
                       {token ? (
-                        <button className="favorite-button" value={product.id}>
+                        <Button className="favorite-button" value={product.id}>
                           {favoritesIds.includes(product.id) ? (
                             <img
                               src={fullHeart}
@@ -147,17 +150,17 @@ const ProductsPage = () => {
                               onClick={() => handleFavorite(product.id)}
                             />
                           )}
-                        </button>
+                        </Button>
                       ) : null}
                     </div>
-                    <button
+                    <Button
                       className="cart-button"
                       value={product.id}
                       onClick={handleCart}
                     >
                       Add to Cart
-                    </button>
-                    <div className="card-footer">
+                    </Button>
+                    <Card.Footer>
                       <p>${product.price / 100}</p>{" "}
                       {product.stock > 20 ? (
                         <p>In stock</p>
@@ -166,9 +169,9 @@ const ProductsPage = () => {
                       ) : (
                         <p>Out of stock</p>
                       )}
-                    </div>
-                  </div>
-                </div>
+                    </Card.Footer>
+                  </Card.Body>
+                </Card>
               ))
             : null}
         </div>
