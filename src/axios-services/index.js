@@ -390,3 +390,21 @@ export async function getSingleProduct({ productId }) {
     console.error(error);
   }
 }
+
+export async function getProductImages({ productId }) {
+  try {
+    const { data: images } = await axios.get(`/api/images/product/${productId}`, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if (!images) {
+      throw new Error("Couldn't get product!");
+    } else {
+      console.log(images);
+      return images;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

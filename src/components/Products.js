@@ -6,8 +6,8 @@ import {
   favoritesAtom,
   tokenAtom,
   shoppingCartAtom,
-  singleProductIdAtom,
-  singleProductAtom,
+  // singleProductIdAtom,
+  // singleProductAtom,
 } from "../atoms";
 import { addToFavorites, addProductToShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
@@ -28,8 +28,8 @@ const ProductsPage = () => {
   const [searchFilter, setSearchFilter] = useState([]);
   const [favoritesIds, setFavoritesIds] = useState([]);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
-  const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
-  const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
+  // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
+  // const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
   useEffect(() => {
     if (favorites) {
@@ -130,13 +130,13 @@ const ProductsPage = () => {
                     className="card-img-top"
                     src={product.image}
                     alt={product.title}
-                    onClick={(e) => {
-                      console.log("running onclick")
-                      setSingleProductId(product.id);
-                      console.log(product);
-                      localStorage.setItem("singleProductId", product.id);
-                      setSingleProduct(product);
-                    }}
+                  // onClick={(e) => {
+                  //   console.log("running onclick")
+                  //   setSingleProductId(product.id);
+                  //   console.log(product);
+                  //   localStorage.setItem("singleProductId", product.id);
+                  //   setSingleProduct(product);
+                  // }}
                   />
                 </Link>
                 <Card.Body>
