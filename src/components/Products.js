@@ -1,11 +1,13 @@
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { categoriesAtom, productsAtom, userAtom } from "../atoms";
 import {
-  getAllProducts,
-  getAllCategories,
-  addToFavorites,
-} from "../axios-services";
+  categoriesAtom,
+  productsAtom,
+  userAtom,
+  favoritesAtom,
+  tokenAtom,
+} from "../atoms";
+import { addToFavorites } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
@@ -13,30 +15,32 @@ import fullHeart from "../images/heart-fill.svg";
 const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
+  const [favorites, setFavorites] = useAtom(favoritesAtom);
+  const [user, setUser] = useAtom(userAtom);
+  const [token, setToken] = useAtom(tokenAtom);
   const [checkedId, setCheckedId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFilter, setSearchFilter] = useState([]);
   const [productId, setProductId] = useState(null);
-  const [user, setUser] = useAtom(userAtom);
+  const [favoritesIds, setFavoritesIds] = useState([]);
 
   useEffect(async () => {
-    const getProducts = async () => {
-      const result = await getAllProducts();
-      setProducts(result);
-    };
-    const getCategories = async () => {
-      const result = await getAllCategories();
-      setCategories(result);
-    };
-    getProducts();
-    getCategories();
+    if (favorites) {
+      const favoritesIdArray = favorites.map((favorite) => favorite.id);
+      setFavoritesIds(favoritesIdArray);
+    }
   }, []);
 
   const handleCheckboxChange = (id) => {
-    setCheckedId(id);
-    const filtered = products.filter((product) => product.categoryId === id);
-    setFilteredProducts(filtered);
+    if (id === "all") {
+      setCheckedId(null);
+      setFilteredProducts(products);
+    } else {
+      setCheckedId(id);
+      const filtered = products.filter((product) => product.categoryId === id);
+      setFilteredProducts(filtered);
+    }
   };
 
   const searchProducts = () => {
@@ -70,6 +74,13 @@ const ProductsPage = () => {
     <div id="products-page">
       <div id="category-nav" bg="info">
         <Form id="category-form">
+          <Form.Check
+            className="mb-3"
+            id="all"
+            label="All Categories"
+            checked={checkedId === null}
+            onChange={() => handleCheckboxChange("all")}
+          />
           {categories.map((category) => (
             <div key={category.id} className="mb-3">
               <Form.Check
@@ -113,12 +124,23 @@ const ProductsPage = () => {
                     value={product.id}
                     onClick={handleFavorite}
                   >
-                    <img
-                      src={emptyHeart}
-                      width="20"
-                      height="20"
-                      className="d-inline-block align-top"
-                    />
+                    {token ? (
+                      favoritesIds.includes(product.id) ? (
+                        <img
+                          src={fullHeart}
+                          width="20"
+                          height="20"
+                          className="d-inline-block align-top"
+                        />
+                      ) : (
+                        <img
+                          src={emptyHeart}
+                          width="20"
+                          height="20"
+                          className="d-inline-block align-top"
+                        />
+                      )
+                    ) : null}
                   </button>
                 </div>
                 <button

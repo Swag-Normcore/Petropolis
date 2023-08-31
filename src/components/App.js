@@ -14,7 +14,12 @@ import basket from "../images/basket-fill.svg";
 // getAPIHealth is defined in our axios-services directory index.js
 // you can think of that directory as a collection of api adapters
 // where each adapter fetches specific info from our express server's /api route
-import { getAPIHealth } from "../axios-services";
+import {
+  getAPIHealth,
+  getAllProducts,
+  getAllCategories,
+  getAllFavorites,
+} from "../axios-services";
 import { useAtom } from "jotai";
 import {
   counterAtom,
@@ -22,6 +27,9 @@ import {
   adminAtom,
   canvasAtom,
   apiHealthAtom,
+  productsAtom,
+  categoriesAtom,
+  favoritesAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
 import Register from "./Register";
@@ -33,6 +41,9 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useAtom(adminAtom);
   const [canvas, setCanvas] = useAtom(canvasAtom);
   const [count, setCount] = useAtom(counterAtom);
+  const [categories, setCategories] = useAtom(categoriesAtom);
+  const [products, setProducts] = useAtom(productsAtom);
+  const [favorites, setFavorites] = useAtom(favoritesAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
@@ -48,6 +59,30 @@ const App = () => {
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
     getAPIStatus();
+
+    const getProducts = async () => {
+      const result = await getAllProducts();
+      setProducts(result);
+    };
+    getProducts();
+    const getCategories = async () => {
+      const result = await getAllCategories();
+      setCategories(result);
+    };
+    getCategories();
+
+    const getFavorites = async () => {
+      const result = await getAllFavorites(user.id);
+      if (result) {
+        setFavorites(result);
+      }
+    };
+    getFavorites();
+
+    const localToken = localStorage.getItem("token");
+    if (localToken) {
+      setToken(localToken);
+    }
   }, []);
 
   return (

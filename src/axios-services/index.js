@@ -85,10 +85,9 @@ export async function getAllCategories() {
   }
 }
 
-export async function addToFavorites({ userId, productId }) {
+export async function addToFavorites(productId) {
   try {
     const { data: favorite } = await axios.post("/api/favorites", {
-      userId,
       productId,
     });
     console.log(favorite);
@@ -98,12 +97,32 @@ export async function addToFavorites({ userId, productId }) {
   }
 }
 
-// export async function getAllCategories() {
-//   try {
-//     const result = await axios.get("/api/categories");
-//     console.log(result);
-//     return result;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
+export async function getAllUsers() {
+  try {
+    const { data: users } = await axios.get("/api/users");
+    console.log(users);
+    return users;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUserById(userId) {
+  try {
+    const { data: user } = await axios.get(`/api/users/${userId}`);
+    console.log(user);
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getAllFavorites(userId) {
+  try {
+    const { data: favorites } = await axios.get(`/api/favorites/${userId}`);
+    console.log(favorites);
+    return favorites;
+  } catch (error) {
+    console.error(error);
+  }
+}
