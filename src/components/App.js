@@ -14,7 +14,13 @@ import basket from "../images/basket-fill.svg";
 // getAPIHealth is defined in our axios-services directory index.js
 // you can think of that directory as a collection of api adapters
 // where each adapter fetches specific info from our express server's /api route
-import { getAPIHealth } from "../axios-services";
+import {
+  getAPIHealth,
+  getUserShoppingCart,
+  getGuestShoppingCart,
+  createGuestShoppingCart,
+  getUser,
+} from "../axios-services";
 import { useAtom } from "jotai";
 import {
   counterAtom,
@@ -22,8 +28,14 @@ import {
   adminAtom,
   canvasAtom,
   apiHealthAtom,
+  shoppingCartAtom,
+  cartProductsAtom,
+  userAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
+import Register from "./Register";
+import Login from "./Login";
+import ShoppingCart from "./ShoppingCart";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -31,6 +43,9 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useAtom(adminAtom);
   const [canvas, setCanvas] = useAtom(canvasAtom);
   const [count, setCount] = useAtom(counterAtom);
+  const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+  const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
+  const [user, setUser] = useAtom(userAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
@@ -39,14 +54,45 @@ const App = () => {
     // follow this pattern inside your useEffect calls:
     // first, create an async function that will wrap your axios service adapter
     // invoke the adapter, await the response, and set the data
-    const getAPIStatus = async () => {
-      const { healthy } = await getAPIHealth();
-      setAPIHealth(healthy ? "api is up! :D" : "api is down :/");
-    };
+    // const getAPIStatus = async () => {
+    //   const { healthy } = await getAPIHealth();
+    //   setAPIHealth(healthy ? "api is up! :D" : "api is down :/");
+    // };
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
-    getAPIStatus();
-  }, []);
+    // getAPIStatus();
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      const getUserCart = async () => {
+        const userData = await getUser({ token: storedToken })
+        const cartData = await getUserShoppingCart({ shoppingId: userData.shoppingId, token: storedToken });
+        setUser(userData);
+        setShoppingCart(cartData);
+      }
+      getUserCart();
+    } else {
+      const getGuestCart = async () => {
+        const storedShoppingId = localStorage.getItem("shoppingId");
+        if (storedShoppingId) {
+          console.log(storedShoppingId);
+          const cartData = await getGuestShoppingCart({ shoppingId: storedShoppingId });
+          if (cartData) {
+            setShoppingCart(cartData);
+          } else {
+            const cartData = await createGuestShoppingCart();
+            localStorage.setItem("shoppingId", cartData.id);
+            setShoppingCart(cartData);
+          }
+        } else {
+          const cartData = await createGuestShoppingCart();
+          localStorage.setItem("shoppingId", cartData.id);
+          setShoppingCart(cartData);
+        }
+      }
+      getGuestCart();
+    }
+  }, [token]);
 
   return (
     <BrowserRouter>
@@ -54,13 +100,14 @@ const App = () => {
         <Offcanvas show={canvas} onHide={handleClose} placement="end">
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>
-              <h3>{APIHealth}</h3>
+              <h3>Shopping Cart</h3>
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <h4>Jotai Test:</h4>
+            {/* <h4>Jotai Test:</h4>
             <h4>{count}</h4>
-            <Button onClick={() => setCount(count + 1)}>Count</Button>
+            <Button onClick={() => setCount(count + 1)}>Count</Button> */}
+            <ShoppingCart />
           </Offcanvas.Body>
         </Offcanvas>
         <Navbar sticky="top" className="cyan" expand="lg">
@@ -95,6 +142,12 @@ const App = () => {
                     <LinkContainer to="/account">
                       <Nav.Link>Account</Nav.Link>
                     </LinkContainer>
+                    <Nav.Link onClick={() => {
+                      localStorage.removeItem("token");
+                      setToken("");
+                      setUser({});
+                      setIsAdmin(false);
+                    }}>Logout</Nav.Link>
                     {isAdmin ? (
                       <>
                         <LinkContainer to="/dashboard">
@@ -125,13 +178,16 @@ const App = () => {
             <ProductsPage />
           </Route>
           <Route path="/products">
-            <h1>Products page</h1>
+            <ProductsPage />
           </Route>
           <Route path="/cart">
             <h1>Cart page</h1>
           </Route>
           <Route path="/login">
-            <h1>Login page</h1>
+            <Login />
+          </Route>
+          <Route path="/register">
+            <Register />
           </Route>
           <Route path="/favorites">
             <h1>Favorites page</h1>
