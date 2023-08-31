@@ -41,7 +41,7 @@ export async function getAllCategories() {
 export async function getAllUsers() {
   try {
     const { data: users } = await axios.get("/api/users");
-    console.log(users);
+    console.log("Get all users in axios", users);
     return users;
   } catch (error) {
     console.error(error);
@@ -51,7 +51,7 @@ export async function getAllUsers() {
 export async function getUserById(userId) {
   try {
     const { data: user } = await axios.get(`/api/users/${userId}`);
-    console.log(user);
+    console.log("Get user by id in axios", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -61,8 +61,18 @@ export async function getUserById(userId) {
 export async function getAllFavorites(userId) {
   try {
     const { data: favorites } = await axios.get(`/api/favorites/${userId}`);
-    console.log(favorites);
+    console.log("Get all favorites in axios", favorites);
     return favorites;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function isAdmin(userId) {
+  try {
+    const { data: isAdmin } = await axios.get(`/api/users/${userId}`);
+    console.log("Is admin in axios", isAdmin);
+    return isAdmin;
   } catch (error) {
     console.error(error);
   }
