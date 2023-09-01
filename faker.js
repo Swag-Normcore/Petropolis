@@ -1,12 +1,13 @@
-const faker = require("faker");
+const { faker } = require('@faker-js/faker');
+const { User, Category, Products, Reviews, Orders } = require("./db");
 
-const {
-  createUser,
-  createCategory,
-  createProduct,
-  createReview,
-  createOrder,
-} = require("./db/models");
+// const {
+//   createUser,
+//   createCategory,
+//   createProduct,
+//   createReview,
+//   createOrder,
+// } = require("./db/models");
 
 const NUM_USERS = 20;
 const NUM_CATEGORIES = 20;
@@ -18,9 +19,9 @@ async function createFakeData() {
   try {
     // create users
     const users = await Promise.all(
-      [...Array(NUM_USERS)].map((_) => {
-        return createUser({
-          name: faker.name.findName(),
+      [...Array(NUM_USERS)].map(async (_) => {
+        return await User.createUser({
+          name: faker.person.firstName(),
           email: faker.internet.email(),
           password: faker.internet.password(),
           isAdmin: faker.datatype.boolean(),
@@ -30,8 +31,8 @@ async function createFakeData() {
 
     // create categories
     const categories = await Promise.all(
-      [...Array(NUM_CATEGORIES)].map((_) => {
-        return createCategory({
+      [...Array(NUM_CATEGORIES)].map(async (_) => {
+        return await Category.createCategory({
           name: faker.commerce.department(),
         });
       })
@@ -39,35 +40,40 @@ async function createFakeData() {
 
     // create products
     const products = await Promise.all(
-      [...Array(NUM_PRODUCTS)].map((_) => {
-        return createProduct({
-          name: faker.commerce.productName(),
+      [...Array(NUM_PRODUCTS)].map(async (_) => {
+        return await Products.createProduct({
+          title: faker.commerce.productName(),
+          // title: faker.animal.type(),
           description: faker.commerce.productDescription(),
-          price: faker.commerce.price(),
-          quantity: faker.datatype.number(),
-          categoryId: faker.random.arrayElement(categories).id,
+          price: faker.number.int(100000),
+          stock: faker.number.int(1000),
+          categoryId: faker.helpers.arrayElement(categories).id,
+          imageUrl: faker.image.urlLoremFlickr({ category: "animal" })
         });
       })
     );
 
     // create reviews
     const reviews = await Promise.all(
-      [...Array(NUM_REVIEWS)].map((_) => {
-        return createReview({
+      [...Array(NUM_REVIEWS)].map(async (_) => {
+        return await Reviews.createReview({
           title: faker.commerce.productName(),
-          content: faker.commerce.productDescription(),
-          stars: faker.datatype.number({ min: 1, max: 5 }),
-          userId: faker.random.arrayElement(users).id,
-          productId: faker.random.arrayElement(products).id,
+          comment: faker.commerce.productDescription(),
+          rating: faker.number.int({ min: 1, max: 5 }),
+          userId: faker.helpers.arrayElement(users).id,
+          productId: faker.helpers.arrayElement(products).id,
+          isAnonymous: faker.datatype.boolean()
         });
       })
     );
 
     // create orders
     const orders = await Promise.all(
-      [...Array(NUM_ORDERS)].map((_) => {
-        return createOrder({
-          userId: faker.random.arrayElement(users).id,
+      [...Array(NUM_ORDERS)].map(async (_) => {
+        return await Orders.createOrder({
+          userId: faker.helpers.arrayElement(users).id,
+          status: faker.helpers.arrayElement(['pending', 'completed', 'shipped']),
+          totalPrice: 0
         });
       })
     );
