@@ -147,9 +147,13 @@ export async function getAllCategories() {
   }
 }
 
-export async function getAllUsers() {
+export async function getAllUsers({ token }) {
   try {
-    const { data: users } = await axios.get("/api/users");
+    const { data: users } = await axios.get("/api/users", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Get all users in axios", users);
     return users;
   } catch (error) {
