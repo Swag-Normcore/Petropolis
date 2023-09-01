@@ -64,11 +64,13 @@ const ProductsPage = () => {
     addToFavorites({ productId, token });
   };
 
-  const handleCart = async (e) => {
+  const handleCart = async (productId) => {
+    console.log(typeof productId);
     const result = await addProductToShoppingCart({
       shoppingId: shoppingCart.id,
-      productId: e.target.value,
+      productId,
       quantity: 1,
+      token
     });
     setShoppingCart(result);
   };
@@ -168,7 +170,9 @@ const ProductsPage = () => {
                   <Button
                     className="cart-button"
                     value={product.id}
-                    onClick={handleCart}
+                    onClick={(e) => {
+                      handleCart(product.id)
+                    }}
                   >
                     Add to Cart
                   </Button>

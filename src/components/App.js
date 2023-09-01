@@ -136,9 +136,9 @@ const App = () => {
   }, [token]);
 
   let totalShoppingCart = 0;
-  shoppingCart.products ? shoppingCart.products.forEach((product) => {
+  shoppingCart ? shoppingCart.products ? shoppingCart.products.forEach((product) => {
     totalShoppingCart += product.quantity;
-  }) : null;
+  }) : null : null;
 
   return (
     <BrowserRouter>
@@ -216,9 +216,9 @@ const App = () => {
                       height="25"
                       className="d-inline-block align-top"
                     />
-                    {shoppingCart.products ? shoppingCart.products.length ?
+                    {shoppingCart ? shoppingCart.products ? shoppingCart.products.length ?
                       <Badge>{totalShoppingCart}</Badge>
-                      : null : null}
+                      : null : null : null}
                   </Button>
                 </Nav.Link>
               </Nav>

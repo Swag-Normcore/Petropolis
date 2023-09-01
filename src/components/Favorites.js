@@ -33,6 +33,7 @@ const FavoritesPage = () => {
       shoppingId: shoppingCart.id,
       productId: id,
       quantity: 1,
+      token
     });
     setShoppingCart(result);
   };

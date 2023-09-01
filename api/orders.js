@@ -1,6 +1,6 @@
 const ordersRouter = require("express").Router();
 const { Orders, User, Order_Products } = require("../db");
-const { requireUser, requireAdmin } = require("./utils");
+const { requireUser, requireCurrentUserOrAdmin, requireAdmin } = require("./utils");
 
 ordersRouter.post("/", requireUser, async (req, res, send) => {
   const { status, price } = req.body;
@@ -18,7 +18,7 @@ ordersRouter.post("/", requireUser, async (req, res, send) => {
   }
 });
 
-ordersRouter.get("/users/:userId", requireUser, async (req, res, next) => {
+ordersRouter.get("/users/:userId", requireUser, requireCurrentUserOrAdmin, async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const orders = await Orders.getAllOrdersByUser(userId);

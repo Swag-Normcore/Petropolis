@@ -1,5 +1,5 @@
 import React from "react";
-import { shoppingCartAtom } from "../atoms";
+import { shoppingCartAtom, tokenAtom } from "../atoms";
 import { useAtom } from "jotai";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
@@ -13,6 +13,7 @@ import {
 
 const ShoppingCart = () => {
     const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+    const [token, setToken] = useAtom(tokenAtom);
     let totalPrice = 0;
     shoppingCart
         ? shoppingCart.products.forEach((cartProduct) => {
@@ -24,6 +25,7 @@ const ShoppingCart = () => {
         const result = await removeProductFromShoppingCart({
             shoppingId: shoppingCart.id,
             cartProductId,
+            token
         });
         if (result) {
             setShoppingCart(result);
@@ -35,6 +37,7 @@ const ShoppingCart = () => {
             shoppingId: shoppingCart.id,
             cartProductId,
             quantity: quantity + 1,
+            token
         });
         if (result) {
             setShoppingCart(result);
@@ -46,6 +49,7 @@ const ShoppingCart = () => {
             const result = await removeProductFromShoppingCart({
                 shoppingId: shoppingCart.id,
                 cartProductId,
+                token
             });
             if (result) {
                 setShoppingCart(result);
@@ -55,6 +59,7 @@ const ShoppingCart = () => {
                 shoppingId: shoppingCart.id,
                 cartProductId,
                 quantity: quantity - 1,
+                token
             });
             if (result) {
                 setShoppingCart(result);
