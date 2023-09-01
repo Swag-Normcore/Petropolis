@@ -1,6 +1,4 @@
 const {
-  // declare your model imports here
-  // for example, User
   client,
   Category,
   User,
@@ -13,6 +11,10 @@ const {
   ShoppingCart,
 } = require("./");
 const { createNewProduct } = require("./models/products");
+
+const faker = require("faker");
+const { createFakeData } = require("./faker");
+const { create } = require("domain");
 
 async function buildTables() {
   try {
@@ -140,8 +142,11 @@ async function populateInitialData() {
     console.log(
       "Starting to test database functions ******************************************************"
     );
+    console.log("Starting to create fake data using faker...");
+    createFakeData();
+    console.log("Finished creating fake data using faker!");
 
-    console.log("Starting to create users...");
+    console.log("Starting to create users ...");
     const fakeUser1 = await User.createUser({
       email: "wizardboi@hogwarts.wiz",
       password: "lumosmaxima",
@@ -177,7 +182,7 @@ async function populateInitialData() {
     const adminUser2 = await User.isAdmin(fakeUser3.id);
     console.log("Finished updating users!");
 
-    console.log("Creating Categories...");
+    console.log("Creating categories...");
     const categoryOne = await Category.createCategory({
       name: "Beds",
       description: "Beds for your furry friend",
