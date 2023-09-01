@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAtom } from "jotai";
-import { singleProductIdAtom, singleProductAtom, productImagesAtom } from "../atoms";
+import {
+    singleProductIdAtom,
+    singleProductAtom,
+    productImagesAtom,
+    tokenAtom,
+    userAtom
+} from "../atoms";
 import { getSingleProduct, getProductImages } from "../axios-services";
 import Carousel from 'react-bootstrap/Carousel';
 import Button from 'react-bootstrap/Button';
+import Stack from 'react-bootstrap/Stack';
 import "../style/SingleProduct.css";
 
 const SingleProductView = () => {
     const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
     const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
     const [productImages, setProductImages] = useAtom(productImagesAtom);
+    const [token] = useAtom(tokenAtom);
+    const [user] = useAtom(userAtom);
     let { productId } = useParams();
     console.log(productId)
 
@@ -43,11 +52,11 @@ const SingleProductView = () => {
     return (
         <div
             id="single-product-page"
-            className="d-flex flex-column align-items-center"
+        // className="d-flex flex-column align-items-center"
         >
             {singleProduct ?
                 <>
-                    <div>
+                    <div id="carousel-container">
                         <Carousel
                             data-bs-theme="dark"
                             interval={null}
@@ -80,7 +89,35 @@ const SingleProductView = () => {
                             }
                         </Carousel>
                     </div>
-                    <h1>{singleProduct.title}</h1>
+                    <div id="single-product-info">
+                        <Stack gap={3} className="align-items-center">
+                            <h1>{singleProduct.title}</h1>
+                            <Stack direction="horizontal" gap={3}>
+                                <h2 className="p-2">${singleProduct.price / 100}</h2>
+                                <h2 className="p-2 ms-auto">{singleProduct.stock > 20 ? (
+                                    "In stock"
+                                ) : singleProduct.stock > 0 ? (
+                                    "Low Stock"
+                                ) : (
+                                    "Out of stock"
+                                )}</h2>
+                            </Stack>
+                            <p className="p-2 h3">{singleProduct.description}</p>
+                            <Stack direction="horizontal" gap={3} className="justify-content-evenly">
+                                <Button className="site-button">Add to cart</Button>
+                                {
+                                    token ? user.isAdmin ?
+                                        <>
+                                            <Button className="site-button">Add to favorites</Button>
+                                            <Button className="site-button">Edit product</Button>
+                                        </> :
+                                        <Button className="site-button">Add to favorites</Button>
+
+                                        : null
+                                }
+                            </Stack>
+                        </Stack>
+                    </div>
                 </> : null
             }
         </div>

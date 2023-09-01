@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #F9E0D9;
   width: 100vw;
@@ -85,12 +89,6 @@ h3 {
 #products-page {
   display: flex;
   height: 100vh;
-}
-
-#single-product-page {
-  display: flex;
-  height: 100vh;
-  margin-top: 10px;
 }
 
 .search {
@@ -226,4 +224,12 @@ h3 {
 #product-form-container {
   display: flex;
   justify-content: center;
+}
+
+.site-button {
+  background-color: #2D93AD;
+}
+
+.site-button:hover {
+  background-color: #69cde6;
 }
