@@ -143,241 +143,241 @@ async function populateInitialData() {
       "Starting to test database functions ******************************************************"
     );
 
-    // console.log("Starting to create users ...");
+    console.log("Starting to create users ...");
     const fakeUser1 = await User.createUser({
       email: "wizardboi@hogwarts.wiz",
       password: "lumosmaxima",
       name: "Albus Dumbledore",
       isAdmin: true,
     });
-    // const fakeUser2 = await User.createUser({
-    //   email: "thechosenone@hogwarts.wiz",
-    //   password: "expelliarmus",
-    //   name: "Harry Potter",
-    //   isAdmin: false,
-    // });
-    // const fakeUser3 = await User.createUser({
-    //   email: "Tyrannosaurus@Zordon.Go",
-    //   password: "Dragonzord",
-    //   name: "Red Ranger",
-    //   isAdmin: false,
-    // });
-    // const fakeUser4 = await User.createUser({
-    //   email: "Triceratops@Zordon.Go",
-    //   password: "PinkRanger",
-    //   name: "Blue Ranger",
-    //   isAdmin: false,
-    // });
-    // console.log("Finished creating users!");
+    const fakeUser2 = await User.createUser({
+      email: "thechosenone@hogwarts.wiz",
+      password: "expelliarmus",
+      name: "Harry Potter",
+      isAdmin: false,
+    });
+    const fakeUser3 = await User.createUser({
+      email: "Tyrannosaurus@Zordon.Go",
+      password: "Dragonzord",
+      name: "Red Ranger",
+      isAdmin: false,
+    });
+    const fakeUser4 = await User.createUser({
+      email: "Triceratops@Zordon.Go",
+      password: "PinkRanger",
+      name: "Blue Ranger",
+      isAdmin: false,
+    });
+    console.log("Finished creating users!");
 
-    // console.log("Starting to check users functions...");
-    // const updatedUser1 = await User.updateUser(fakeUser1.id, {
-    //   name: "The Albus Dumbledore",
-    // });
-    // const updatedUser2 = await User.updateUser(fakeUser2.id, { isAdmin: true });
-    // const adminUser1 = await User.isAdmin(fakeUser2.id);
-    // const adminUser2 = await User.isAdmin(fakeUser3.id);
-    // console.log("Finished updating users!");
+    console.log("Starting to check users functions...");
+    const updatedUser1 = await User.updateUser(fakeUser1.id, {
+      name: "The Albus Dumbledore",
+    });
+    const updatedUser2 = await User.updateUser(fakeUser2.id, { isAdmin: true });
+    const adminUser1 = await User.isAdmin(fakeUser2.id);
+    const adminUser2 = await User.isAdmin(fakeUser3.id);
+    console.log("Finished updating users!");
 
-    // console.log("Creating categories...");
-    // const categoryOne = await Category.createCategory({
-    //   name: "Beds",
-    //   description: "Beds for your furry friend",
-    // });
-    // const categoryTwo = await Category.createCategory({
-    //   name: "Clothes",
-    //   description: "Find all your furry friends needs",
-    // });
-    // const categoryThree = await Category.createCategory({
-    //   name: "Food",
-    //   description: "S-XL bags of food for cats and dogs",
-    // });
-    // console.log("Finshed creating categories.");
+    console.log("Creating categories...");
+    const categoryOne = await Category.createCategory({
+      name: "Beds",
+      description: "Beds for your furry friend",
+    });
+    const categoryTwo = await Category.createCategory({
+      name: "Clothes",
+      description: "Find all your furry friends needs",
+    });
+    const categoryThree = await Category.createCategory({
+      name: "Food",
+      description: "S-XL bags of food for cats and dogs",
+    });
+    console.log("Finshed creating categories.");
 
-    // console.log("Starting to create products");
-    // const fakeProduct1 = await Products.createProduct({
-    //   title: "Large Brown Dog Bed",
-    //   description: "Soft polyester lining and walls will make your pet happy!",
-    //   price: 2099,
-    //   stock: 20,
-    //   imageUrl:
-    //     "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
-    //   categoryId: 1,
-    //   animalType: "dog",
-    // });
-    // const fakeProduct2 = await Products.createProduct({
-    //   title: "Bone chew toy",
-    //   description: "Splinter free for pet safety!",
-    //   price: 999,
-    //   stock: 950,
-    //   imageUrl:
-    //     "https://target.scene7.com/is/image/Target/GUEST_c7f07978-3f6d-47f8-9f07-161fa101de27",
-    //   categoryId: 2,
-    //   animalType: "dog",
-    // });
-    // const fakeProduct3 = await Products.createProduct({
-    //   title: "Stuffed cat treats",
-    //   description: "Delicious salmon filled treats with no filler products!",
-    //   price: 999,
-    //   stock: 250,
-    //   imageUrl:
-    //     "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
-    //   categoryId: 3,
-    //   animalType: "cat",
-    // });
-    // console.log("Finished creating products!");
+    console.log("Starting to create products");
+    const fakeProduct1 = await Products.createProduct({
+      title: "Large Brown Dog Bed",
+      description: "Soft polyester lining and walls will make your pet happy!",
+      price: 2099,
+      stock: 20,
+      imageUrl:
+        "https://m.media-amazon.com/images/I/61gxx3o19RL._AC_SL1500_.jpg",
+      categoryId: 1,
+      animalType: "dog",
+    });
+    const fakeProduct2 = await Products.createProduct({
+      title: "Bone chew toy",
+      description: "Splinter free for pet safety!",
+      price: 999,
+      stock: 950,
+      imageUrl:
+        "https://target.scene7.com/is/image/Target/GUEST_c7f07978-3f6d-47f8-9f07-161fa101de27",
+      categoryId: 2,
+      animalType: "dog",
+    });
+    const fakeProduct3 = await Products.createProduct({
+      title: "Stuffed cat treats",
+      description: "Delicious salmon filled treats with no filler products!",
+      price: 999,
+      stock: 250,
+      imageUrl:
+        "https://i0.wp.com/catladyfitness.com/wp-content/uploads/2018/11/final-treats-puppy.jpg?w=665",
+      categoryId: 3,
+      animalType: "cat",
+    });
+    console.log("Finished creating products!");
 
-    // console.log("Starting to create orders...");
-    // const order1 = await Orders.createOrder({
-    //   userId: fakeUser1.id,
-    //   status: "pending",
-    //   totalPrice: 0,
-    // });
-    // const order2 = await Orders.createOrder({
-    //   userId: fakeUser2.id,
-    //   status: "pending",
-    //   totalPrice: 0,
-    // });
-    // const order3 = await Orders.createOrder({
-    //   userId: fakeUser3.id,
-    //   status: "pending",
-    //   totalPrice: 0,
-    // });
-    // const order4 = await Orders.createOrder({
-    //   userId: fakeUser4.id,
-    //   status: "pending",
-    //   totalPrice: 0,
-    // });
-    // console.log("Finished creating orders!");
+    console.log("Starting to create orders...");
+    const order1 = await Orders.createOrder({
+      userId: fakeUser1.id,
+      status: "pending",
+      totalPrice: 0,
+    });
+    const order2 = await Orders.createOrder({
+      userId: fakeUser2.id,
+      status: "pending",
+      totalPrice: 0,
+    });
+    const order3 = await Orders.createOrder({
+      userId: fakeUser3.id,
+      status: "pending",
+      totalPrice: 0,
+    });
+    const order4 = await Orders.createOrder({
+      userId: fakeUser4.id,
+      status: "pending",
+      totalPrice: 0,
+    });
+    console.log("Finished creating orders!");
 
-    // console.log("Starting to add products to order...");
-    // await Order_Products.addProductToOrder({
-    //   orderId: 1,
-    //   productId: 1,
-    //   quantity: 1,
-    // });
-    // await Order_Products.addProductToOrder({
-    //   orderId: 2,
-    //   productId: 2,
-    //   quantity: 2,
-    // });
-    // await Order_Products.addProductToOrder({
-    //   orderId: 3,
-    //   productId: 3,
-    //   quantity: 3,
-    // });
-    // await Order_Products.addProductToOrder({
-    //   orderId: 4,
-    //   productId: 1,
-    //   quantity: 4,
-    // });
-    // await Order_Products.addProductToOrder({
-    //   orderId: 1,
-    //   productId: 2,
-    //   quantity: 2,
-    // });
-    // await Order_Products.addProductToOrder({
-    //   orderId: 1,
-    //   productId: 3,
-    //   quantity: 3,
-    // });
-    // console.log("Finished adding products to order!");
+    console.log("Starting to add products to order...");
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 1,
+      quantity: 1,
+    });
+    await Order_Products.addProductToOrder({
+      orderId: 2,
+      productId: 2,
+      quantity: 2,
+    });
+    await Order_Products.addProductToOrder({
+      orderId: 3,
+      productId: 3,
+      quantity: 3,
+    });
+    await Order_Products.addProductToOrder({
+      orderId: 4,
+      productId: 1,
+      quantity: 4,
+    });
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 2,
+      quantity: 2,
+    });
+    await Order_Products.addProductToOrder({
+      orderId: 1,
+      productId: 3,
+      quantity: 3,
+    });
+    console.log("Finished adding products to order!");
 
-    // console.log("Starting to test all orders functions...");
-    // await Orders.getOrderById(order1.id);
-    // await Orders.getAllOrdersByUser(fakeUser1.id);
-    // await Orders.updateOrder(1, { status: "completed" });
-    // await Orders.deleteOrder(4);
-    // await Orders.deleteOrdersByUser(3);
-    // await Order_Products.getOrderProductsByOrder(1);
-    // await Order_Products.updateOrderProductQuantity({
-    //   orderProductId: 1,
-    //   quantity: 5,
-    // });
-    // console.log("Finished testing orders functions!");
+    console.log("Starting to test all orders functions...");
+    await Orders.getOrderById(order1.id);
+    await Orders.getAllOrdersByUser(fakeUser1.id);
+    await Orders.updateOrder(1, { status: "completed" });
+    await Orders.deleteOrder(4);
+    await Orders.deleteOrdersByUser(3);
+    await Order_Products.getOrderProductsByOrder(1);
+    await Order_Products.updateOrderProductQuantity({
+      orderProductId: 1,
+      quantity: 5,
+    });
+    console.log("Finished testing orders functions!");
 
-    // console.log("Starting to test all category functions...");
-    // await Category.getAllCategories();
-    // await Category.getCategoryById(1);
-    // await Category.updateCategory(1, { name: "Pet Beds" });
-    // await Category.updateCategory(3, {
-    //   description: "Bags of food for cats and dogs",
-    // });
-    // // await Category.deleteCategory(2);
-    // console.log("Finshied testing all category functions!");
+    console.log("Starting to test all category functions...");
+    await Category.getAllCategories();
+    await Category.getCategoryById(1);
+    await Category.updateCategory(1, { name: "Pet Beds" });
+    await Category.updateCategory(3, {
+      description: "Bags of food for cats and dogs",
+    });
+    // await Category.deleteCategory(2);
+    console.log("Finshied testing all category functions!");
 
-    // console.log("Starting to test all product functions...");
-    // await Products.getAllProducts();
-    // await Products.getProductById(1);
-    // await Products.getProductByTitle("Bone chew toy");
-    // await Products.updateProduct(2, { categoryId: 3 });
-    // await Products.getProductByCategoryId(3);
-    // // await Products.makeProductInactive(1);
-    // console.log("Finished testing all product functions!");
+    console.log("Starting to test all product functions...");
+    await Products.getAllProducts();
+    await Products.getProductById(1);
+    await Products.getProductByTitle("Bone chew toy");
+    await Products.updateProduct(2, { categoryId: 3 });
+    await Products.getProductByCategoryId(3);
+    // await Products.makeProductInactive(1);
+    console.log("Finished testing all product functions!");
 
-    // console.log("Starting to test all favorites functions...");
-    // await Favorites.createFavorite({ userId: 1, productId: 1 });
-    // await Favorites.createFavorite({ userId: 1, productId: 3 });
-    // await Favorites.getAllFavorites(1);
-    // await Favorites.getFavorite(1);
-    // await Favorites.deleteFavorite(1);
-    // await Favorites.deleteFavoritesByUser(1);
-    // console.log("Finished testing all favorites functions!");
+    console.log("Starting to test all favorites functions...");
+    await Favorites.createFavorite({ userId: 1, productId: 1 });
+    await Favorites.createFavorite({ userId: 1, productId: 3 });
+    await Favorites.getAllFavorites(1);
+    await Favorites.getFavorite(1);
+    await Favorites.deleteFavorite(1);
+    await Favorites.deleteFavoritesByUser(1);
+    console.log("Finished testing all favorites functions!");
 
-    // console.log("Starting to test all reviews functions...");
-    // await Reviews.createReview({
-    //   userId: 1,
-    //   productId: 1,
-    //   rating: 5,
-    //   comment: "It's good, init",
-    //   isAnonymous: false,
-    // });
-    // await Reviews.createReview({
-    //   userId: 2,
-    //   productId: 1,
-    //   rating: 3,
-    //   comment: "It's mid, init",
-    //   isAnonymous: false,
-    // });
-    // await Reviews.createReview({
-    //   userId: 3,
-    //   productId: 1,
-    //   rating: 1,
-    //   comment: "It's bad, init",
-    //   isAnonymous: true,
-    // });
-    // await Reviews.getReviewsByUser(3);
-    // await Reviews.getReviewsByProduct(1);
-    // await Reviews.updateReview(2, {
-    //   rating: 4,
-    //   comment: "Ok it's pretty good, init",
-    // });
-    // await Reviews.getReviewById(1);
-    // await Reviews.deleteReview(3);
-    // await Reviews.deleteReviewsByUser(1);
-    // await Reviews.getReviewsByProduct(1);
-    // console.log("Finished testing all reviews functions!");
+    console.log("Starting to test all reviews functions...");
+    await Reviews.createReview({
+      userId: 1,
+      productId: 1,
+      rating: 5,
+      comment: "It's good, init",
+      isAnonymous: false,
+    });
+    await Reviews.createReview({
+      userId: 2,
+      productId: 1,
+      rating: 3,
+      comment: "It's mid, init",
+      isAnonymous: false,
+    });
+    await Reviews.createReview({
+      userId: 3,
+      productId: 1,
+      rating: 1,
+      comment: "It's bad, init",
+      isAnonymous: true,
+    });
+    await Reviews.getReviewsByUser(3);
+    await Reviews.getReviewsByProduct(1);
+    await Reviews.updateReview(2, {
+      rating: 4,
+      comment: "Ok it's pretty good, init",
+    });
+    await Reviews.getReviewById(1);
+    await Reviews.deleteReview(3);
+    await Reviews.deleteReviewsByUser(1);
+    await Reviews.getReviewsByProduct(1);
+    console.log("Finished testing all reviews functions!");
 
-    // console.log("Starting to test all images functions...");
-    // await Images.addImages(1, [
-    //   "https://image.chewy.com/is/image/catalog/191823_MAIN._AC_SL1200_V1565795239_.jpg",
-    //   "https://www.impactdogcrates.com/cdn/shop/products/CommenceStudio2022-ImpactDogCrates-1276_1800x1800.jpg?v=1663264963",
-    //   "https://i5.walmartimages.com/seo/Vibrant-Life-Small-Cuddler-Dog-Bed-Gray_664bc6a9-ea04-4248-bdca-49e86f99aa68.7e65d8b17d5cfaeb7494617d2f25c735.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF",
-    // ]);
-    // await Images.getImagesByProduct(1);
-    // await Images.deleteImage(1);
-    // await Images.deleteAllImagesForAProduct(1);
-    // console.log("Finished testing images functions!");
+    console.log("Starting to test all images functions...");
+    await Images.addImages(1, [
+      "https://image.chewy.com/is/image/catalog/191823_MAIN._AC_SL1200_V1565795239_.jpg",
+      "https://www.impactdogcrates.com/cdn/shop/products/CommenceStudio2022-ImpactDogCrates-1276_1800x1800.jpg?v=1663264963",
+      "https://i5.walmartimages.com/seo/Vibrant-Life-Small-Cuddler-Dog-Bed-Gray_664bc6a9-ea04-4248-bdca-49e86f99aa68.7e65d8b17d5cfaeb7494617d2f25c735.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF",
+    ]);
+    await Images.getImagesByProduct(1);
+    await Images.deleteImage(1);
+    await Images.deleteAllImagesForAProduct(1);
+    console.log("Finished testing images functions!");
 
-    // console.log("Starting to test all shopping cart functions...");
-    // await ShoppingCart.createShoppingCart({ productId: 1, userId: null });
-    // await ShoppingCart.deleteShoppingCart(5);
-    // console.log("Finished testing all shopping cart functions!");
+    console.log("Starting to test all shopping cart functions...");
+    await ShoppingCart.createShoppingCart({ productId: 1, userId: null });
+    await ShoppingCart.deleteShoppingCart(5);
+    console.log("Finished testing all shopping cart functions!");
 
-    // console.log("Starting to test delete...");
-    // await User.deleteUser(4);
-    // // await Products.deleteProduct(2);
-    // console.log("Finished testing delete!");
+    console.log("Starting to test delete...");
+    await User.deleteUser(4);
+    // await Products.deleteProduct(2);
+    console.log("Finished testing delete!");
 
     console.log("Starting to create fake data using faker...");
     await createFakeData();
