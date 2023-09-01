@@ -76,14 +76,12 @@ const ManageUser = () => {
             Submit
           </Button>
         </Form>
-        {usersToDisplay() ? (
+        {usersToDisplay && usersToDisplay(users, search).length ? (
           usersToDisplay(users, search).map((user) => (
             <Card key={user.id} style={{ width: "18rem" }}>
-              <Card.Img variant="top" src={user.image} />
               <Card.Body>
                 <Card.Title>{user.name}</Card.Title>
                 <Card.Text>{user.email}</Card.Text>
-                <Button variant="primary">Go somewhere</Button>
                 <Button variant="danger" onClick={() => handleDelete(user.id)}>
                   Delete
                 </Button>
@@ -91,7 +89,7 @@ const ManageUser = () => {
             </Card>
           ))
         ) : (
-          <div>No users found</div>
+          <p>No users found</p>
         )}
       </div>
     </div>
