@@ -76,25 +76,23 @@ const ManageUser = () => {
             Submit
           </Button>
         </Form>
-        if (usersToDisplay(users, search).length){" "}
-        {
-          <div id="users-container">
-            {usersToDisplay(users, search).map((user) => (
-              <Card key={user.id} style={{ width: "18rem" }}>
-                <Card.Body>
-                  <Card.Title>{user.name}</Card.Title>
-                  <Card.Text>{user.email}</Card.Text>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    Delete
-                  </Button>
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
-        }
+        {usersToDisplay() ? (
+          usersToDisplay(users, search).map((user) => (
+            <Card key={user.id} style={{ width: "18rem" }}>
+              <Card.Img variant="top" src={user.image} />
+              <Card.Body>
+                <Card.Title>{user.name}</Card.Title>
+                <Card.Text>{user.email}</Card.Text>
+                <Button variant="primary">Go somewhere</Button>
+                <Button variant="danger" onClick={() => handleDelete(user.id)}>
+                  Delete
+                </Button>
+              </Card.Body>
+            </Card>
+          ))
+        ) : (
+          <div>No users found</div>
+        )}
       </div>
     </div>
   );
