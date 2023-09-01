@@ -10,6 +10,12 @@ export const userAtom = atom({});
 
 export const productsAtom = atom([]);
 
+export const singleProductIdAtom = atom(null);
+
+export const singleProductAtom = atom({});
+
+export const productImagesAtom = atom([]);
+
 export const categoriesAtom = atom([]);
 
 export const favoritesAtom = atom([]);

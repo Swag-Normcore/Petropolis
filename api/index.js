@@ -57,6 +57,9 @@ apiRouter.use("/reviews", reviewsRouter);
 const ordersRouter = require("./orders");
 apiRouter.use("/orders", ordersRouter);
 
+const imagesRouter = require("./images");
+apiRouter.use("/images", imagesRouter);
+
 apiRouter.use((err, req, res, next) => {
   if (err) {
     res.status(400).send({

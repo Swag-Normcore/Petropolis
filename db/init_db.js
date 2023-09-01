@@ -365,8 +365,8 @@ async function populateInitialData() {
       "https://i5.walmartimages.com/seo/Vibrant-Life-Small-Cuddler-Dog-Bed-Gray_664bc6a9-ea04-4248-bdca-49e86f99aa68.7e65d8b17d5cfaeb7494617d2f25c735.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF",
     ]);
     await Images.getImagesByProduct(1);
-    await Images.deleteImage(1);
-    await Images.deleteAllImagesForAProduct(1);
+    // await Images.deleteImage(1);
+    // await Images.deleteAllImagesForAProduct(1);
     console.log("Finished testing images functions!");
 
     console.log("Starting to test all shopping cart functions...");
@@ -375,7 +375,7 @@ async function populateInitialData() {
     console.log("Finished testing all shopping cart functions!");
 
     console.log("Starting to test delete...");
-    await User.deleteUser(4);
+    // await User.deleteUser(4);
     // await Products.deleteProduct(2);
     console.log("Finished testing delete!");
 

@@ -4,13 +4,10 @@ const { requireUser, requireAdmin } = require("./utils");
 
 // POST / (guest cart)
 apiRouter.post("/guest", async (req, res, next) => {
-    console.log("post request being made to /api/shopping_cart/guest")
     const userId = null;
     // const { productId, quantity } = req.body;
     try {
-        console.log("trying to create guest cart...");
         const guestCart = await ShoppingCart.createShoppingCart({ userId });
-        console.log("finished creating guest cart!")
         if (!guestCart) {
             throw { error: "Couldn't create shopping cart!" };
         } else {
@@ -39,13 +36,17 @@ apiRouter.get("/:shoppingId", async (req, res, next) => {
         if (!shoppingCart) {
             throw { error: "Couldn't get shopping cart!" };
         } else {
-            const cartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
-            if (!cartProducts) {
-                throw { error: "Couldn't get cart products!" }
+            if (shoppingCart.userId && shoppingCart.userId !== req.user.id) {
+                throw { error: "Can't get another users cart!" };
             } else {
-                shoppingCart.products = cartProducts;
-                console.log("GET /:shoppingId ", shoppingCart);
-                res.send(shoppingCart);
+                const cartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
+                if (!cartProducts) {
+                    throw { error: "Couldn't get cart products!" }
+                } else {
+                    shoppingCart.products = cartProducts;
+                    console.log("GET /:shoppingId ", shoppingCart);
+                    res.send(shoppingCart);
+                }
             }
         }
     } catch ({ error }) {
@@ -55,43 +56,47 @@ apiRouter.get("/:shoppingId", async (req, res, next) => {
 
 // POST /:shoppingId (guest or user cart)
 apiRouter.post("/:shoppingId", async (req, res, next) => {
-    const shoppingId = req.params.shoppingId;
+    const shoppingId = Number(req.params.shoppingId);
     const { productId, quantity } = req.body;
     try {
         const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
         if (!shoppingCart) {
             throw { error: "Couldn't find cart!" };
         } else {
-            const cartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
-            let cartProductId = null;
-            let cartProductQuantity = null;
-            let indexOfCartProduct = null;
-            cartProducts.forEach((product, index) => {
-                if (product.productId == productId) {
-                    cartProductId = product.id;
-                    cartProductQuantity = product.quantity + quantity;
-                    indexOfCartProduct = index;
-                }
-            });
-            if (cartProductId) {
-                const updatedCartProduct = await CartProducts.updateCartProductsQuantity({ cartProductId, quantity: cartProductQuantity })
-                if (!updatedCartProduct) {
-                    throw { error: "Couldn't update cart product quantity!" };
-                } else {
-                    cartProducts.splice(indexOfCartProduct, 1, updatedCartProduct);
-                    shoppingCart.products = cartProducts;
-                    console.log("POST /:shoppingId ", shoppingCart);
-                    res.send(shoppingCart);
-                }
+            if (shoppingCart.userId && shoppingCart.userId !== req.user.id) {
+                throw { error: "Can't get another users cart!" };
             } else {
-                const newCartProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
-                if (!newCartProduct) {
-                    throw { error: "Couldn't add product to cart!" };
+                const cartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
+                let cartProductId = null;
+                let cartProductQuantity = null;
+                let indexOfCartProduct = null;
+                cartProducts.forEach((product, index) => {
+                    if (product.productId == productId) {
+                        cartProductId = product.id;
+                        cartProductQuantity = product.quantity + quantity;
+                        indexOfCartProduct = index;
+                    }
+                });
+                if (cartProductId) {
+                    const updatedCartProduct = await CartProducts.updateCartProductsQuantity({ cartProductId, quantity: cartProductQuantity })
+                    if (!updatedCartProduct) {
+                        throw { error: "Couldn't update cart product quantity!" };
+                    } else {
+                        cartProducts.splice(indexOfCartProduct, 1, updatedCartProduct);
+                        shoppingCart.products = cartProducts;
+                        console.log("POST /:shoppingId ", shoppingCart);
+                        res.send(shoppingCart);
+                    }
                 } else {
-                    cartProducts.push(newCartProduct);
-                    shoppingCart.products = cartProducts;
-                    console.log("POST /:shoppingId ", shoppingCart);
-                    res.send(shoppingCart);
+                    const newCartProduct = await CartProducts.addProductToCart({ shoppingId, productId, quantity });
+                    if (!newCartProduct) {
+                        throw { error: "Couldn't add product to cart!" };
+                    } else {
+                        cartProducts.push(newCartProduct);
+                        shoppingCart.products = cartProducts;
+                        console.log("POST /:shoppingId ", shoppingCart);
+                        res.send(shoppingCart);
+                    }
                 }
             }
         }
@@ -106,18 +111,26 @@ apiRouter.patch("/:shoppingId", async (req, res, next) => {
     const shoppingId = req.params.shoppingId;
     const { cartProductId, quantity } = req.body;
     try {
-        const updatedCartProduct = await CartProducts.updateCartProductsQuantity({ cartProductId, quantity });
-        if (!updatedCartProduct) {
-            throw { error: "Couldn't update cart!" };
+        const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
+        if (!shoppingCart) {
+            throw { error: "Couldn't find cart!" }
         } else {
-            const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
-            const allCartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
-            if (!shoppingCart || !allCartProducts) {
-                throw { error: "Couldn't get updated cart!" };
+            if (shoppingCart.userId && shoppingCart.userId !== req.user.id) {
+                throw { error: "Can't get another users cart!" };
+            } else {
+                const updatedCartProduct = await CartProducts.updateCartProductsQuantity({ cartProductId, quantity });
+                if (!updatedCartProduct) {
+                    throw { error: "Couldn't update cart!" };
+                } else {
+                    const allCartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
+                    if (!allCartProducts) {
+                        throw { error: "Couldn't get all cart products!" };
+                    }
+                    shoppingCart.products = allCartProducts;
+                    console.log("PATCH /:cartProductId ", shoppingCart);
+                    res.send(shoppingCart);
+                }
             }
-            shoppingCart.products = allCartProducts;
-            console.log("PATCH /:cartProductId ", shoppingCart);
-            res.send(shoppingCart);
         }
     } catch ({ error }) {
         next({ error });
@@ -130,19 +143,26 @@ apiRouter.delete("/products/:cartProductId", async (req, res, next) => {
     const cartProductId = req.params.cartProductId;
     const { shoppingId } = req.body;
     try {
-        console.log("trying to remove product from cart", cartProductId)
-        const removedProduct = await CartProducts.removeProductFromCart(cartProductId);
-        if (!removedProduct) {
-            throw { error: "Couldn't remove product from cart!" }
+        const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
+        if (!shoppingCart) {
+            throw { error: "Couldn't find cart!" };
         } else {
-            const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
-            const allCartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
-            if (!shoppingCart) {
-                throw { error: "Couldn't get shopping cart!" };
+            if (shoppingCart.userId && shoppingCart.userId !== req.user.id) {
+                throw { error: "Can't get another users cart!" };
             } else {
-                shoppingCart.products = allCartProducts;
-                console.log("DELETE /:shoppingId ", shoppingCart);
-                res.send(shoppingCart);
+                const removedProduct = await CartProducts.removeProductFromCart(cartProductId);
+                if (!removedProduct) {
+                    throw { error: "Couldn't remove product from cart!" }
+                } else {
+                    const allCartProducts = await CartProducts.getProductsByShoppingCart(shoppingId);
+                    if (!allCartProducts) {
+                        throw { error: "Couldn't get shopping cart!" };
+                    } else {
+                        shoppingCart.products = allCartProducts;
+                        console.log("DELETE /:shoppingId ", shoppingCart);
+                        res.send(shoppingCart);
+                    }
+                }
             }
         }
     } catch ({ error }) {

@@ -255,7 +255,7 @@ export async function getUserShoppingCart({ shoppingId, token }) {
     console.log("running getUserShoppingCart...");
     const { data: shoppingCart } = await axios.get(
       `/api/shopping_cart/${shoppingId}`,
-      {},
+
       {
         headers: {
           "Content-type": "application/json",
@@ -301,21 +301,55 @@ export async function addProductToShoppingCart({
   shoppingId,
   productId,
   quantity,
+  token
 }) {
   try {
     console.log("running addProductToShoppingCart...");
-    const { data: shoppingCart } = await axios.post(
-      `api/shopping_cart/${shoppingId}`,
-      { productId, quantity },
-      {
-        "Content-Type": "application/json",
+    console.log(shoppingId, productId, quantity, token)
+    // const { data: shoppingCart } = await axios.post(
+    //   `api/shopping_cart/${shoppingId}`,
+    //   {
+    //     productId,
+    //     quantity,
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${token}`,
+    //     }
+    //   }
+    // );
+    if (token) {
+      const { data: shoppingCart } = await axios({
+        method: "post",
+        url: `api/shopping_cart/${shoppingId}`,
+        data: {
+          productId,
+          quantity
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
       }
-    );
-    if (!shoppingCart) {
-      throw new Error("Couldn't add product to cart!");
     } else {
-      console.log(shoppingCart);
-      return shoppingCart;
+      const { data: shoppingCart } = await axios({
+        method: "post",
+        url: `api/shopping_cart/${shoppingId}`,
+        data: {
+          productId,
+          quantity
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
+      }
     }
   } catch (error) {
     console.error(error);
@@ -325,25 +359,51 @@ export async function addProductToShoppingCart({
 export async function removeProductFromShoppingCart({
   shoppingId,
   cartProductId,
+  token
 }) {
   try {
     console.log("running removeProductFromShoppingCart...", cartProductId);
-    const { data: shoppingCart } = await axios.delete(
-      `api/shopping_cart/products/${cartProductId}`,
-      {
-        data: { shoppingId },
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+    // const { data: shoppingCart } = await axios.delete(
+    //   `api/shopping_cart/products/${cartProductId}`,
+    //   {
+    //     data: { shoppingId },
+    //   }, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // }
+    // );
+    if (token) {
+      const { data: shoppingCart } = await axios({
+        method: "delete",
+        url: `api/shopping_cart/products/${cartProductId}`,
+        data: {
+          shoppingId
         },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
       }
-    );
-    if (!shoppingCart) {
-      throw new Error("Couldn't add product to cart!");
     } else {
-      console.log(shoppingCart);
-      return shoppingCart;
+      const { data: shoppingCart } = await axios({
+        method: "delete",
+        url: `api/shopping_cart/products/${cartProductId}`,
+        data: {
+          shoppingId
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
+      }
     }
   } catch (error) {
     console.error(error);
@@ -354,21 +414,88 @@ export async function updateShoppingCartProductQuantity({
   shoppingId,
   cartProductId,
   quantity,
+  token
 }) {
   try {
     console.log("running updateCartProductQuantity...");
-    const { data: shoppingCart } = await axios.patch(
-      `api/shopping_cart/${shoppingId}`,
-      { cartProductId, quantity },
-      {
-        "Content-Type": "application/json",
+    // const { data: shoppingCart } = await axios.patch(
+    //   `api/shopping_cart/${shoppingId}`,
+    //   {
+    //     cartProductId,
+    //     quantity,
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${token}`,
+    //     }
+    //   }
+    // );
+    if (token) {
+      const { data: shoppingCart } = await axios({
+        method: "patch",
+        url: `api/shopping_cart/${shoppingId}`,
+        data: {
+          cartProductId,
+          quantity,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
       }
-    );
-    if (!shoppingCart) {
-      throw new Error("Couldn't add product to cart!");
     } else {
-      console.log(shoppingCart);
-      return shoppingCart;
+      const { data: shoppingCart } = await axios({
+        method: "patch",
+        url: `api/shopping_cart/${shoppingId}`,
+        data: {
+          cartProductId,
+          quantity,
+        }
+      })
+      if (!shoppingCart) {
+        throw new Error("Couldn't add product to cart!");
+      } else {
+        console.log(shoppingCart);
+        return shoppingCart;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getSingleProduct({ productId }) {
+  try {
+    const { data: product } = await axios.get(`/api/products/${productId}`, {
+      "Content-Type": "application/json"
+    });
+    if (!product) {
+      throw new Error("Couldn't get product!");
+    } else {
+      console.log(product);
+      return product;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getProductImages({ productId }) {
+  try {
+    const { data: images } = await axios.get(`/api/images/product/${productId}`, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if (!images) {
+      throw new Error("Couldn't get product!");
+    } else {
+      console.log(images);
+      return images;
     }
   } catch (error) {
     console.error(error);

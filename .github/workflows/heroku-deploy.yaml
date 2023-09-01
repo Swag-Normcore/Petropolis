@@ -3,7 +3,7 @@ on:
   push:
     branches:
       # for merged pull requests
-      - 'main'
+      - 'Development'
       # for hotfixes
       - 'deploy'
 jobs:
@@ -23,7 +23,7 @@ jobs:
               password $HEROKU_API_KEY
             machine git.heroku.com
               login $HEROKU_EMAIL
-              password $HEROKU_API_KEY 
+              password $HEROKU_API_KEY
           EOF
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -34,4 +34,4 @@ jobs:
         # github.ref_name is the branch name that triggered the workflow
         # you can assign any branch(es) you like in the on: block at the top of this yaml
         # and the ref_name will pick them up
-        run: git push heroku ${{ github.ref_name }}:refs/heads/main
+        run: git push heroku ${{ github.ref_name }}:refs/heads/Development

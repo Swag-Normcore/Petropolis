@@ -8,6 +8,7 @@ import Image from "react-bootstrap/Image";
 import { LinkContainer } from "react-router-bootstrap";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
+import Badge from 'react-bootstrap/Badge';
 import "../style/App.css";
 import petLogo from "../images/pet-logo.png";
 import basket from "../images/basket-fill.svg";
@@ -37,6 +38,7 @@ import {
   shoppingCartAtom,
   cartProductsAtom,
   userAtom,
+  singleProductAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
 import Register from "./Register";
@@ -44,6 +46,7 @@ import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
 import Favorites from "./Favorites";
 import ProductForm from "./ProductForm";
+import SingleProductView from "./SingleProductView";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -57,6 +60,7 @@ const App = () => {
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
   const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
+  const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
@@ -131,6 +135,11 @@ const App = () => {
     }
   }, [token]);
 
+  let totalShoppingCart = 0;
+  shoppingCart ? shoppingCart.products ? shoppingCart.products.forEach((product) => {
+    totalShoppingCart += product.quantity;
+  }) : null : null;
+
   return (
     <BrowserRouter>
       <div className="app">
@@ -141,9 +150,6 @@ const App = () => {
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            {/* <h4>Jotai Test:</h4>
-            <h4>{count}</h4>
-            <Button onClick={() => setCount(count + 1)}>Count</Button> */}
             <ShoppingCart />
           </Offcanvas.Body>
         </Offcanvas>
@@ -202,13 +208,18 @@ const App = () => {
                     <Nav.Link>Login</Nav.Link>
                   </LinkContainer>
                 )}
-                <Nav.Link onClick={handleShow}>
-                  <img
-                    src={basket}
-                    width="25"
-                    height="25"
-                    className="d-inline-block align-top"
-                  />
+                <Nav.Link className="pt-0" onClick={handleShow}>
+                  <Button variant="link" size="sm">
+                    <img
+                      src={basket}
+                      width="25"
+                      height="25"
+                      className="d-inline-block align-top"
+                    />
+                    {shoppingCart ? shoppingCart.products ? shoppingCart.products.length ?
+                      <Badge>{totalShoppingCart}</Badge>
+                      : null : null : null}
+                  </Button>
                 </Nav.Link>
               </Nav>
             </Navbar.Collapse>
@@ -218,8 +229,11 @@ const App = () => {
           <Route exact path="/">
             <ProductsPage />
           </Route>
-          <Route path="/products">
+          <Route exact path="/products">
             <ProductsPage />
+          </Route>
+          <Route path="/products/:productId">
+            <SingleProductView />
           </Route>
           <Route path="/cart">
             <h1>Cart page</h1>

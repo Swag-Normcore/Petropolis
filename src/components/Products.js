@@ -6,6 +6,8 @@ import {
   favoritesAtom,
   tokenAtom,
   shoppingCartAtom,
+  // singleProductIdAtom,
+  // singleProductAtom,
 } from "../atoms";
 import { addToFavorites, addProductToShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
@@ -13,6 +15,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
+import { Link } from "react-router-dom";
 
 const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
@@ -25,6 +28,8 @@ const ProductsPage = () => {
   const [searchFilter, setSearchFilter] = useState([]);
   const [favoritesIds, setFavoritesIds] = useState([]);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+  // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
+  // const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
   useEffect(() => {
     if (favorites) {
@@ -59,11 +64,13 @@ const ProductsPage = () => {
     addToFavorites({ productId, token });
   };
 
-  const handleCart = async (e) => {
+  const handleCart = async (productId) => {
+    console.log(typeof productId);
     const result = await addProductToShoppingCart({
       shoppingId: shoppingCart.id,
-      productId: e.target.value,
+      productId,
       quantity: 1,
+      token
     });
     setShoppingCart(result);
   };
@@ -71,8 +78,8 @@ const ProductsPage = () => {
   const productsToDisplay = searchTerm.length
     ? searchFilter
     : filteredProducts
-    ? filteredProducts
-    : products;
+      ? filteredProducts
+      : products;
 
   return (
     <div id="products-page">
@@ -87,15 +94,15 @@ const ProductsPage = () => {
           />
           {categories
             ? categories.map((category) => (
-                <div key={category.id} className="mb-3">
-                  <Form.Check
-                    id={`${category.id}`}
-                    label={`${category.name}`}
-                    checked={category.id === checkedId}
-                    onChange={() => handleCheckboxChange(category.id)}
-                  />
-                </div>
-              ))
+              <div key={category.id} className="mb-3">
+                <Form.Check
+                  id={`${category.id}`}
+                  label={`${category.name}`}
+                  checked={category.id === checkedId}
+                  onChange={() => handleCheckboxChange(category.id)}
+                />
+              </div>
+            ))
             : null}
         </Form>
       </div>
@@ -115,68 +122,77 @@ const ProductsPage = () => {
         <div id="products-container">
           {productsToDisplay
             ? productsToDisplay.map((product) => (
-                <Card
-                  className="card"
-                  style={{ width: "18rem", height: "19rem" }}
-                  key={product.id}
-                >
-                  <a href={`/api/products/${product.id}`}>
-                    <Card.Img
-                      className="card-img-top"
-                      src={product.image}
-                      alt={product.title}
-                    />
-                  </a>
-                  <Card.Body>
-                    <div className="title-block">
-                      <Card.Title>{product.title}</Card.Title>
-                      {token ? (
-                        <Button className="favorite-button" value={product.id}>
-                          {favoritesIds.includes(product.id) ? (
-                            <img
-                              src={fullHeart}
-                              value={product.id}
-                              width="20"
-                              height="20"
-                              className="d-inline-block align-top"
-                            />
-                          ) : (
-                            <img
-                              src={emptyHeart}
-                              value={product.id}
-                              width="20"
-                              height="20"
-                              className="d-inline-block align-top"
-                              onClick={() => handleFavorite(product.id)}
-                            />
-                          )}
-                        </Button>
-                      ) : null}
-                    </div>
-                    <Button
-                      className="cart-button"
-                      value={product.id}
-                      onClick={handleCart}
-                    >
-                      Add to Cart
-                    </Button>
-                    <Card.Footer>
-                      <p>${product.price / 100}</p>{" "}
-                      {product.stock > 20 ? (
-                        <p>In stock</p>
-                      ) : product.stock > 0 ? (
-                        <p>Low Stock</p>
-                      ) : (
-                        <p>Out of stock</p>
-                      )}
-                    </Card.Footer>
-                  </Card.Body>
-                </Card>
-              ))
+              <Card
+                className="card"
+                style={{ width: "18rem", height: "19rem" }}
+                key={product.id}
+              >
+                <Link to={`/products/${product.id}`}>
+                  <Card.Img
+                    className="card-img-top"
+                    src={product.image}
+                    alt={product.title}
+                  // onClick={(e) => {
+                  //   console.log("running onclick")
+                  //   setSingleProductId(product.id);
+                  //   console.log(product);
+                  //   localStorage.setItem("singleProductId", product.id);
+                  //   setSingleProduct(product);
+                  // }}
+                  />
+                </Link>
+                <Card.Body>
+                  <div className="title-block">
+                    <Card.Title>{product.title}</Card.Title>
+                    {token ? (
+                      <Button className="favorite-button" value={product.id}>
+                        {favoritesIds.includes(product.id) ? (
+                          <img
+                            src={fullHeart}
+                            value={product.id}
+                            width="20"
+                            height="20"
+                            className="d-inline-block align-top"
+                          />
+                        ) : (
+                          <img
+                            src={emptyHeart}
+                            value={product.id}
+                            width="20"
+                            height="20"
+                            className="d-inline-block align-top"
+                            onClick={() => handleFavorite(product.id)}
+                          />
+                        )}
+                      </Button>
+                    ) : null}
+                  </div>
+                  <Button
+                    className="cart-button"
+                    value={product.id}
+                    onClick={(e) => {
+                      handleCart(product.id)
+                    }}
+                  >
+                    Add to Cart
+                  </Button>
+                  <Card.Footer>
+                    <p>${product.price / 100}</p>{" "}
+                    {product.stock > 20 ? (
+                      <p>In stock</p>
+                    ) : product.stock > 0 ? (
+                      <p>Low Stock</p>
+                    ) : (
+                      <p>Out of stock</p>
+                    )}
+                  </Card.Footer>
+                </Card.Body>
+              </Card>
+            ))
             : null}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
