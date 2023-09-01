@@ -20,14 +20,17 @@ function filterUsers(users, search) {
   return users.filter((user) => usersMatch(user, search));
 }
 
+const usersToDisplay = (users, search) => {
+  if (search.length) {
+    return filterUsers(users, search);
+  } else {
+    return users;
+  }
+};
+
 const ManageUser = () => {
   const [users, setUsers] = useAtom(usersAtom);
   const [search, setSearch] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(users);
-
-  useEffect(() => {
-    setFilteredUsers(filterUsers(users, search));
-  }, [search, users]);
 
   useEffect(async () => {
     const getUsers = async () => {
@@ -38,10 +41,6 @@ const ManageUser = () => {
     console.log("users in useEffect", users);
   }, []);
 
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-  };
-
   const handleDelete = async (id) => {
     try {
       const result = await axios.delete(`/api/users/${id}`);
@@ -51,11 +50,20 @@ const ManageUser = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setSearch("");
+  };
+
   return (
-    <div id="manage-user-page">
-      <div id="manage-user-container">
-        <Form id="manage-user-form">
-          <Form.Group className="mb-3" controlId="formBasicEmail">
+    <div id="users-page">
+      <div id="users-container">
+        <Form id="search-form" onSubmit={handleSubmit}>
+          <Form.Group className="mb-3" controlId="formBasicSearch">
             <Form.Label>Search</Form.Label>
             <Form.Control
               type="text"
@@ -64,18 +72,29 @@ const ManageUser = () => {
               onChange={handleSearchChange}
             />
           </Form.Group>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
         </Form>
-        {filteredUsers.map((user) => (
-          <Card key={user.id} style={{ width: "18rem" }}>
-            <Card.Body>
-              <Card.Title>{user.name}</Card.Title>
-              <Card.Text>{user.email}</Card.Text>
-              <Button variant="danger" onClick={() => handleDelete(user.id)}>
-                Delete
-              </Button>
-            </Card.Body>
-          </Card>
-        ))}
+        if (usersToDisplay(users, search).length){" "}
+        {
+          <div id="users-container">
+            {usersToDisplay(users, search).map((user) => (
+              <Card key={user.id} style={{ width: "18rem" }}>
+                <Card.Body>
+                  <Card.Title>{user.name}</Card.Title>
+                  <Card.Text>{user.email}</Card.Text>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(user.id)}
+                  >
+                    Delete
+                  </Button>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        }
       </div>
     </div>
   );
