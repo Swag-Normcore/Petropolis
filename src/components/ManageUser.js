@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { usersAtom } from "../atoms";
+import { usersAtom, tokenAtom } from "../atoms";
 import { getAllUsers } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -31,11 +31,12 @@ const usersToDisplay = (users, search) => {
 const ManageUser = () => {
   const [users, setUsers] = useAtom(usersAtom);
   const [search, setSearch] = useState("");
+  const [token, setToken] = useAtom(tokenAtom);
 
   useEffect(async () => {
     const getUsers = async () => {
-      const result = await getAllUsers();
-      setUsers(result);
+      // const result = await getAllUsers({ token });
+      // setUsers(result);
     };
     getUsers();
     console.log("users in useEffect", users);

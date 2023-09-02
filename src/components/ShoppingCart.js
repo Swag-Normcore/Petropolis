@@ -137,7 +137,7 @@ const ShoppingCart = () => {
                                 </p>
                             </Stack>
                             <Stack className="mx-auto">
-                                <Button>Checkout</Button>
+                                <Button className="site-button">Checkout</Button>
                             </Stack>
                         </>
                     ) : (

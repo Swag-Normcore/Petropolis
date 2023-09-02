@@ -58,6 +58,7 @@ apiRouter.get("/:shoppingId", async (req, res, next) => {
 apiRouter.post("/:shoppingId", async (req, res, next) => {
     const shoppingId = Number(req.params.shoppingId);
     const { productId, quantity } = req.body;
+    console.log("recieve a request to POST /:shoppingId")
     try {
         const shoppingCart = await ShoppingCart.getShoppingCart(shoppingId);
         if (!shoppingCart) {

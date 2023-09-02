@@ -35,6 +35,7 @@ import {
   productsAtom,
   categoriesAtom,
   favoritesAtom,
+  favoritesIdsAtom,
   shoppingCartAtom,
   cartProductsAtom,
   userAtom,
@@ -47,6 +48,7 @@ import ShoppingCart from "./ShoppingCart";
 import Favorites from "./Favorites";
 import ProductForm from "./ProductForm";
 import SingleProductView from "./SingleProductView";
+import DashboardPage from "./DashboardPage";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -57,6 +59,7 @@ const App = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
   const [favorites, setFavorites] = useAtom(favoritesAtom);
+  const [favoritesIds, setFavoritesIds] = useAtom(favoritesIdsAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
   const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
@@ -93,6 +96,8 @@ const App = () => {
       const result = await getAllFavorites(userId);
       if (result) {
         setFavorites(result);
+        const favoritesIdsArray = result.map((favorite) => favorite.productId);
+        setFavoritesIds(favoritesIdsArray);
       }
     };
 
@@ -185,16 +190,18 @@ const App = () => {
                     <LinkContainer to="/account">
                       <Nav.Link>Account</Nav.Link>
                     </LinkContainer>
-                    <Nav.Link
-                      onClick={() => {
-                        localStorage.removeItem("token");
-                        setToken("");
-                        setUser({});
-                        setIsAdmin(false);
-                      }}
-                    >
-                      Logout
-                    </Nav.Link>
+                    <LinkContainer to="/">
+                      <Nav.Link
+                        onClick={() => {
+                          localStorage.removeItem("token");
+                          setToken("");
+                          setUser({});
+                          setIsAdmin(false);
+                        }}
+                      >
+                        Logout
+                      </Nav.Link>
+                    </LinkContainer>
                     {isAdmin ? (
                       <>
                         <LinkContainer to="/dashboard">
@@ -254,7 +261,7 @@ const App = () => {
             <h1>Account page</h1>
           </Route>
           <Route path="/dashboard">
-            <h1>Dashboard page</h1>
+            <DashboardPage />
           </Route>
           <Route path="/dashboard/product_form">
             <ProductForm />

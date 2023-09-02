@@ -26,7 +26,13 @@ favoritesRouter.post("/", requireUser, async (req, res, next) => {
     if (!newFavorite) {
       throw { error: "Unable to create favorites" };
     }
-    res.send(newFavorite);
+    const allFavorites = await Favorites.getAllFavorites(userId);
+    if (!allFavorites) {
+      throw { error: "Couldn't get all favorites!" };
+    } else {
+      console.log(allFavorites);
+      res.send(allFavorites);
+    }
   } catch ({ error }) {
     next({ error });
   }

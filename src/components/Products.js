@@ -6,6 +6,7 @@ import {
   favoritesAtom,
   tokenAtom,
   shoppingCartAtom,
+  favoritesIdsAtom,
   // singleProductIdAtom,
   // singleProductAtom,
 } from "../atoms";
@@ -26,17 +27,17 @@ const ProductsPage = () => {
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchFilter, setSearchFilter] = useState([]);
-  const [favoritesIds, setFavoritesIds] = useState([]);
+  const [favoritesIds, setFavoritesIds] = useAtom(favoritesIdsAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
   // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
   // const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
-  useEffect(() => {
-    if (favorites) {
-      const favoritesIdArray = favorites.map((favorite) => favorite.productId);
-      setFavoritesIds(favoritesIdArray);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (favorites) {
+  //     const favoritesIdArray = favorites.map((favorite) => favorite.productId);
+  //     setFavoritesIds(favoritesIdArray);
+  //   }
+  // }, []);
 
   const handleCheckboxChange = (id) => {
     if (id === "all") {
@@ -60,12 +61,13 @@ const ProductsPage = () => {
     setSearchFilter(filtered);
   };
 
-  const handleFavorite = (productId) => {
-    addToFavorites({ productId, token });
+  const handleFavorite = async (productId) => {
+    const result = await addToFavorites({ productId, token });
+    setFavorites(result);
   };
 
   const handleCart = async (productId) => {
-    console.log(typeof productId);
+    console.log(shoppingCart.id, productId, token);
     const result = await addProductToShoppingCart({
       shoppingId: shoppingCart.id,
       productId,
@@ -121,74 +123,76 @@ const ProductsPage = () => {
         </div>
         <div id="products-container">
           {productsToDisplay
-            ? productsToDisplay.map((product) => (
-              <Card
-                className="card"
-                style={{ width: "18rem", height: "19rem" }}
-                key={product.id}
-              >
-                <Link to={`/products/${product.id}`}>
-                  <Card.Img
-                    className="card-img-top"
-                    src={product.image}
-                    alt={product.title}
-                  // onClick={(e) => {
-                  //   console.log("running onclick")
-                  //   setSingleProductId(product.id);
-                  //   console.log(product);
-                  //   localStorage.setItem("singleProductId", product.id);
-                  //   setSingleProduct(product);
-                  // }}
-                  />
-                </Link>
-                <Card.Body>
-                  <div className="title-block">
-                    <Card.Title>{product.title}</Card.Title>
-                    {token ? (
-                      <Button className="favorite-button" value={product.id}>
-                        {favoritesIds.includes(product.id) ? (
-                          <img
-                            src={fullHeart}
-                            value={product.id}
-                            width="20"
-                            height="20"
-                            className="d-inline-block align-top"
-                          />
-                        ) : (
-                          <img
-                            src={emptyHeart}
-                            value={product.id}
-                            width="20"
-                            height="20"
-                            className="d-inline-block align-top"
-                            onClick={() => handleFavorite(product.id)}
-                          />
-                        )}
-                      </Button>
-                    ) : null}
-                  </div>
-                  <Button
-                    className="cart-button"
-                    value={product.id}
-                    onClick={(e) => {
-                      handleCart(product.id)
-                    }}
-                  >
-                    Add to Cart
-                  </Button>
-                  <Card.Footer>
-                    <p>${product.price / 100}</p>{" "}
-                    {product.stock > 20 ? (
-                      <p>In stock</p>
-                    ) : product.stock > 0 ? (
-                      <p>Low Stock</p>
-                    ) : (
-                      <p>Out of stock</p>
-                    )}
-                  </Card.Footer>
-                </Card.Body>
-              </Card>
-            ))
+            ? productsToDisplay.map((product) => {
+              return (product.isActive ?
+                <Card
+                  className="card"
+                  style={{ width: "18rem", height: "19rem" }}
+                  key={product.id}
+                >
+                  <Link to={`/products/${product.id}`}>
+                    <Card.Img
+                      className="card-img-top"
+                      src={product.image}
+                      alt={product.title}
+                    // onClick={(e) => {
+                    //   console.log("running onclick")
+                    //   setSingleProductId(product.id);
+                    //   console.log(product);
+                    //   localStorage.setItem("singleProductId", product.id);
+                    //   setSingleProduct(product);
+                    // }}
+                    />
+                  </Link>
+                  <Card.Body>
+                    <div className="title-block">
+                      <Card.Title>{product.title}</Card.Title>
+                      {token ? (
+                        <Button className="favorite-button" value={product.id}>
+                          {favoritesIds.includes(product.id) ? (
+                            <img
+                              src={fullHeart}
+                              value={product.id}
+                              width="20"
+                              height="20"
+                              className="d-inline-block align-top"
+                            />
+                          ) : (
+                            <img
+                              src={emptyHeart}
+                              value={product.id}
+                              width="20"
+                              height="20"
+                              className="d-inline-block align-top"
+                              onClick={() => handleFavorite(product.id)}
+                            />
+                          )}
+                        </Button>
+                      ) : null}
+                    </div>
+                    <Button
+                      className="cart-button"
+                      value={product.id}
+                      onClick={(e) => {
+                        handleCart(product.id)
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
+                    <Card.Footer>
+                      <p>${product.price / 100}</p>{" "}
+                      {product.stock > 20 ? (
+                        <p>In stock</p>
+                      ) : product.stock > 0 ? (
+                        <p>Low Stock</p>
+                      ) : (
+                        <p>Out of stock</p>
+                      )}
+                    </Card.Footer>
+                  </Card.Body>
+                </Card> : null
+              )
+            })
             : null}
         </div>
       </div>
