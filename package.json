@@ -37,11 +37,11 @@
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
+    "@faker-js/faker": "^8.0.2",
     "util": "^0.12.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@faker-js/faker": "^8.0.2",
     "nodemon": "^2.0.4",
     "supertest": "^6.3.3"
   },
