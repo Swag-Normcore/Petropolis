@@ -214,22 +214,16 @@ h3 {
   display: flex;
 }
 
-#favorites-container {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  height: 100%;
-}
-
-#product-form-container {
-  display: flex;
-  justify-content: center;
-}
-
 .site-button {
   background-color: #2D93AD;
 }
 
 .site-button:hover {
   background-color: #69cde6;
+}
+
+#dashboard-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }

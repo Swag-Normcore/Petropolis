@@ -8,6 +8,8 @@ export const adminAtom = atom(true);
 
 export const userAtom = atom({});
 
+export const usersAtom = atom([]);
+
 export const productsAtom = atom([]);
 
 export const singleProductIdAtom = atom(null);
@@ -19,6 +21,8 @@ export const productImagesAtom = atom([]);
 export const categoriesAtom = atom([]);
 
 export const favoritesAtom = atom([]);
+
+export const favoritesIdsAtom = atom([]);
 
 export const ordersAtom = atom([]);
 
