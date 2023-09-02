@@ -54,18 +54,18 @@ async function createFakeData() {
     );
 
     // create reviews
-    const reviews = await Promise.all(
-      [...Array(NUM_REVIEWS)].map(async (_) => {
-        return await Reviews.createReview({
-          title: faker.commerce.productName(),
-          comment: faker.commerce.productDescription(),
-          rating: faker.number.int({ min: 1, max: 5 }),
-          userId: faker.helpers.arrayElement(users).id,
-          productId: faker.helpers.arrayElement(products).id,
-          isAnonymous: faker.datatype.boolean()
-        });
-      })
-    );
+    // const reviews = await Promise.all(
+    //   [...Array(NUM_REVIEWS)].map(async (_) => {
+    //     return await Reviews.createReview({
+    //       title: faker.commerce.productName(),
+    //       comment: faker.commerce.productDescription(),
+    //       rating: faker.number.int({ min: 1, max: 5 }),
+    //       userId: faker.helpers.arrayElement(users).id,
+    //       productId: faker.helpers.arrayElement(products).id,
+    //       isAnonymous: faker.datatype.boolean()
+    //     });
+    //   })
+    // );
 
     // create orders
     const orders = await Promise.all(
