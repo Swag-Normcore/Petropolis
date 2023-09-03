@@ -553,3 +553,24 @@ export async function updateProduct({
     return updatedProduct;
   }
 }
+
+export async function stripeCheckout({ cartProducts, shoppingId, token }) {
+  try {
+    const { data: url } = await axios({
+      method: "post",
+      url: "/api/stripe/create-checkout-session",
+      data: {
+        cartProducts,
+        shoppingId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    })
+    console.log(url);
+    return url;
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -1,6 +1,8 @@
 const apiRouter = require("express").Router();
 const jwt = require("jsonwebtoken");
 const { User } = require("../db");
+require("dotenv").config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 apiRouter.get("/", (req, res, next) => {
   res.send({
@@ -59,6 +61,9 @@ apiRouter.use("/orders", ordersRouter);
 
 const imagesRouter = require("./images");
 apiRouter.use("/images", imagesRouter);
+
+const stripeRouter = require("./stripe_checkout");
+apiRouter.use("/stripe", stripeRouter);
 
 apiRouter.use((err, req, res, next) => {
   if (err) {
