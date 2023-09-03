@@ -190,3 +190,42 @@ h3{
   display: flex;
   justify-content: center;
 }
+
+#account-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 75px;
+}
+
+
+#account-page{
+  display: flex;
+  height: 100vh;
+  justify-content: space-around;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+}
+
+
+#customer-service{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+
+}
+
+#update-account{
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+
+}
+
+#history-button{
+  background-color: #2D93AD;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}

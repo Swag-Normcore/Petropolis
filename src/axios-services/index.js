@@ -149,7 +149,7 @@ export async function getAllCategories() {
 
 export async function getAllUsers() {
   try {
-    const { data: users } = await axios.get("/api/users");
+    const { data: users } = await axios.get(`/api/users`);
     console.log("Get all users in axios", users);
     return users;
   } catch (error) {
@@ -157,11 +157,11 @@ export async function getAllUsers() {
   }
 }
 
-export async function getUserById(userId) {
+export async function getAllOrdersByUser(userId) {
   try {
-    const { data: user } = await axios.get(`/api/users/${userId}`);
-    console.log("Get user by id in axios", user);
-    return user;
+    const { data: orders } = await axios.get(`/api/orders`);
+    console.log("Get orders by user", orders);
+    return orders;
   } catch (error) {
     console.error(error);
   }
@@ -365,6 +365,29 @@ export async function updateShoppingCartProductQuantity({
     } else {
       console.log(shoppingCart);
       return shoppingCart;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updatedUser({ userId, name }) {
+  try {
+    const { data: user } = await axios({
+      method: "patch",
+      url: `/api/users/${userId}`,
+      data: {
+        name,
+      },
+      headers: {
+        Authorization: `Bearer $ {token}`,
+      },
+    });
+    if (!updatedUser) {
+      throw new Error("Unable to update user");
+    } else {
+      console.log(updatedUser);
+      return updatedUser;
     }
   } catch (error) {
     console.error(error);

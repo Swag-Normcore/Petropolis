@@ -19,6 +19,7 @@ import {
   getAllProducts,
   getAllCategories,
   getAllFavorites,
+  getUserByEmail,
   getUserShoppingCart,
   getGuestShoppingCart,
   createGuestShoppingCart,
@@ -44,6 +45,7 @@ import Login from "./Login";
 import ShoppingCart from "./ShoppingCart";
 import Favorites from "./Favorites";
 import ProductForm from "./ProductForm";
+import AccountPage from "./AccountPage";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -237,7 +239,7 @@ const App = () => {
             <h1>Orders page</h1>
           </Route>
           <Route path="/account">
-            <h1>Account page</h1>
+            <AccountPage />
           </Route>
           <Route path="/dashboard">
             <h1>Dashboard page</h1>
