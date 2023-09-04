@@ -25,6 +25,7 @@ const Login = () => {
     setMessage(result.message);
     setEmail("");
     setPassword("");
+    window.location.href = "/";
   };
 
   return (

@@ -4,7 +4,7 @@ export const counterAtom = atom(0);
 
 export const tokenAtom = atom(null);
 
-export const adminAtom = atom(true);
+export const adminAtom = atom(false);
 
 export const userAtom = atom({});
 
@@ -31,5 +31,7 @@ export const shoppingCartAtom = atom([]);
 export const cartProductsAtom = atom([]);
 
 export const canvasAtom = atom(false);
+
+export const categoriesCanvasAtom = atom(false);
 
 export const apiHealthAtom = atom("");

@@ -29,6 +29,7 @@ const Register = () => {
       setEmail("");
       setPassConfirm("");
       setPassword("");
+      window.location.href = "/";
     }
   };
 
