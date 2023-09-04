@@ -7,6 +7,7 @@ import {
   tokenAtom,
   shoppingCartAtom,
   favoritesIdsAtom,
+  categoriesCanvasAtom,
   // singleProductIdAtom,
   // singleProductAtom,
 } from "../atoms";
@@ -17,6 +18,8 @@ import Card from "react-bootstrap/Card";
 import emptyHeart from "../images/heart-empty.svg";
 import fullHeart from "../images/heart-fill.svg";
 import { Link } from "react-router-dom";
+import Pagination from "react-bootstrap/Pagination";
+import Offcanvas from "react-bootstrap/Offcanvas";
 
 const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
@@ -29,6 +32,9 @@ const ProductsPage = () => {
   const [searchFilter, setSearchFilter] = useState([]);
   const [favoritesIds, setFavoritesIds] = useAtom(favoritesIdsAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(20);
+  const [categoriesCanvas, setCategoriesCanvas] = useAtom(categoriesCanvasAtom);
   // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
   // const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
@@ -83,9 +89,59 @@ const ProductsPage = () => {
       ? filteredProducts
       : products;
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = productsToDisplay.slice(indexOfFirstProduct, indexOfLastProduct);
+  const paginationItems = [];
+  for (let number = 1; number <= (productsToDisplay.length / productsPerPage + 1); number++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={number}
+        active={number === currentPage}
+        onClick={(e) => {
+          console.log(number);
+          setCurrentPage(number);
+        }}>{number}</Pagination.Item>
+    )
+  }
+
+  const handleClose = () => setCategoriesCanvas(false);
+  const handleShow = () => setCategoriesCanvas(true);
+
   return (
     <div id="products-page">
-      <div id="category-nav" bg="info">
+      <Offcanvas show={categoriesCanvas} onHide={handleClose} placement="start">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>
+            <h3>Categories:</h3>
+          </Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <Form id="category-form">
+            <Form.Check
+              className="mb-3"
+              id="all"
+              label="All Categories"
+              checked={checkedId === null}
+              onChange={() => handleCheckboxChange("all")}
+            />
+            {categories
+              ? categories.map((category) => (
+                <div key={category.id} className="mb-3">
+                  <Form.Check
+                    id={`${category.id}`}
+                    label={`${category.name}`}
+                    checked={category.id === checkedId}
+                    onChange={() => handleCheckboxChange(category.id)}
+                  />
+                </div>
+              ))
+              : null}
+          </Form>
+        </Offcanvas.Body>
+      </Offcanvas>
+      {/* <div id="category-nav" bg="info">
+        <Button className="site-button" onClick={handleShow}>Categories</Button>
         <Form id="category-form">
           <Form.Check
             className="mb-3"
@@ -107,9 +163,10 @@ const ProductsPage = () => {
             ))
             : null}
         </Form>
-      </div>
+      </div> */}
       <div id="search-container">
         <div className="search">
+          <Button className="site-button me-2" onClick={handleShow}>Categories</Button>
           <input
             id="search"
             type="text"
@@ -119,11 +176,11 @@ const ProductsPage = () => {
               searchProducts();
             }}
           />
-          <Button id="search-button">SEARCH</Button>
+          <Button id="search-button" className="ms-2">SEARCH</Button>
         </div>
         <div id="products-container">
-          {productsToDisplay
-            ? productsToDisplay.map((product) => {
+          {currentProducts
+            ? currentProducts.map((product) => {
               return (product.isActive ?
                 <Card
                   className="card"
@@ -195,6 +252,11 @@ const ProductsPage = () => {
             })
             : null}
         </div>
+        <Pagination className="ms-5 justify-content-center">
+          {paginationItems.map((item) => {
+            return item;
+          })}
+        </Pagination>
       </div>
     </div >
   );

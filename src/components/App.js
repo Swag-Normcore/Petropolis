@@ -81,17 +81,17 @@ const App = () => {
     // invoke it immediately after its declaration, inside the useEffect callback
     // getAPIStatus();
 
-    const query = new URLSearchParams(window.location.search);
+    // const query = new URLSearchParams(window.location.search);
 
-    if (query.get("success")) {
-      alert("Order placed! You will receive an email confirmation.");
-    }
+    // if (query.get("success")) {
+    //   alert("Order placed! You will receive an email confirmation.");
+    // }
 
-    if (query.get("canceled")) {
-      alert(
-        "Order canceled -- continue to shop around and checkout when you're ready."
-      );
-    }
+    // if (query.get("canceled")) {
+    //   alert(
+    //     "Order canceled -- continue to shop around and checkout when you're ready."
+    //   );
+    // }
 
     const getProducts = async () => {
       const result = await getAllProducts();
@@ -117,7 +117,7 @@ const App = () => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      const getUserCart = async () => {
+      const getUserData = async () => {
         const userData = await getUser({ token: storedToken });
         const cartData = await getUserShoppingCart({
           shoppingId: userData.shoppingId,
@@ -125,9 +125,10 @@ const App = () => {
         });
         setUser(userData);
         setShoppingCart(cartData);
+        setIsAdmin(userData.isAdmin);
         getFavorites({ userId: userData.id, token: storedToken });
       };
-      getUserCart();
+      getUserData();
     } else {
       const getGuestCart = async () => {
         const storedShoppingId = localStorage.getItem("shoppingId");
