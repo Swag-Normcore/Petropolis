@@ -15,20 +15,20 @@ async function addProductToOrder({ orderId, productId, quantity }) {
         const product = await getProductById(productId);
         if (order && product) {
             const subTotal = product.price * quantity;
-            let totalPrice = order.totalPrice + subTotal;
+            // let totalPrice = order.totalPrice + subTotal;
             const { rows: [orderProduct] } = await client.query(`
                 INSERT INTO order_products("orderId", "productId", "subTotal", quantity)
                 VALUES ($1, $2, $3, $4)
                 RETURNING *;
             `, [orderId, productId, subTotal, quantity]);
-            const updatedOrder = await updateOrder(orderId, { totalPrice });
+            // const updatedOrder = await updateOrder(orderId, { totalPrice });
             if (!orderProduct) {
                 throw new Error("Couldn't add product to order!");
-            } else if (!updatedOrder) {
-                throw new Error("Couldn't update order's total price!");
+                // } else if (!updatedOrder) {
+                //     throw new Error("Couldn't update order's total price!");
             } else {
                 orderProduct.product = product;
-                console.log("addProductToOrder: ", orderProduct, updatedOrder);
+                console.log("addProductToOrder: ", orderProduct);
                 return orderProduct;
             }
         } else {
@@ -80,25 +80,25 @@ async function updateOrderProductQuantity({ orderProductId, quantity }) {
                 throw new Error("Couldn't find product!");
             } else {
                 const subTotal = product.price * quantity;
-                let totalPrice = subTotal;
-                if (order.products) {
-                    order.products.forEach((el) => {
-                        if (el.orderProductId !== orderProductId) {
-                            totalPrice += el.subTotal;
-                        }
-                    })
-                }
+                // let totalPrice = subTotal;
+                // if (order.products) {
+                //     order.products.forEach((el) => {
+                //         if (el.orderProductId !== orderProductId) {
+                //             totalPrice += el.subTotal;
+                //         }
+                //     })
+                // }
                 const { rows: [updatedOrderProduct] } = await client.query(`
                     UPDATE order_products
                     SET "quantity"=$1, "subTotal"=$2
                     WHERE id=$3
                     RETURNING *;
                 `, [quantity, subTotal, orderProductId]);
-                const updatedOrder = await updateOrder(order.id, { totalPrice });
+                // const updatedOrder = await updateOrder(order.id, { totalPrice });
                 if (!updatedOrderProduct) {
                     throw new Error("Couldn't update order product!");
-                } else if (!updatedOrder) {
-                    throw new Error("Couldn't update order's total price!");
+                    // } else if (!updatedOrder) {
+                    //     throw new Error("Couldn't update order's total price!");
                 } else {
                     updatedOrderProduct.product = product;
                     console.log("updateOrderProductQuantity: ", updatedOrderProduct, updatedOrder);
@@ -128,14 +128,14 @@ async function removeProductFromOrder(orderProductId) {
         } else if (!order) {
             throw new Error("Couldn't find order!");
         } else {
-            const totalPrice = order.totalPrice - orderProduct.subTotal;
-            const updatedOrder = await updateOrder(orderId, { totalPrice });
-            if (!updatedOrder) {
-                throw new Error("Couldn't update order!");
-            } else {
-                console.log("removeProductFromOrder: ", orderProduct, updatedOrder);
-                return orderProduct;
-            }
+            // const totalPrice = order.totalPrice - orderProduct.subTotal;
+            // const updatedOrder = await updateOrder(orderId, { totalPrice });
+            // if (!updatedOrder) {
+            //     throw new Error("Couldn't update order!");
+            // } else {
+            console.log("removeProductFromOrder: ", orderProduct);
+            return orderProduct;
+            // }
         }
     } catch (err) {
         console.error(err);

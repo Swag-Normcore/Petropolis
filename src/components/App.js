@@ -49,6 +49,7 @@ import Favorites from "./Favorites";
 import ProductForm from "./ProductForm";
 import SingleProductView from "./SingleProductView";
 import DashboardPage from "./DashboardPage";
+import CheckoutSuccess from "./CheckoutSuccess";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -79,6 +80,18 @@ const App = () => {
     // second, after you've defined your getter above
     // invoke it immediately after its declaration, inside the useEffect callback
     // getAPIStatus();
+
+    const query = new URLSearchParams(window.location.search);
+
+    if (query.get("success")) {
+      alert("Order placed! You will receive an email confirmation.");
+    }
+
+    if (query.get("canceled")) {
+      alert(
+        "Order canceled -- continue to shop around and checkout when you're ready."
+      );
+    }
 
     const getProducts = async () => {
       const result = await getAllProducts();
@@ -190,7 +203,7 @@ const App = () => {
                     <LinkContainer to="/account">
                       <Nav.Link>Account</Nav.Link>
                     </LinkContainer>
-                    <LinkContainer to="/">
+                    <LinkContainer exact to="/">
                       <Nav.Link
                         onClick={() => {
                           localStorage.removeItem("token");
@@ -265,6 +278,9 @@ const App = () => {
           </Route>
           <Route path="/dashboard/product_form">
             <ProductForm />
+          </Route>
+          <Route path="/checkout-success">
+            <CheckoutSuccess />
           </Route>
         </main>
       </div>

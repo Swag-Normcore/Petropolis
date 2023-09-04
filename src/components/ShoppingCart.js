@@ -1,5 +1,6 @@
 import React from "react";
-import { shoppingCartAtom, tokenAtom } from "../atoms";
+import { Link } from "react-router-dom/";
+import { shoppingCartAtom, tokenAtom, userAtom } from "../atoms";
 import { useAtom } from "jotai";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
@@ -9,11 +10,14 @@ import trashCan from "../images/trash-fill.svg";
 import {
     removeProductFromShoppingCart,
     updateShoppingCartProductQuantity,
+    stripeCheckout,
 } from "../axios-services";
 
 const ShoppingCart = () => {
     const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
     const [token, setToken] = useAtom(tokenAtom);
+    const [user, setUser] = useAtom(userAtom);
+
     let totalPrice = 0;
     shoppingCart
         ? shoppingCart.products.forEach((cartProduct) => {
@@ -66,6 +70,14 @@ const ShoppingCart = () => {
             }
         }
     }
+
+    async function handleCheckout() {
+        const result = await stripeCheckout({ cartProducts: shoppingCart.products, shoppingId: shoppingCart.id, token });
+        if (result.url) {
+            window.location.href = result.url;
+        }
+    }
+
     return (
         <div>
             {shoppingCart ? (
@@ -125,19 +137,27 @@ const ShoppingCart = () => {
                                 </p>
                             </Stack>
                             <Stack direction="horizontal" gap={1}>
-                                <p className="p-2">Taxes: </p>
+                                <p className="p-2">Taxes (7.25%): </p>
                                 <p className="p-2 ms-auto">
-                                    ${Math.ceil(totalPrice * 0.07 * 100) / 100}
+                                    ${Math.ceil(totalPrice * 0.0725 * 100) / 100}
                                 </p>
                             </Stack>
                             <Stack direction="horizontal" gap={1}>
                                 <p className="p-2">Total: </p>
                                 <p className="p-2 ms-auto">
-                                    ${Math.ceil(totalPrice * 1.07 * 100) / 100}
+                                    ${Math.ceil(totalPrice * 1.0725 * 100) / 100}
                                 </p>
                             </Stack>
-                            <Stack className="mx-auto">
-                                <Button className="site-button">Checkout</Button>
+                            <Stack className="mx-auto col-md-5">
+                                {token ?
+                                    <Button className="site-button" onClick={() => {
+                                        handleCheckout();
+                                    }}>Checkout</Button>
+                                    :
+                                    <Link to="/login">
+                                        <Button className="site-button">Please sign in</Button>
+                                    </Link>
+                                }
                             </Stack>
                         </>
                     ) : (
