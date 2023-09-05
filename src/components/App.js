@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import Image from "react-bootstrap/Image";
 import { LinkContainer } from "react-router-bootstrap";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
@@ -16,7 +15,6 @@ import basket from "../images/basket-fill.svg";
 // you can think of that directory as a collection of api adapters
 // where each adapter fetches specific info from our express server's /api route
 import {
-  getAPIHealth,
   getAllProducts,
   getAllCategories,
   getAllFavorites,
@@ -28,19 +26,14 @@ import {
 } from "../axios-services";
 import { useAtom } from "jotai";
 import {
-  counterAtom,
   tokenAtom,
   adminAtom,
   canvasAtom,
-  apiHealthAtom,
   productsAtom,
   categoriesAtom,
   favoritesAtom,
-  favoritesIdsAtom,
   shoppingCartAtom,
-  cartProductsAtom,
   userAtom,
-  singleProductAtom,
   ordersAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
@@ -56,37 +49,20 @@ import OrdersPageComponent from "./OrdersPage";
 import AccountPage from "./AccountPage";
 
 const App = () => {
-  const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
   const [token, setToken] = useAtom(tokenAtom);
   const [isAdmin, setIsAdmin] = useAtom(adminAtom);
   const [canvas, setCanvas] = useAtom(canvasAtom);
-  const [count, setCount] = useAtom(counterAtom);
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
   const [favorites, setFavorites] = useAtom(favoritesAtom);
-  const [favoritesIds, setFavoritesIds] = useAtom(favoritesIdsAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
-  const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
-  const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
   const [orders, setOrders] = useAtom(ordersAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
 
   useEffect(() => {
-    // const query = new URLSearchParams(window.location.search);
-
-    // if (query.get("success")) {
-    //   alert("Order placed! You will receive an email confirmation.");
-    // }
-
-    // if (query.get("canceled")) {
-    //   alert(
-    //     "Order canceled -- continue to shop around and checkout when you're ready."
-    //   );
-    // }
-
     const getProducts = async () => {
       const result = await getAllProducts();
       setProducts(result);
@@ -125,7 +101,6 @@ const App = () => {
       const getGuestCart = async () => {
         const storedShoppingId = localStorage.getItem("shoppingId");
         if (storedShoppingId) {
-          console.log(storedShoppingId);
           const cartData = await getGuestShoppingCart({
             shoppingId: storedShoppingId,
           });
@@ -181,13 +156,14 @@ const App = () => {
         <Navbar sticky="top" className="cyan" expand="lg">
           <Container>
             <LinkContainer to="/">
-              <Navbar.Brand>
+              <Navbar.Brand id="brand-container">
                 <img
                   src={petLogo}
                   width="50"
                   height="50"
                   className="d-inline-block align-top"
                 />
+                <h1>Petropolis</h1>
               </Navbar.Brand>
             </LinkContainer>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -284,11 +260,8 @@ const App = () => {
           <Route path="/account">
             <AccountPage />
           </Route>
-          <Route path="/dashboard">
+          <Route exact path="/dashboard">
             <DashboardPage />
-          </Route>
-          <Route path="/dashboard/product_form">
-            <ProductForm />
           </Route>
           <Route path="/checkout-success">
             <CheckoutSuccess />

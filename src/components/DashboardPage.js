@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import ProductForm from "./ProductForm";
 import ManageUser from "./ManageUser";
 import ManageCategory from "./ManageCategory";
 
 const DashboardPage = () => {
-  const [activeComponent, setActiveComponent] = useState("productForm");
+  const [activeComponent, setActiveComponent] = useState("");
+
+  useEffect(() => {
+    setActiveComponent(localStorage.getItem("admin component"));
+  }, []);
 
   const showComponent = (component) => {
     setActiveComponent(component);
+    localStorage.setItem("admin component", component);
   };
 
   return (
@@ -48,6 +53,7 @@ const DashboardPage = () => {
       {activeComponent === "productForm" && <ProductForm />}
       {activeComponent === "manageUser" && <ManageUser />}
       {activeComponent === "manageCategory" && <ManageCategory />}
+      {!activeComponent && <ProductForm />}
     </div>
   );
 };

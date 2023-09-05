@@ -24,7 +24,6 @@ const ManageUser = () => {
       }
     };
     getUsers();
-    console.log("users in useEffect", users);
   }, []);
 
   const searchUsers = () => {
@@ -42,12 +41,10 @@ const ManageUser = () => {
 
   const handleDelete = async (userId) => {
     const result = await deleteUser({ userId, token });
-    console.log(result);
   };
 
   const handleAdmin = async (userId) => {
     const result = await patchUser({ userId, token, isAdmin: true });
-    console.log("result inside handle admin", result);
   };
 
   const handleSubmit = (event) => {

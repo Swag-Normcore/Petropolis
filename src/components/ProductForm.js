@@ -18,7 +18,6 @@ const ProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("token:", token);
     const newProduct = await createProduct({
       title,
       description,
@@ -29,14 +28,12 @@ const ProductForm = () => {
       animalType,
       token: token,
     });
-    console.log("new product in handlesubmit", newProduct);
     const productId = newProduct.id;
     const addImages = await addImagesToProduct({
       productId,
       imageUrls,
       token: token,
     });
-    console.log(addImages);
   };
 
   return (
