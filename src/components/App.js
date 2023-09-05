@@ -24,6 +24,7 @@ import {
   getGuestShoppingCart,
   createGuestShoppingCart,
   getUser,
+  getAllOrders,
 } from "../axios-services";
 import { useAtom } from "jotai";
 import {
@@ -40,6 +41,7 @@ import {
   cartProductsAtom,
   userAtom,
   singleProductAtom,
+  ordersAtom,
 } from "../atoms";
 import ProductsPage from "./Products";
 import Register from "./Register";
@@ -50,6 +52,7 @@ import ProductForm from "./ProductForm";
 import SingleProductView from "./SingleProductView";
 import DashboardPage from "./DashboardPage";
 import CheckoutSuccess from "./CheckoutSuccess";
+import OrdersPageComponent from "./OrdersPage";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -65,21 +68,12 @@ const App = () => {
   const [cartProducts, setCartProducts] = useAtom(cartProductsAtom);
   const [user, setUser] = useAtom(userAtom);
   const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
+  const [orders, setOrders] = useAtom(ordersAtom);
 
   const handleClose = () => setCanvas(false);
   const handleShow = () => setCanvas(true);
 
   useEffect(() => {
-    // follow this pattern inside your useEffect calls:
-    // first, create an async function that will wrap your axios service adapter
-    // invoke the adapter, await the response, and set the data
-    // const getAPIStatus = async () => {
-    //   const { healthy } = await getAPIHealth();
-    //   setAPIHealth(healthy ? "api is up! :D" : "api is down :/");
-    // };
-    // second, after you've defined your getter above
-    // invoke it immediately after its declaration, inside the useEffect callback
-    // getAPIStatus();
 
     // const query = new URLSearchParams(window.location.search);
 
@@ -114,6 +108,13 @@ const App = () => {
       }
     };
 
+    const getOrders = async ({ token, userId }) => {
+      const result = await getAllOrders({ token, userId });
+      if (result) {
+        setOrders(result);
+      }
+    }
+
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
@@ -127,6 +128,7 @@ const App = () => {
         setShoppingCart(cartData);
         setIsAdmin(userData.isAdmin);
         getFavorites({ userId: userData.id, token: storedToken });
+        getOrders({ token: storedToken, userId: userData.id });
       };
       getUserData();
     } else {
@@ -269,7 +271,7 @@ const App = () => {
             <Favorites />
           </Route>
           <Route path="/order-history">
-            <h1>Orders page</h1>
+            <OrdersPageComponent />
           </Route>
           <Route path="/account">
             <h1>Account page</h1>

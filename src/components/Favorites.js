@@ -71,8 +71,7 @@ const FavoritesPage = () => {
                     <img src={trashCan} />
                   </Button>
                   <Button
-                    className="m-1"
-                    variant="primary"
+                    className="m-1 site-button"
                     onClick={() => handleAddToCart(favorite.productId)}
                   >
                     Add to Cart

@@ -574,3 +574,20 @@ export async function stripeCheckout({ cartProducts, shoppingId, token }) {
     console.error(error);
   }
 }
+
+export async function getAllOrders({ token, userId }) {
+  try {
+    const { data: orders } = await axios({
+      method: "get",
+      url: `/api/orders/users/${userId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    })
+    console.log(orders);
+    return orders;
+  } catch (error) {
+    console.error(error)
+  }
+}

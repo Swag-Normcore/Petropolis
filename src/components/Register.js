@@ -1,8 +1,8 @@
-import { register } from "../axios-services";
+import { register, addProductToShoppingCart, removeProductFromShoppingCart } from "../axios-services";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { useAtom } from "jotai";
-import { tokenAtom, adminAtom, userAtom } from "../atoms";
+import { tokenAtom, adminAtom, userAtom, shoppingCartAtom } from "../atoms";
 import { Link } from "react-router-dom";
 
 const Register = () => {
@@ -14,21 +14,36 @@ const Register = () => {
   const [passConfirm, setPassConfirm] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await register({ name, email, password });
-    console.log(result);
-    if (result) {
-      setToken(result.token);
-      localStorage.setItem("token", result.token);
-      setAdmin(result.user.isAdmin);
-      setMessage(result.message);
-      setUser(result.user);
+    const userData = await register({ name, email, password });
+    if (userData) {
+      setToken(userData.token);
+      localStorage.setItem("token", userData.token);
+      setAdmin(userData.user.isAdmin);
+      setMessage(userData.message);
+      setUser(userData.user);
       setName("");
       setEmail("");
       setPassConfirm("");
       setPassword("");
+      if (shoppingCart) {
+        await Promise.all(shoppingCart.products.map(async (cartProduct) => {
+          await addProductToShoppingCart({
+            shoppingId: userData.user.shoppingId,
+            productId: cartProduct.productId,
+            quantity: cartProduct.quantity,
+            token: userData.token
+          });
+          await removeProductFromShoppingCart({
+            shoppingId: shoppingCart.id,
+            cartProductId: cartProduct.id,
+            token: userData.token
+          });
+        }));
+      }
       window.location.href = "/";
     }
   };
