@@ -1,11 +1,6 @@
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import {
-  favoritesAtom,
-  tokenAtom,
-  shoppingCartAtom,
-  // singleProductIdAtom
-} from "../atoms";
+import { useEffect } from "react";
+import { favoritesAtom, tokenAtom, shoppingCartAtom } from "../atoms";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import trashCan from "../images/trash-fill.svg";
@@ -16,13 +11,19 @@ const FavoritesPage = () => {
   const [favorites, setFavorites] = useAtom(favoritesAtom);
   const [token, setToken] = useAtom(tokenAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
-  // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
 
   const handleDelete = async (id) => {
     const favoriteId = id;
     try {
+      // Remove the favorite
       const result = await removeFavorite({ favoriteId, token });
       console.log(result);
+
+      // Update the favorites state after successful removal
+      const updatedFavorites = favorites.filter(
+        (favorite) => favorite.id !== favoriteId
+      );
+      setFavorites(updatedFavorites);
     } catch (error) {
       console.error(error);
     }
@@ -33,7 +34,7 @@ const FavoritesPage = () => {
       shoppingId: shoppingCart.id,
       productId: id,
       quantity: 1,
-      token
+      token,
     });
     setShoppingCart(result);
   };
@@ -49,13 +50,7 @@ const FavoritesPage = () => {
               style={{ width: "18rem" }}
             >
               <Link to={`/products/${favorite.productId}`}>
-                <Card.Img variant="top" src={favorite.image}
-                // onClick={(e) => {
-                //   console.log("running onclick")
-                //   localStorage.setItem("singleProductId", favorite.productId);
-                //   setSingleProductId(favorite.productId);
-                // }}
-                />
+                <Card.Img variant="top" src={favorite.image} />
               </Link>
               <Card.Body>
                 <Card.Title className="favorite-title mb-0 mt-2">
