@@ -8,7 +8,7 @@ async function requireUser(req, res, next) {
 }
 
 async function requireCurrentUserOrAdmin(req, res, next) {
-    if (req.user.id !== req.params.userId && req.user.isAdmin === false) {
+    if (req.user.id !== Number(req.params.userId) && req.user.isAdmin === false) {
         next({
             error: "You must be the current logged in user or an admin."
         })

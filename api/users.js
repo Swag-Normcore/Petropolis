@@ -113,6 +113,7 @@ apiRouter.get("/me", requireUser, async (req, res, next) => {
 apiRouter.patch(
   "/:userId",
   requireUser,
+  requireCurrentUserOrAdmin,
   async (req, res, next) => {
     console.log("inside PATCH /users/:userId");
     const userId = Number(req.params.userId);
@@ -122,24 +123,19 @@ apiRouter.patch(
     console.log("req.user.id", req.user.id);
     const fields = req.body;
     try {
-      if (req.user.id !== userId) {
-        console.log("Couldn't verify current user")
-        throw { error: "Must be the current user!" }
-      } else {
-        if (password) {
-          const updatedUser = await User.updatePassword({ userId, password });
-          if (!updatedUser) {
-            throw { error: "Couldn't update user!" };
-          } else {
-            res.send(updatedUser);
-          }
+      if (password) {
+        const updatedUser = await User.updatePassword({ userId, password });
+        if (!updatedUser) {
+          throw { error: "Couldn't update user!" };
         } else {
-          const updatedUser = await User.updateUser(userId, fields);
-          if (!updatedUser) {
-            throw { error: "Couldn't update user!" };
-          } else {
-            res.send(updatedUser);
-          }
+          res.send(updatedUser);
+        }
+      } else {
+        const updatedUser = await User.updateUser(userId, fields);
+        if (!updatedUser) {
+          throw { error: "Couldn't update user!" };
+        } else {
+          res.send(updatedUser);
         }
       }
     } catch ({ error }) {

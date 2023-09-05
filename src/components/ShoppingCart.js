@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom/";
-import { shoppingCartAtom, tokenAtom, userAtom } from "../atoms";
+import { shoppingCartAtom, tokenAtom, userAtom, canvasAtom } from "../atoms";
 import { useAtom } from "jotai";
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
@@ -17,6 +17,7 @@ const ShoppingCart = () => {
     const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
     const [token, setToken] = useAtom(tokenAtom);
     const [user, setUser] = useAtom(userAtom);
+    const [canvas, setCanvas] = useAtom(canvasAtom);
 
     let totalPrice = 0;
     shoppingCart
@@ -155,7 +156,9 @@ const ShoppingCart = () => {
                                     }}>Checkout</Button>
                                     :
                                     <Link to="/login">
-                                        <Button className="site-button">Please sign in</Button>
+                                        <Button className="site-button" onClick={() => {
+                                            setCanvas(false);
+                                        }}>Please sign in</Button>
                                     </Link>
                                 }
                             </Stack>
