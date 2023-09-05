@@ -598,3 +598,48 @@ export async function getAllOrders({ token, userId }) {
     console.error(error);
   }
 }
+
+export async function updateUser({ userId, name, password, token }) {
+  try {
+    console.log("updateUser: ", userId, name, password, token);
+    if (name) {
+      const { data: updatedUser } = await axios({
+        method: "patch",
+        url: `/api/users/${userId}`,
+        data: {
+          name,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!updatedUser) {
+        throw new Error("Unable to update user");
+      } else {
+        console.log(updatedUser);
+        return updatedUser;
+      }
+    } else if (password) {
+      const { data: updatedUser } = await axios({
+        method: "patch",
+        url: `/api/users/${userId}`,
+        data: {
+          password,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!updatedUser) {
+        throw new Error("Unable to update user");
+      } else {
+        console.log(updatedUser);
+        return updatedUser;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

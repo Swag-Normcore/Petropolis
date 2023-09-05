@@ -20,12 +20,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login({ email, password });
-    localStorage.setItem("token", result.token);
-    setToken(result.token);
-    setUser(result.user);
-    setAdmin(result.user.isAdmin);
-    setMessage(result.message);
+    const userData = await login({ email, password });
+    localStorage.setItem("token", userData.token);
+    setToken(userData.token);
+    setUser(userData.user);
+    setAdmin(userData.user.isAdmin);
+    setMessage(userData.message);
     setEmail("");
     setPassword("");
     if (shoppingCart) {
@@ -45,7 +45,7 @@ const Login = () => {
         })
       );
     }
-    window.location.href = "/";
+    window.location.href = "/"; å
   };
 
   return (

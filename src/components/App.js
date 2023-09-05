@@ -46,6 +46,7 @@ import SingleProductView from "./SingleProductView";
 import DashboardPage from "./DashboardPage";
 import CheckoutSuccess from "./CheckoutSuccess";
 import OrdersPageComponent from "./OrdersPage";
+import AccountPage from "./AccountPage";
 
 const App = () => {
   const [token, setToken] = useAtom(tokenAtom);
@@ -257,7 +258,7 @@ const App = () => {
             <OrdersPageComponent />
           </Route>
           <Route path="/account">
-            <h1>Account page</h1>
+            <AccountPage />
           </Route>
           <Route exact path="/dashboard">
             <DashboardPage />
