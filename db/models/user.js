@@ -17,6 +17,7 @@ module.exports = {
   updateUser,
   deleteUser,
   isAdmin,
+  updatePassword,
 };
 
 async function getAllUsers() {
@@ -165,16 +166,35 @@ async function updateUser(id, fields = {}) {
     `,
       Object.values(fields)
     );
-
-    console.log("updateUser:", user);
-
     if (!user) {
       throw new Error("User not found");
     }
 
     delete user.password;
+    console.log("updateUser:", user);
 
     return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function updatePassword({ userId, password }) {
+  const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+  try {
+    const { rows: [user] } = await client.query(`
+      UPDATE users
+      SET "password"=$1
+      WHERE id=$2
+      RETURNING *;
+    `, [hashedPassword, userId]);
+    if (!user) {
+      throw new Error("Couldn't update user!");
+    } else {
+      delete user.password;
+      console.log("updatedPassword: ", user);
+      return user;
+    }
   } catch (error) {
     console.error(error);
   }

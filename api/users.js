@@ -21,7 +21,7 @@ apiRouter.post("/register", async (req, res, next) => {
   console.log(req.body);
   try {
     const existingUser = await User.getUserByEmail(email);
-    if (password.length < 8) {
+    if (password.length < 6) {
       throw { error: "Password too short!" };
     } else if (existingUser) {
       throw { error: "Email already used!" };
@@ -113,16 +113,34 @@ apiRouter.get("/me", requireUser, async (req, res, next) => {
 apiRouter.patch(
   "/:userId",
   requireUser,
-  requireCurrentUserOrAdmin,
   async (req, res, next) => {
-    const userId = req.params.userId;
+    console.log("inside PATCH /users/:userId");
+    const userId = Number(req.params.userId);
+    const { password } = req.body;
+    console.log("password", password);
+    console.log("userId", userId);
+    console.log("req.user.id", req.user.id);
     const fields = req.body;
     try {
-      const updatedUser = await User.updateUser(userId, fields);
-      if (!updatedUser) {
-        throw { error: "Couldn't update user!" };
+      if (req.user.id !== userId) {
+        console.log("Couldn't verify current user")
+        throw { error: "Must be the current user!" }
       } else {
-        res.send(updatedUser);
+        if (password) {
+          const updatedUser = await User.updatePassword({ userId, password });
+          if (!updatedUser) {
+            throw { error: "Couldn't update user!" };
+          } else {
+            res.send(updatedUser);
+          }
+        } else {
+          const updatedUser = await User.updateUser(userId, fields);
+          if (!updatedUser) {
+            throw { error: "Couldn't update user!" };
+          } else {
+            res.send(updatedUser);
+          }
+        }
       }
     } catch ({ error }) {
       next({ error });
