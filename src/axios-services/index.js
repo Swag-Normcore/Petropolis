@@ -4,20 +4,6 @@ import axios from "axios";
 // think about each function as a service that provides data
 // to your React UI through AJAX calls
 
-// for example, if we need to display a list of users
-// we'd probably want to define a getUsers service like this:
-
-/*
-  export async function getUsers() {
-    try {
-      const { data: users } = await axios.get('/api/users')
-      return users;
-    } catch(err) {
-      console.error(err)
-    }
-  }
-*/
-
 export async function register({ name, email, password }) {
   try {
     const { data: user } = await axios.post(
@@ -29,7 +15,6 @@ export async function register({ name, email, password }) {
         },
       }
     );
-    console.log("Axios register POST", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -47,7 +32,6 @@ export async function login({ email, password }) {
         },
       }
     );
-    console.log("Axios login POST", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -62,7 +46,6 @@ export async function getUser({ token }) {
         "Content-Type": "application/json",
       },
     });
-    console.log(user);
     return user;
   } catch (error) {
     console.error(error);
@@ -72,7 +55,6 @@ export async function getUser({ token }) {
 export async function getAPIHealth() {
   try {
     const { data } = await axios.get("/api/health");
-    console.log(data);
     return data;
   } catch (err) {
     console.error(err);
@@ -110,7 +92,6 @@ export async function createProduct({
         },
       }
     );
-    console.log("product inside axios", product);
     return product;
   } catch (error) {
     console.error(error);
@@ -129,7 +110,6 @@ export async function addImagesToProduct({ productId, imageUrls, token }) {
         },
       }
     );
-    console.log("images inside axios", images);
     return images;
   } catch (error) {
     console.error(error);
@@ -157,7 +137,6 @@ export async function createCategory({ name, description, token }) {
         },
       }
     );
-    console.log("Category inside axios post", category);
     return category;
   } catch (error) {
     console.error(error);
@@ -166,7 +145,6 @@ export async function createCategory({ name, description, token }) {
 
 export async function patchCategory({ categoryId, name, description, token }) {
   try {
-    console.log("log inside patch", categoryId, name, description, token);
     const { data: category } = await axios.patch(
       `/api/categories/${categoryId}`,
       { name, description },
@@ -177,7 +155,6 @@ export async function patchCategory({ categoryId, name, description, token }) {
         },
       }
     );
-    console.log("result from inside axios update category", category);
     return category;
   } catch (error) {
     console.error(error);
@@ -209,7 +186,6 @@ export async function getAllUsers({ token }) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("axios call", users);
     return users;
   } catch (error) {
     console.error(error);
@@ -219,7 +195,6 @@ export async function getAllUsers({ token }) {
 export async function getUserById(userId) {
   try {
     const { data: user } = await axios.get(`/api/users/${userId}`);
-    console.log("Get user by id in axios", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -234,7 +209,6 @@ export async function deleteUser({ userId, token }) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("deleting user in axios", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -253,7 +227,6 @@ export async function patchUser({ userId, token, isAdmin }) {
         },
       }
     );
-    console.log("patch users req inside axios", user);
     return user;
   } catch (error) {
     console.error(error);
@@ -288,7 +261,6 @@ export async function addToFavorites({ productId, token }) {
         },
       }
     );
-    console.log(favorite);
     return favorite;
   } catch (error) {
     console.error(error);
@@ -306,7 +278,6 @@ export async function removeFavorite({ favoriteId, token }) {
         },
       }
     );
-    console.log("remove fave in axios", favorite);
     return favorite;
   } catch (error) {
     console.error(error);
@@ -316,7 +287,6 @@ export async function removeFavorite({ favoriteId, token }) {
 export async function isAdmin(userId) {
   try {
     const { data: isAdmin } = await axios.get(`/api/users/${userId}`);
-    console.log("Is admin in axios", isAdmin);
     return isAdmin;
   } catch (error) {
     console.error(error);
@@ -325,12 +295,10 @@ export async function isAdmin(userId) {
 
 export async function createGuestShoppingCart() {
   try {
-    console.log("running createGuestShoppingCart...");
     const { data: shoppingCart } = await axios.post("/api/shopping_cart/guest");
     if (!shoppingCart) {
       throw new Error("Couldn't create new guest cart!");
     } else {
-      console.log(shoppingCart);
       return shoppingCart;
     }
   } catch (error) {
@@ -340,7 +308,6 @@ export async function createGuestShoppingCart() {
 
 export async function getUserShoppingCart({ shoppingId, token }) {
   try {
-    console.log("running getUserShoppingCart...");
     const { data: shoppingCart } = await axios.get(
       `/api/shopping_cart/${shoppingId}`,
 
@@ -354,7 +321,6 @@ export async function getUserShoppingCart({ shoppingId, token }) {
     if (!shoppingCart) {
       throw new Error("Couldn't get user's shopping cart!");
     } else {
-      console.log(shoppingCart);
       return shoppingCart;
     }
   } catch (error) {
@@ -364,7 +330,6 @@ export async function getUserShoppingCart({ shoppingId, token }) {
 
 export async function getGuestShoppingCart({ shoppingId }) {
   try {
-    console.log("running getGuestShoppingCart...");
     const { data: shoppingCart } = await axios.get(
       `/api/shopping_cart/${shoppingId}`,
       {},
@@ -377,7 +342,6 @@ export async function getGuestShoppingCart({ shoppingId }) {
     if (!shoppingCart) {
       throw new Error("Couln't get guest's shopping cart!");
     } else {
-      console.log(shoppingCart);
       return shoppingCart;
     }
   } catch (error) {
@@ -392,19 +356,6 @@ export async function addProductToShoppingCart({
   token,
 }) {
   try {
-    console.log("running addProductToShoppingCart...");
-    console.log(shoppingId, productId, quantity, token);
-    // const { data: shoppingCart } = await axios.post(
-    //   `api/shopping_cart/${shoppingId}`,
-    //   {
-    //     productId,
-    //     quantity,
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "Authorization": `Bearer ${token}`,
-    //     }
-    //   }
-    // );
     if (token) {
       const { data: shoppingCart } = await axios({
         method: "post",
@@ -420,7 +371,6 @@ export async function addProductToShoppingCart({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     } else {
@@ -435,7 +385,6 @@ export async function addProductToShoppingCart({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     }
@@ -450,17 +399,6 @@ export async function removeProductFromShoppingCart({
   token,
 }) {
   try {
-    console.log("running removeProductFromShoppingCart...", cartProductId);
-    // const { data: shoppingCart } = await axios.delete(
-    //   `api/shopping_cart/products/${cartProductId}`,
-    //   {
-    //     data: { shoppingId },
-    //   }, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    // }
-    // );
     if (token) {
       const { data: shoppingCart } = await axios({
         method: "delete",
@@ -475,7 +413,6 @@ export async function removeProductFromShoppingCart({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     } else {
@@ -489,7 +426,6 @@ export async function removeProductFromShoppingCart({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     }
@@ -505,18 +441,6 @@ export async function updateShoppingCartProductQuantity({
   token,
 }) {
   try {
-    console.log("running updateCartProductQuantity...");
-    // const { data: shoppingCart } = await axios.patch(
-    //   `api/shopping_cart/${shoppingId}`,
-    //   {
-    //     cartProductId,
-    //     quantity,
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "Authorization": `Bearer ${token}`,
-    //     }
-    //   }
-    // );
     if (token) {
       const { data: shoppingCart } = await axios({
         method: "patch",
@@ -532,7 +456,6 @@ export async function updateShoppingCartProductQuantity({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     } else {
@@ -547,7 +470,6 @@ export async function updateShoppingCartProductQuantity({
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
-        console.log(shoppingCart);
         return shoppingCart;
       }
     }
@@ -564,7 +486,6 @@ export async function getSingleProduct({ productId }) {
     if (!product) {
       throw new Error("Couldn't get product!");
     } else {
-      console.log(product);
       return product;
     }
   } catch (error) {
@@ -585,7 +506,6 @@ export async function getProductImages({ productId }) {
     if (!images) {
       throw new Error("Couldn't get product!");
     } else {
-      console.log(images);
       return images;
     }
   } catch (error) {
@@ -604,7 +524,6 @@ export async function deleteProduct({ productId, token }) {
   if (!deletedProduct) {
     throw new Error("Couldn't delete product!");
   } else {
-    console.log(deletedProduct);
     return deletedProduct;
   }
 }
@@ -640,7 +559,6 @@ export async function updateProduct({
   if (!updatedProduct) {
     throw new Error("Couldn't update product!");
   } else {
-    console.log(updatedProduct);
     return updatedProduct;
   }
 }
@@ -659,7 +577,6 @@ export async function stripeCheckout({ cartProducts, shoppingId, token }) {
         "Content-Type": "application/json",
       },
     });
-    console.log(url);
     return url;
   } catch (error) {
     console.error(error);
@@ -674,11 +591,10 @@ export async function getAllOrders({ token, userId }) {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-      }
-    })
-    console.log(orders);
+      },
+    });
     return orders;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }

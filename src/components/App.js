@@ -8,7 +8,7 @@ import Image from "react-bootstrap/Image";
 import { LinkContainer } from "react-router-bootstrap";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Button from "react-bootstrap/Button";
-import Badge from 'react-bootstrap/Badge';
+import Badge from "react-bootstrap/Badge";
 import "../style/App.css";
 import petLogo from "../images/pet-logo.png";
 import basket from "../images/basket-fill.svg";
@@ -74,7 +74,6 @@ const App = () => {
   const handleShow = () => setCanvas(true);
 
   useEffect(() => {
-
     // const query = new URLSearchParams(window.location.search);
 
     // if (query.get("success")) {
@@ -99,21 +98,12 @@ const App = () => {
     };
     getCategories();
 
-    const getFavorites = async (userId) => {
-      const result = await getAllFavorites(userId);
-      if (result) {
-        setFavorites(result);
-        const favoritesIdsArray = result.map((favorite) => favorite.productId);
-        setFavoritesIds(favoritesIdsArray);
-      }
-    };
-
     const getOrders = async ({ token, userId }) => {
       const result = await getAllOrders({ token, userId });
       if (result) {
         setOrders(result);
       }
-    }
+    };
 
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -127,7 +117,6 @@ const App = () => {
         setUser(userData);
         setShoppingCart(cartData);
         setIsAdmin(userData.isAdmin);
-        getFavorites({ userId: userData.id, token: storedToken });
         getOrders({ token: storedToken, userId: userData.id });
       };
       getUserData();
@@ -154,12 +143,26 @@ const App = () => {
       };
       getGuestCart();
     }
-  }, [token]);
+  }, [token, favorites]);
+
+  useEffect(() => {
+    const getFavoritesData = async () => {
+      if (token && user.id) {
+        const result = await getAllFavorites({ userId: user.id, token: token });
+        setFavorites(result);
+      }
+    };
+    getFavoritesData();
+  }, [user.id, token]);
 
   let totalShoppingCart = 0;
-  shoppingCart ? shoppingCart.products ? shoppingCart.products.forEach((product) => {
-    totalShoppingCart += product.quantity;
-  }) : null : null;
+  shoppingCart
+    ? shoppingCart.products
+      ? shoppingCart.products.forEach((product) => {
+          totalShoppingCart += product.quantity;
+        })
+      : null
+    : null;
 
   return (
     <BrowserRouter>
@@ -239,9 +242,13 @@ const App = () => {
                       height="25"
                       className="d-inline-block align-top"
                     />
-                    {shoppingCart ? shoppingCart.products ? shoppingCart.products.length ?
-                      <Badge>{totalShoppingCart}</Badge>
-                      : null : null : null}
+                    {shoppingCart ? (
+                      shoppingCart.products ? (
+                        shoppingCart.products.length ? (
+                          <Badge>{totalShoppingCart}</Badge>
+                        ) : null
+                      ) : null
+                    ) : null}
                   </Button>
                 </Nav.Link>
               </Nav>

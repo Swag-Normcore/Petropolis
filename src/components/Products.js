@@ -8,10 +8,13 @@ import {
   shoppingCartAtom,
   favoritesIdsAtom,
   categoriesCanvasAtom,
-  // singleProductIdAtom,
-  // singleProductAtom,
+  userAtom,
 } from "../atoms";
-import { addToFavorites, addProductToShoppingCart } from "../axios-services";
+import {
+  addToFavorites,
+  addProductToShoppingCart,
+  getAllFavorites,
+} from "../axios-services";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -25,6 +28,7 @@ const ProductsPage = () => {
   const [categories, setCategories] = useAtom(categoriesAtom);
   const [products, setProducts] = useAtom(productsAtom);
   const [favorites, setFavorites] = useAtom(favoritesAtom);
+  const [user, setUser] = useAtom(userAtom);
   const [token, setToken] = useAtom(tokenAtom);
   const [checkedId, setCheckedId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState(null);
@@ -35,8 +39,6 @@ const ProductsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(20);
   const [categoriesCanvas, setCategoriesCanvas] = useAtom(categoriesCanvasAtom);
-  // const [singleProductId, setSingleProductId] = useAtom(singleProductIdAtom);
-  // const [singleProduct, setSingleProduct] = useAtom(singleProductAtom);
 
   // useEffect(() => {
   //   if (favorites) {
@@ -68,8 +70,13 @@ const ProductsPage = () => {
   };
 
   const handleFavorite = async (productId) => {
+    const userId = user.id;
     const result = await addToFavorites({ productId, token });
-    setFavorites(result);
+    console.log(result);
+    const newFavorites = await getAllFavorites({ userId, token });
+    setFavorites(newFavorites);
+    const newFavoritesIds = newFavorites.map((favorite) => favorite.productId);
+    setFavoritesIds(newFavoritesIds);
   };
 
   const handleCart = async (productId) => {
@@ -78,7 +85,7 @@ const ProductsPage = () => {
       shoppingId: shoppingCart.id,
       productId,
       quantity: 1,
-      token
+      token,
     });
     setShoppingCart(result);
   };
@@ -86,14 +93,21 @@ const ProductsPage = () => {
   const productsToDisplay = searchTerm.length
     ? searchFilter
     : filteredProducts
-      ? filteredProducts
-      : products;
+    ? filteredProducts
+    : products;
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = productsToDisplay.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = productsToDisplay.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const paginationItems = [];
-  for (let number = 1; number <= (productsToDisplay.length / productsPerPage + 1); number++) {
+  for (
+    let number = 1;
+    number <= productsToDisplay.length / productsPerPage + 1;
+    number++
+  ) {
     paginationItems.push(
       <Pagination.Item
         key={number}
@@ -101,8 +115,11 @@ const ProductsPage = () => {
         onClick={(e) => {
           console.log(number);
           setCurrentPage(number);
-        }}>{number}</Pagination.Item>
-    )
+        }}
+      >
+        {number}
+      </Pagination.Item>
+    );
   }
 
   const handleClose = () => setCategoriesCanvas(false);
@@ -127,46 +144,24 @@ const ProductsPage = () => {
             />
             {categories
               ? categories.map((category) => (
-                <div key={category.id} className="mb-3">
-                  <Form.Check
-                    id={`${category.id}`}
-                    label={`${category.name}`}
-                    checked={category.id === checkedId}
-                    onChange={() => handleCheckboxChange(category.id)}
-                  />
-                </div>
-              ))
+                  <div key={category.id} className="mb-3">
+                    <Form.Check
+                      id={`${category.id}`}
+                      label={`${category.name}`}
+                      checked={category.id === checkedId}
+                      onChange={() => handleCheckboxChange(category.id)}
+                    />
+                  </div>
+                ))
               : null}
           </Form>
         </Offcanvas.Body>
       </Offcanvas>
-      {/* <div id="category-nav" bg="info">
-        <Button className="site-button" onClick={handleShow}>Categories</Button>
-        <Form id="category-form">
-          <Form.Check
-            className="mb-3"
-            id="all"
-            label="All Categories"
-            checked={checkedId === null}
-            onChange={() => handleCheckboxChange("all")}
-          />
-          {categories
-            ? categories.map((category) => (
-              <div key={category.id} className="mb-3">
-                <Form.Check
-                  id={`${category.id}`}
-                  label={`${category.name}`}
-                  checked={category.id === checkedId}
-                  onChange={() => handleCheckboxChange(category.id)}
-                />
-              </div>
-            ))
-            : null}
-        </Form>
-      </div> */}
       <div id="search-container">
         <div className="search">
-          <Button className="site-button me-2" onClick={handleShow}>Categories</Button>
+          <Button className="site-button me-2" onClick={handleShow}>
+            Categories
+          </Button>
           <input
             id="search"
             type="text"
@@ -176,80 +171,85 @@ const ProductsPage = () => {
               searchProducts();
             }}
           />
-          <Button id="search-button" className="ms-2">SEARCH</Button>
+          <Button id="search-button" className="ms-2">
+            SEARCH
+          </Button>
         </div>
         <div id="products-container">
           {currentProducts
             ? currentProducts.map((product) => {
-              return (product.isActive ?
-                <Card
-                  className="card"
-                  style={{ width: "18rem", height: "19rem" }}
-                  key={product.id}
-                >
-                  <Link to={`/products/${product.id}`}>
-                    <Card.Img
-                      className="card-img-top"
-                      src={product.image}
-                      alt={product.title}
-                    // onClick={(e) => {
-                    //   console.log("running onclick")
-                    //   setSingleProductId(product.id);
-                    //   console.log(product);
-                    //   localStorage.setItem("singleProductId", product.id);
-                    //   setSingleProduct(product);
-                    // }}
-                    />
-                  </Link>
-                  <Card.Body>
-                    <div className="title-block">
-                      <Card.Title>{product.title}</Card.Title>
-                      {token ? (
-                        <Button className="favorite-button" value={product.id}>
-                          {favoritesIds.includes(product.id) ? (
-                            <img
-                              src={fullHeart}
-                              value={product.id}
-                              width="20"
-                              height="20"
-                              className="d-inline-block align-top"
-                            />
-                          ) : (
-                            <img
-                              src={emptyHeart}
-                              value={product.id}
-                              width="20"
-                              height="20"
-                              className="d-inline-block align-top"
-                              onClick={() => handleFavorite(product.id)}
-                            />
-                          )}
-                        </Button>
-                      ) : null}
-                    </div>
-                    <Button
-                      className="cart-button"
-                      value={product.id}
-                      onClick={(e) => {
-                        handleCart(product.id)
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                    <Card.Footer>
-                      <p>${product.price / 100}</p>{" "}
-                      {product.stock > 20 ? (
-                        <p>In stock</p>
-                      ) : product.stock > 0 ? (
-                        <p>Low Stock</p>
-                      ) : (
-                        <p>Out of stock</p>
-                      )}
-                    </Card.Footer>
-                  </Card.Body>
-                </Card> : null
-              )
-            })
+                return product.isActive ? (
+                  <Card
+                    className="card"
+                    style={{ width: "18rem", height: "19rem" }}
+                    key={product.id}
+                  >
+                    <Link to={`/products/${product.id}`}>
+                      <Card.Img
+                        className="card-img-top"
+                        src={product.image}
+                        alt={product.title}
+                        // onClick={(e) => {
+                        //   console.log("running onclick")
+                        //   setSingleProductId(product.id);
+                        //   console.log(product);
+                        //   localStorage.setItem("singleProductId", product.id);
+                        //   setSingleProduct(product);
+                        // }}
+                      />
+                    </Link>
+                    <Card.Body>
+                      <div className="title-block">
+                        <Card.Title>{product.title}</Card.Title>
+                        {token ? (
+                          <Button
+                            className="favorite-button"
+                            value={product.id}
+                          >
+                            {favoritesIds.includes(product.id) ? (
+                              <img
+                                src={fullHeart}
+                                value={product.id}
+                                width="20"
+                                height="20"
+                                className="d-inline-block align-top"
+                              />
+                            ) : (
+                              <img
+                                src={emptyHeart}
+                                value={product.id}
+                                width="20"
+                                height="20"
+                                className="d-inline-block align-top"
+                                onClick={() => handleFavorite(product.id)}
+                              />
+                            )}
+                          </Button>
+                        ) : null}
+                      </div>
+                      <Button
+                        className="cart-button"
+                        value={product.id}
+                        onClick={(e) => {
+                          handleCart(product.id);
+                        }}
+                      >
+                        Add to Cart
+                      </Button>
+                      <Card.Footer>
+                        <p>${product.price / 100}</p>{" "}
+                        {product.stock > 20 ? (
+                          <p>In stock</p>
+                        ) : product.stock > 0 ? (
+                          <p>Low Stock</p>
+                        ) : (
+                          <p>Out of stock</p>
+                        )}
+                      </Card.Footer>
+                    </Card.Body>
+                  </Card>
+                ) : null;
+              })
             : null}
         </div>
         <Pagination className="ms-5 justify-content-center">
@@ -258,7 +258,7 @@ const ProductsPage = () => {
           })}
         </Pagination>
       </div>
-    </div >
+    </div>
   );
 };
 
