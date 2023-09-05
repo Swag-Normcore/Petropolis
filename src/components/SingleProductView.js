@@ -84,32 +84,6 @@ const SingleProductView = () => {
         }
     }, [favoritesIds])
 
-    // useEffect(() => {
-    //     console.log(typeof title);
-    // }, [title])
-    // useEffect(() => {
-    //     console.log(typeof description);
-    // }, [description])
-    // useEffect(() => {
-    //     console.log(typeof animalType);
-    // }, [animalType])
-    // useEffect(() => {
-    //     console.log(typeof price);
-    // }, [price])
-    // useEffect(() => {
-    //     console.log(typeof stock);
-    // }, [stock])
-    // useEffect(() => {
-    //     console.log(typeof image);
-    // }, [image])
-    // useEffect(() => {
-    //     console.log(typeof categoryId);
-    // }, [categoryId])
-
-    // useEffect(() => {
-    //     console.log("useEffect favoriteId", favoriteId);
-    // }, [favoriteId]);
-
     async function handleCart() {
         const result = await addProductToShoppingCart({
             shoppingId: shoppingCart.id,

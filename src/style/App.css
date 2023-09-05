@@ -233,3 +233,38 @@ h3 {
   flex-direction: column;
   height: 100vh;
 }
+
+.order-info {
+  font-size: 20px;
+}
+
+.order-product {
+  font-size: 20px;
+}
+
+@media (max-width: 575px) {
+  .order-header {
+    height: 0%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .order-item {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    /* margin: 0;
+    padding: 0; */
+  }
+
+  .order-info {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    height: 5%;
+  }
+
+  .order-product {
+    font-size: 20px;
+  }
+}

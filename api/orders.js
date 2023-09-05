@@ -20,6 +20,7 @@ ordersRouter.post("/", requireUser, async (req, res, send) => {
 
 ordersRouter.get("/users/:userId", requireUser, requireCurrentUserOrAdmin, async (req, res, next) => {
   try {
+    console.log("inside GET /orders/users/:userId");
     const userId = req.params.userId;
     const orders = await Orders.getAllOrdersByUser(userId);
     if (!orders) {
