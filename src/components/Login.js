@@ -2,7 +2,11 @@ import Form from "react-bootstrap/Form";
 import { useState } from "react";
 import { useAtom } from "jotai";
 import { tokenAtom, adminAtom, userAtom, shoppingCartAtom } from "../atoms";
-import { login, addProductToShoppingCart, removeProductFromShoppingCart } from "../axios-services";
+import {
+  login,
+  addProductToShoppingCart,
+  removeProductFromShoppingCart,
+} from "../axios-services";
 import { Link } from "react-router-dom";
 
 const Login = () => {
@@ -16,29 +20,30 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email, password);
-    const userData = await login({ email, password });
-    localStorage.setItem("token", userData.token);
-    setToken(userData.token);
-    setUser(userData.user);
-    setAdmin(userData.user.isAdmin);
-    setMessage(userData.message);
+    const result = await login({ email, password });
+    localStorage.setItem("token", result.token);
+    setToken(result.token);
+    setUser(result.user);
+    setAdmin(result.user.isAdmin);
+    setMessage(result.message);
     setEmail("");
     setPassword("");
     if (shoppingCart) {
-      await Promise.all(shoppingCart.products.map(async (cartProduct) => {
-        await addProductToShoppingCart({
-          shoppingId: userData.user.shoppingId,
-          productId: cartProduct.productId,
-          quantity: cartProduct.quantity,
-          token: userData.token
-        });
-        await removeProductFromShoppingCart({
-          shoppingId: shoppingCart.id,
-          cartProductId: cartProduct.id,
-          token: userData.token
-        });
-      }));
+      await Promise.all(
+        shoppingCart.products.map(async (cartProduct) => {
+          await addProductToShoppingCart({
+            shoppingId: userData.user.shoppingId,
+            productId: cartProduct.productId,
+            quantity: cartProduct.quantity,
+            token: userData.token,
+          });
+          await removeProductFromShoppingCart({
+            shoppingId: shoppingCart.id,
+            cartProductId: cartProduct.id,
+            token: userData.token,
+          });
+        })
+      );
     }
     window.location.href = "/";
   };
@@ -48,9 +53,12 @@ const Login = () => {
       <p className="login-redirect">
         New User? Register <Link to="/register">here</Link>
       </p>
-      <Form id="register-form" onSubmit={(e) => {
-        handleSubmit(e);
-      }}>
+      <Form
+        id="register-form"
+        onSubmit={(e) => {
+          handleSubmit(e);
+        }}
+      >
         <div className="mb-3">
           <label htmlFor="email-input" className="form-label">
             Email address:

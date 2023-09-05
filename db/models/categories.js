@@ -67,6 +67,7 @@ async function updateCategory(id, fields = {}) {
     )
     .join(", ");
   try {
+    console.log("log inside updateCategory DB adapter", setString);
     const {
       rows: [category],
     } = await client.query(
@@ -90,6 +91,7 @@ async function updateCategory(id, fields = {}) {
 
 async function deleteCategory(id) {
   try {
+    console.log("Delete category in db is being called");
     const {
       rows: [products],
     } = await client.query(

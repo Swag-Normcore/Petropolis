@@ -26,13 +26,11 @@ apiRouter.patch(
   requireAdmin,
   async (req, res, next) => {
     const categoryId = req.params.categoryId;
-    const { name, description } = req.body;
     try {
-      const updatedCategory = await Category.updateCategory({
-        id: categoryId,
-        name,
-        description,
-      });
+      const updatedCategory = await Category.updateCategory(
+        categoryId,
+        req.body
+      );
       if (!updatedCategory) {
         throw { error: "Couldn't update category!" };
       } else {
