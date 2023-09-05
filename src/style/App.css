@@ -189,7 +189,6 @@ h3 {
   padding: 0px;
 }
 
-
 .favorite-title {
   font-size: 1.2rem;
 }
@@ -208,9 +207,10 @@ h3 {
 
 #product-form-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
-
 
 .favorite-title {
   font-size: 1.2rem;
@@ -267,4 +267,21 @@ h3 {
   .order-product {
     font-size: 20px;
   }
+#category-dashboard{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.category-div{
+  background-color: white;
+  outline: 2px solid #F9E0D9;
+}
+
+#users-page{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
