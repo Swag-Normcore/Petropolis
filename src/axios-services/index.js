@@ -301,11 +301,11 @@ export async function addProductToShoppingCart({
   shoppingId,
   productId,
   quantity,
-  token
+  token,
 }) {
   try {
     console.log("running addProductToShoppingCart...");
-    console.log(shoppingId, productId, quantity, token)
+    console.log(shoppingId, productId, quantity, token);
     // const { data: shoppingCart } = await axios.post(
     //   `api/shopping_cart/${shoppingId}`,
     //   {
@@ -323,12 +323,12 @@ export async function addProductToShoppingCart({
         url: `/api/shopping_cart/${shoppingId}`,
         data: {
           productId,
-          quantity
+          quantity,
         },
         headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -341,9 +341,9 @@ export async function addProductToShoppingCart({
         url: `/api/shopping_cart/${shoppingId}`,
         data: {
           productId,
-          quantity
-        }
-      })
+          quantity,
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -359,7 +359,7 @@ export async function addProductToShoppingCart({
 export async function removeProductFromShoppingCart({
   shoppingId,
   cartProductId,
-  token
+  token,
 }) {
   try {
     console.log("running removeProductFromShoppingCart...", cartProductId);
@@ -378,12 +378,12 @@ export async function removeProductFromShoppingCart({
         method: "delete",
         url: `/api/shopping_cart/products/${cartProductId}`,
         data: {
-          shoppingId
+          shoppingId,
         },
         headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -395,9 +395,9 @@ export async function removeProductFromShoppingCart({
         method: "delete",
         url: `/api/shopping_cart/products/${cartProductId}`,
         data: {
-          shoppingId
-        }
-      })
+          shoppingId,
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -414,7 +414,7 @@ export async function updateShoppingCartProductQuantity({
   shoppingId,
   cartProductId,
   quantity,
-  token
+  token,
 }) {
   try {
     console.log("running updateCartProductQuantity...");
@@ -438,9 +438,9 @@ export async function updateShoppingCartProductQuantity({
           quantity,
         },
         headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -454,8 +454,8 @@ export async function updateShoppingCartProductQuantity({
         data: {
           cartProductId,
           quantity,
-        }
-      })
+        },
+      });
       if (!shoppingCart) {
         throw new Error("Couldn't add product to cart!");
       } else {
@@ -471,7 +471,7 @@ export async function updateShoppingCartProductQuantity({
 export async function getSingleProduct({ productId }) {
   try {
     const { data: product } = await axios.get(`/api/products/${productId}`, {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     });
     if (!product) {
       throw new Error("Couldn't get product!");
@@ -486,11 +486,14 @@ export async function getSingleProduct({ productId }) {
 
 export async function getProductImages({ productId }) {
   try {
-    const { data: images } = await axios.get(`/api/images/product/${productId}`, {
-      headers: {
-        "Content-Type": "application/json"
+    const { data: images } = await axios.get(
+      `/api/images/product/${productId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     if (!images) {
       throw new Error("Couldn't get product!");
     } else {
@@ -507,9 +510,9 @@ export async function deleteProduct({ productId, token }) {
     method: "patch",
     url: `/api/products/${productId}/active`,
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!deletedProduct) {
     throw new Error("Couldn't delete product!");
   } else {
@@ -527,7 +530,7 @@ export async function updateProduct({
   price,
   stock,
   image,
-  categoryId
+  categoryId,
 }) {
   const { data: updatedProduct } = await axios({
     method: "patch",
@@ -539,17 +542,33 @@ export async function updateProduct({
       price,
       stock,
       image,
-      categoryId
+      categoryId,
     },
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  })
+      "Content-Type": "application/json",
+    },
+  });
   if (!updatedProduct) {
     throw new Error("Couldn't update product!");
   } else {
     console.log(updatedProduct);
     return updatedProduct;
+  }
+}
+
+export async function deleteUser({ userId, token }) {
+  const { data: deletedUser } = await axios({
+    method: "delete",
+    url: `/api/users/${userId}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!deletedUser) {
+    throw new Error("Couldn't delete user!");
+  } else {
+    console.log(deletedUser);
+    return deletedUser;
   }
 }
