@@ -10,10 +10,10 @@ const { User, Category, Products, Reviews, Orders } = require("./db");
 // } = require("./db/models");
 
 const NUM_USERS = 20;
-const NUM_CATEGORIES = 20;
-const NUM_PRODUCTS = 50;
-const NUM_REVIEWS = 50;
-const NUM_ORDERS = 20;
+const NUM_CATEGORIES = 10;
+const NUM_PRODUCTS = 100;
+// const NUM_REVIEWS = 50;
+// const NUM_ORDERS = 20;
 
 async function createFakeData() {
   try {
@@ -24,7 +24,7 @@ async function createFakeData() {
           name: faker.person.firstName(),
           email: faker.internet.email(),
           password: faker.internet.password(),
-          isAdmin: faker.datatype.boolean(),
+          isAdmin: false,
         });
       })
     );
@@ -48,7 +48,8 @@ async function createFakeData() {
           price: faker.number.int(100000),
           stock: faker.number.int(1000),
           categoryId: faker.helpers.arrayElement(categories).id,
-          imageUrl: faker.image.urlLoremFlickr({ category: "animal" })
+          imageUrl: faker.image.urlLoremFlickr({ category: "animal" }),
+          animalType: faker.helpers.arrayElement(['dog', 'cat']),
         });
       })
     );
@@ -68,15 +69,15 @@ async function createFakeData() {
     // );
 
     // create orders
-    const orders = await Promise.all(
-      [...Array(NUM_ORDERS)].map(async (_) => {
-        return await Orders.createOrder({
-          userId: faker.helpers.arrayElement(users).id,
-          status: faker.helpers.arrayElement(['pending', 'completed', 'shipped']),
-          totalPrice: 0
-        });
-      })
-    );
+    // const orders = await Promise.all(
+    //   [...Array(NUM_ORDERS)].map(async (_) => {
+    //     return await Orders.createOrder({
+    //       userId: faker.helpers.arrayElement(users).id,
+    //       status: faker.helpers.arrayElement(['complete', 'shipped']),
+    //       totalPrice: 0
+    //     });
+    //   })
+    // );
 
     console.log("Finished creating fake data!");
   } catch (error) {
