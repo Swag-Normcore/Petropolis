@@ -53,6 +53,7 @@ import SingleProductView from "./SingleProductView";
 import DashboardPage from "./DashboardPage";
 import CheckoutSuccess from "./CheckoutSuccess";
 import OrdersPageComponent from "./OrdersPage";
+import AccountPage from "./AccountPage";
 
 const App = () => {
   const [APIHealth, setAPIHealth] = useAtom(apiHealthAtom);
@@ -274,7 +275,7 @@ const App = () => {
             <OrdersPageComponent />
           </Route>
           <Route path="/account">
-            <h1>Account page</h1>
+            <AccountPage />
           </Route>
           <Route path="/dashboard">
             <DashboardPage />

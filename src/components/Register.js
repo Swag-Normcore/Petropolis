@@ -18,33 +18,37 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = await register({ name, email, password });
-    if (userData) {
-      setToken(userData.token);
-      localStorage.setItem("token", userData.token);
-      setAdmin(userData.user.isAdmin);
-      setMessage(userData.message);
-      setUser(userData.user);
-      setName("");
-      setEmail("");
-      setPassConfirm("");
-      setPassword("");
-      if (shoppingCart) {
-        await Promise.all(shoppingCart.products.map(async (cartProduct) => {
-          await addProductToShoppingCart({
-            shoppingId: userData.user.shoppingId,
-            productId: cartProduct.productId,
-            quantity: cartProduct.quantity,
-            token: userData.token
-          });
-          await removeProductFromShoppingCart({
-            shoppingId: shoppingCart.id,
-            cartProductId: cartProduct.id,
-            token: userData.token
-          });
-        }));
+    if (password === passConfirm) {
+      const userData = await register({ name, email, password });
+      if (userData) {
+        setToken(userData.token);
+        localStorage.setItem("token", userData.token);
+        setAdmin(userData.user.isAdmin);
+        setMessage(userData.message);
+        setUser(userData.user);
+        setName("");
+        setEmail("");
+        setPassConfirm("");
+        setPassword("");
+        if (shoppingCart) {
+          await Promise.all(shoppingCart.products.map(async (cartProduct) => {
+            await addProductToShoppingCart({
+              shoppingId: userData.user.shoppingId,
+              productId: cartProduct.productId,
+              quantity: cartProduct.quantity,
+              token: userData.token
+            });
+            await removeProductFromShoppingCart({
+              shoppingId: shoppingCart.id,
+              cartProductId: cartProduct.id,
+              token: userData.token
+            });
+          }));
+        }
+        window.location.href = "/";
       }
-      window.location.href = "/";
+    } else {
+      alert("Password and confirm password must match!");
     }
   };
 
@@ -100,7 +104,7 @@ const Register = () => {
         </label>
         <input
           type="password"
-          minLength={8}
+          minLength={6}
           id="password2-input"
           className="form-control"
           aria-describedby="passwordHelpBlock"
