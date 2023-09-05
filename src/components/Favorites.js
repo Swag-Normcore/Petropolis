@@ -12,16 +12,6 @@ const FavoritesPage = () => {
   const [token, setToken] = useAtom(tokenAtom);
   const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch favorites data here if needed
-      // Update the favorites state with the fetched data
-      // setFavorites(newFavoritesData);
-    };
-
-    fetchData();
-  }, [token]); // Listen for changes to the token or any other relevant dependency
-
   const handleDelete = async (id) => {
     const favoriteId = id;
     try {
