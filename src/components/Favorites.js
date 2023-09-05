@@ -1,5 +1,4 @@
 import { useAtom } from "jotai";
-import { useEffect } from "react";
 import { favoritesAtom, tokenAtom, shoppingCartAtom } from "../atoms";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";

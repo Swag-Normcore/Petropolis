@@ -40,13 +40,6 @@ const ProductsPage = () => {
   const [productsPerPage] = useState(20);
   const [categoriesCanvas, setCategoriesCanvas] = useAtom(categoriesCanvasAtom);
 
-  // useEffect(() => {
-  //   if (favorites) {
-  //     const favoritesIdArray = favorites.map((favorite) => favorite.productId);
-  //     setFavoritesIds(favoritesIdArray);
-  //   }
-  // }, []);
-
   const handleCheckboxChange = (id) => {
     if (id === "all") {
       setCheckedId(null);
@@ -72,7 +65,6 @@ const ProductsPage = () => {
   const handleFavorite = async (productId) => {
     const userId = user.id;
     const result = await addToFavorites({ productId, token });
-    console.log(result);
     const newFavorites = await getAllFavorites({ userId, token });
     setFavorites(newFavorites);
     const newFavoritesIds = newFavorites.map((favorite) => favorite.productId);
@@ -80,7 +72,6 @@ const ProductsPage = () => {
   };
 
   const handleCart = async (productId) => {
-    console.log(shoppingCart.id, productId, token);
     const result = await addProductToShoppingCart({
       shoppingId: shoppingCart.id,
       productId,
@@ -113,7 +104,6 @@ const ProductsPage = () => {
         key={number}
         active={number === currentPage}
         onClick={(e) => {
-          console.log(number);
           setCurrentPage(number);
         }}
       >
@@ -189,13 +179,6 @@ const ProductsPage = () => {
                         className="card-img-top"
                         src={product.image}
                         alt={product.title}
-                        // onClick={(e) => {
-                        //   console.log("running onclick")
-                        //   setSingleProductId(product.id);
-                        //   console.log(product);
-                        //   localStorage.setItem("singleProductId", product.id);
-                        //   setSingleProduct(product);
-                        // }}
                       />
                     </Link>
                     <Card.Body>

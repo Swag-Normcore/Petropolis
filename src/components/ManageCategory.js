@@ -23,7 +23,6 @@ const ManageCategory = () => {
   const handleCreateCategory = async (e) => {
     e.preventDefault();
     if (edit) {
-      console.log(categoryId, name, description, token);
       await patchCategory({
         categoryId,
         name,
@@ -32,7 +31,6 @@ const ManageCategory = () => {
       });
     } else {
       const result = await createCategory({ name, description, token });
-      console.log("handle create category result", result);
     }
   };
 
@@ -50,7 +48,7 @@ const ManageCategory = () => {
   return (
     <div id="category-dashboard" className="container-fluid">
       <Col xs={12} md={8}>
-        <h2 className="my-4">Create a New Category</h2>
+        <h2 className="my-4">Category Management</h2>
         <Form
           onSubmit={(e) => {
             handleCreateCategory(e);
@@ -85,7 +83,7 @@ const ManageCategory = () => {
             <Button type="submit">Create New Category</Button>
           )}
         </Form>
-        <h2 className="my-4">Manage Existing Categories</h2>
+        <h2 className="my-4">Existing Categories</h2>
         <div className="categories-dashboard-parent">
           {categories
             ? categories.map((category) => (
