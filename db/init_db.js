@@ -11,6 +11,7 @@ const {
   ShoppingCart,
 } = require("./");
 const { createNewProduct } = require("./models/products");
+const createFirstTwenty = require("./data");
 
 // const faker = require("@faker-js/faker");
 const createFakeData = require("../faker");
@@ -185,12 +186,21 @@ async function populateInitialData() {
       description: "Beds for your furry friend",
     });
     const categoryTwo = await Category.createCategory({
-      name: "Clothes",
-      description: "Find all your furry friends needs",
+      name: "Equipment/Clothes",
+      description: "From collars and leashes to cute outfits",
     });
     const categoryThree = await Category.createCategory({
       name: "Food",
       description: "S-XL bags of food for cats and dogs",
+    });
+    const categoryFour = await Category.createCategory({
+      name: "Toys",
+      description: "Fun playthings for any animal",
+    });
+    const categoryFive = await Category.createCategory({
+      name: "Houses/Enclosures",
+      description:
+        "Keep your pet safe with our high-quality houses, cages, and more",
     });
     console.log("Finshed creating categories.");
 
@@ -205,16 +215,16 @@ async function populateInitialData() {
       categoryId: 1,
       animalType: "dog",
     });
-    const fakeProduct2 = await Products.createProduct({
-      title: "Bone chew toy",
-      description: "Splinter free for pet safety!",
-      price: 999,
-      stock: 950,
-      imageUrl:
-        "https://target.scene7.com/is/image/Target/GUEST_c7f07978-3f6d-47f8-9f07-161fa101de27",
-      categoryId: 2,
-      animalType: "dog",
-    });
+    // const fakeProduct2 = await Products.createProduct({
+    //   title: "Bone chew toy",
+    //   description: "Splinter free for pet safety!",
+    //   price: 999,
+    //   stock: 950,
+    //   imageUrl:
+    //     "https://target.scene7.com/is/image/Target/GUEST_c7f07978-3f6d-47f8-9f07-161fa101de27",
+    //   categoryId: 2,
+    //   animalType: "dog",
+    // });
     const fakeProduct3 = await Products.createProduct({
       title: "Stuffed cat treats",
       description: "Delicious salmon filled treats with no filler products!",
@@ -378,6 +388,9 @@ async function populateInitialData() {
     // await User.deleteUser(4);
     // await Products.deleteProduct(2);
     console.log("Finished testing delete!");
+
+    console.log("Starting to create first 20 products");
+    await createFirstTwenty();
 
     console.log("Starting to create fake data using faker...");
     await createFakeData();

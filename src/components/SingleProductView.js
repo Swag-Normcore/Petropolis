@@ -168,11 +168,11 @@ const SingleProductView = () => {
             </Carousel>
           </div>
           <div id="single-product-info">
-            <Stack gap={3} className="align-items-center">
+            <Stack gap={3} className="align-items-center bg-white p-5">
               <h1>{singleProduct.title}</h1>
               <Stack direction="horizontal" gap={3}>
-                <h2 className="p-2">${singleProduct.price / 100}</h2>
-                <h2 className="p-2 ms-auto">
+                <h2 className="p-2 text-muted">${singleProduct.price / 100}</h2>
+                <h2 className="p-2 ms-auto text-muted">
                   {singleProduct.stock > 20
                     ? "In stock"
                     : singleProduct.stock > 0
@@ -180,7 +180,7 @@ const SingleProductView = () => {
                     : "Out of stock"}
                 </h2>
               </Stack>
-              <p className="p-2 h3">{singleProduct.description}</p>
+              <p className="p-2 h4">{singleProduct.description}</p>
               <Stack
                 direction="horizontal"
                 gap={3}
