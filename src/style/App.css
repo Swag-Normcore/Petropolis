@@ -1,3 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #F9E0D9;
+  width: 100vw;
+}
+
+.cyan {
+  background-color: #2D93AD;
+  color: white;
+}
+
+#root {
+  width: 100vw;
+}
+
+nav {
+  width: 100vw;
+}
+
+.nav-link {
+  color: white
+}
+
+#brand-container{
+  display: flex;
+  color: white;
+}
+
+#brand-container>h1{
+  margin-left: 20px;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -10,4 +45,256 @@
 .app-container h1 {
   color: var(--green);
   padding: 1rem;
+}
+
+.login-redirect {
+  margin-top: 15px;
+  margin-bottom: -15px;
+}
+
+.login-redirect {
+  margin-top: 15px;
+  margin-bottom: -15px;
+}
+
+.login-register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#register-form {
+  width: 20rem;
+  margin: 20px;
+}
+
+.form-label {
+  font-size: 1.12rem;
+}
+
+Form>button {
+  background-color: #2D93AD;
+  color: white;
+  margin: 10px;
+  margin-left: 0px;
+  border-radius: 5px;
+}
+
+Form>button:hover {
+  background-color: #69cde6;
+}
+
+h3 {
+  color: #2D93AD;
+  margin-top: -10px;
+}
+
+h3 {
+  color: #2D93AD;
+  margin-top: -10px;
+}
+
+#products-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.search {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px;
+}
+
+.search>input {
+  width: 88%;
+  border-radius: 3px;
+}
+
+#search-button {
+  background-color: #2D93AD;
+  color: white;
+  margin: 0px 5px 0px 5px;
+  border-radius: 5px;
+}
+
+#search-button:hover {
+  background-color: #69cde6;
+}
+
+#category-nav {
+  height: 50%;
+  background-color: #F9E0D9;
+  padding: 25px;
+  padding-left: 10px;
+  margin: 20px;
+  border-radius: 10px;
+  outline: 1px solid #57371e;
+}
+
+#category-form>input {
+  margin-right: 50px;
+}
+
+#products-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.card {
+  height: 18rem;
+  width: 15rem;
+  margin: 10px;
+}
+
+.card-img-top {
+  height: 10rem;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title-block {
+  display: flex;
+  justify-content: space-around;
+}
+
+.title-block>h5 {
+  font-size: 1rem;
+}
+
+.favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.cart-button {
+  background-color: #2D93AD;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.cart-button:hover {
+  background-color: #69cde6;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0px;
+  height: 3rem;
+  padding: 0px;
+}
+
+.favorite-title {
+  font-size: 1.2rem;
+}
+
+.favorite-footer {
+  display: flex;
+}
+
+#favorites-container {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
+#product-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-title {
+  font-size: 1.2rem;
+}
+
+.favorite-footer {
+  display: flex;
+}
+
+.site-button {
+  background-color: #2D93AD;
+}
+
+.site-button:hover {
+  background-color: #69cde6;
+}
+
+#dashboard-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.order-info {
+  font-size: 20px;
+}
+
+.order-product {
+  font-size: 20px;
+}
+
+#category-dashboard{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.category-div{
+  background-color: white;
+  outline: 2px solid #F9E0D9;
+}
+
+#users-page{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 575px) {
+  .order-header {
+    height: 0%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .order-item {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    /* margin: 0;
+    padding: 0; */
+  }
+
+  .order-info {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    height: 5%;
+  }
+
+  .order-product {
+    font-size: 20px;
+  }
+
 }
